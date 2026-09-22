@@ -1,0 +1,113 @@
+\paragraph{The comparison separates initialization from refinement.}
+The study comprises 4,032 optimization runs on 24 held-out graphs, using two depths, two shot caps, three shot seeds, and 14 methods. All graphs, settings, call records, donor fits, and final validation measurements are saved. The reference bank contains 16 nonisomorphic graphs; held-out graphs are also nonisomorphic to every bank graph. The same graph instances and resource caps are used across all policies in this ideal-circuit simulation study.
+\paragraph{Initialization and region shape have distinct effects.}
+At depth 2 and the larger shot cap, descriptor transfer with an isotropic region changes the mean normalized expected cut relative to the fixed-donor control by 1.05 (95\% interval 0.65 to 1.51) percentage points, and relative to a random start by 13.95 (95\% interval 12.23 to 15.78) percentage points. Keeping the descriptor initialization fixed, the shaped region changes it by 0.00 (95\% interval 0.00 to 0.00) percentage points. GW with a shaped region changes it relative to descriptor transfer with an isotropic region by -0.52 (95\% interval -0.84 to -0.23) percentage points. Positive values indicate higher expected cut for the method being compared against its stated baseline. Intervals resample the 24 graph-level means after averaging the three shot seeds; they are descriptive, unadjusted percentile bootstrap intervals, not simultaneous confidence statements. The full ablation table prevents an initialization benefit from being attributed to anisotropy (Table~\ref{tab:results}).
+The nine undisplaced donor-based local-model policies accept 0 refinement steps in 2,592 runs across both depths and budgets, despite consuming 196,341,504 online shots. For these policies, the final parameter vector equals the transferred anchor: their quality comes entirely from initialization. An explicit initialization-only comparison therefore gives the same depth-2 deficits, 0.38 percentage points for the descriptor anchor and 0.90 for the GW anchor, at zero online refinement shots. This comparison retains the offline donor-construction cost and does not waive any independent output-validation measurements. The 240 accepted moves occur only in the random-start, displaced-prior, and shuffled-reference controls. At the larger depth-2 budget, SPSA has a mean reference deficit of 0.11 percentage points, compared with 0.38 for descriptor-based local-model search and 0.90 for GW-based local-model search. The prescribed conservative refinement therefore has no demonstrated efficiency advantage over directly using the descriptor-selected anchor.
+The descriptor initialization already meets the prespecified target on 24/24 graphs at depth 1 and 24/24 graphs at depth 2, before target-graph measurements. The corresponding run counts are 72/72 and 72/72, because each graph contributes three identical initializations; repeated shot seeds add no independent graphs. Zero target-graph shots therefore do not mean zero total cost: donor optimization is performed offline. The target is an expected normalized cut within 0.02 of an independently computed best-found depth-matched reference; it is not a certified QAOA optimum. A negative deficit means that a run exceeds that reference.
+\paragraph{Conservative decisions consume the available information.}
+Across all trust-region variants, 240 of 21,484 attempted decisions are accepted and 12,763 remain unresolved at their sampling cap or available budget. Unresolved decisions keep the current point. Figure~\ref{fig:accounting} separates fitting from acceptance measurements. Fixed-shot decisions start at the largest planned sample count; adaptive decisions may stop at an earlier certified look. That single look spends 65,536 shots on the two endpoints, more than the smaller 32,768-shot cap, so the fixed-shot policy can take no acceptance measurement at that cap; 144 unresolved decisions are recorded with zero acceptance shots. Their confidence penalties differ because the fixed-shot variant has one planned look. These are finite-budget comparisons of complete policies, not a demonstration of asymptotic convergence.
+
+An offline evaluation of the recorded endpoints finds 2,898 truly improving proposals among 16,299 trials of the eight adaptive undisplaced donor policies. Of those trials, 15,852 (97.3\%) have true acceptance margin $h=f(x)-f(x^+)-\eta q\leq0.005$; positive decreases are counted above a $10^{-12}$ numerical tolerance. For this margin range, Proposition~\ref{prop:acceptancepower} bounds the conditional probability of acceptance in any one trial by $3.48\times10^{-6}$, even if all four prescribed looks are affordable. The fixed-shot control is excluded from this calculation because it uses a different confidence penalty. These exact proposal values are retrospective diagnostics, never online inputs. The counts include dependent trials and are not independent observations or an empirical estimate of the acceptance probability; they connect the transferred-anchor experiment to the regime in which the proposition predicts low acceptance probability.
+
+Building the reference bank used 14,560 exact objective evaluations and 2.3 seconds in the recorded environment. Those exact simulator calls have no assigned hardware-shot equivalent and must not be omitted from deployment considerations. Every final point receives 16,384 additional independent validation shots, one evaluation, and one simulated job. Tables show optimization cost separately so that the common validation cost can be added explicitly. Hardware-job counts describe the specified batching schedule; no device latency or hardware run is inferred.
+The structural transport comparisons require 9.13 seconds per target graph on average, shared between the two depth-specific banks. Descriptor selection and shape construction require 0.55 milliseconds at depth one. This substantial classical overhead provides an additional reason to prefer the simpler selector for this study; it is not converted into a hardware speedup.
+Of the 384 distinct target--reference transport solves, 253 end above the prescribed $10^{-9}$ coupling-change tolerance after the iteration cap. Their couplings satisfy the marginal constraints, but feasibility does not establish convergence or global optimality. These finite-iteration scores must be interpreted together with solver and donor-sensitivity diagnostics rather than as exact graph distances.
+\begin{table}[t]
+\caption{Complete depth-2 comparison at an optimization cap of 131,072 shots. Deficit is 100 times the signed difference from the best-found normalized reference objective. Each row averages 24 graphs and three shot seeds. Target success counts all 72 runs, including zero-shot initial successes. Capped target cost assigns the full budget to failures and uses the first successful recorded incumbent for successes. The first two rows are initialization-only policies that return the selected anchor and make no optimization call, so refinement gains are never credited to transfer. Shots exclude 16,384 independent final-validation shots per run, which every policy including initialization alone still incurs. The Local TV and Fixed donor rows differ only through a floating-point tie-break among depth-2 scores that are all equal to one; see the text.}\label{tab:results}
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+Method & Deficit & Success & Shots & Calls & Jobs & \shortstack{Capped\\target cost} \\
+\midrule
+Descriptor anchor only & 0.38 & 72/72 & 0 & 0.0 & 0.0 & 0 \\
+GW anchor only & 0.90 & 66/72 & 0 & 0.0 & 0.0 & 10923 \\
+\midrule
+Fixed donor & 1.43 & 60/72 & 130560 & 64.0 & 23.0 & 21845 \\
+Random start & 14.32 & 0/72 & 130400 & 65.0 & 23.2 & 131072 \\
+Descriptor, isotropic & 0.38 & 72/72 & 130560 & 64.0 & 23.0 & 0 \\
+Descriptor, shaped & 0.38 & 72/72 & 130560 & 64.0 & 23.0 & 0 \\
+GW, isotropic & 0.90 & 66/72 & 130560 & 64.0 & 23.0 & 10923 \\
+GW, shaped & 0.90 & 66/72 & 130560 & 64.0 & 23.0 & 10923 \\
+Local TV & 1.47 & 60/72 & 130560 & 64.0 & 23.0 & 21845 \\
+Shuffled GW & 1.51 & 54/72 & 130528 & 64.2 & 23.0 & 32768 \\
+Displaced prior & 16.91 & 0/72 & 130432 & 65.6 & 23.4 & 131072 \\
+No point repair & 0.38 & 72/72 & 130411 & 65.0 & 23.2 & 0 \\
+Fixed radius & 0.38 & 72/72 & 129312 & 156.7 & 53.2 & 0 \\
+Fixed shots & 0.38 & 72/72 & 66816 & 7.0 & 2.0 & 0 \\
+COBYLA & 0.33 & 72/72 & 23282 & 22.7 & 22.7 & 0 \\
+SPSA & 0.11 & 72/72 & 129024 & 126.0 & 84.0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\paragraph{Model geometry and the graph bound have limited roles.}
+For descriptor, shaped, the median local-design condition number is 3.99, with 95th percentile 3.99.
+For no point repair, the median local-design condition number is 17.23, with 95th percentile 223.85.
+At depth 1, 301/384 target--reference pairs have local-neighborhood total variation equal to one.
+At depth 2, 384/384 target--reference pairs have local-neighborhood total variation equal to one.
+At depth 2 those recorded scores are constant across the bank to within $10^{-15}$, which is double-precision rounding in the edge-frequency sums and not structural information. The softmax floor $\tau=10^{-3}$ in the selection rule nevertheless resolves that rounding, so the local-total-variation anchor differs from the fixed-donor anchor on 3 of 24 depth-2 targets, that is 9 of 72 runs per budget. The separation between the Local TV and Fixed donor rows of Table~\ref{tab:results} is an artifact of that tie-break and must not be read as evidence of structural selection.
+A bound of one cannot narrow the unit range of the normalized objective. Improved numerical conditioning alone is not evidence of saved shots, and a valid transfer bound can be uninformative on the evaluated graphs (Fig.~\ref{fig:conditioning}). The results do not establish a consistent improvement from the complete transport-shaped policy over the simpler descriptor and conventional-optimizer controls. Comparisons with a tuned ASTRO-DF implementation and physical device noise remain outside this study.
+\paragraph{Separately seeded panels test tighter targets and deeper circuits.}
+The separate follow-up contains 448 test runs on 16 graphs from two separately seeded bank--validation--test panels, at depths 2 and 3. Its 128 tuning runs consume 8,170,240 optimization shots and 1,048,576 independent validation shots. The selected model-shot count and initial radius are frozen before any test run and shared by the isotropic and shaped variance-sensitive policies at each depth. All methods use a 65,536-shot online cap; each output receives 8,192 additional validation shots. Table~\ref{tab:followup} keeps initialization-only outcomes and actual online costs visible.
+Exact isomorphism checks identify 1 follow-up test graph also present in the canonical test set, leaving 15 structurally distinct test graphs. There is also 1 bank-to-bank overlap across the two studies. The follow-up bank, validation and test splits remain pairwise nonisomorphic within the new study.
+At depth 2, validation selects 256 model shots per point and initial radius 0.10.
+All four validation scores are tied exactly; the first candidate in the declared order wins the tie. This outcome is not evidence of tuning superiority.
+Hoeffding, isotropic accepts 0 steps and changes 0/32 outputs, using 2,072,576 online shots in total.
+Bernstein, isotropic accepts 0 steps and changes 0/32 outputs, using 2,072,576 online shots in total.
+Bernstein, shaped accepts 1 step and changes 1/32 outputs, using 2,072,576 online shots in total.
+The paired expected-cut change from the isotropic to shaped variance-sensitive rule is 0.03 (95\% interval 0.00 to 0.10) percentage points at depth 2; positive values favor shaping.
+At depth 3, validation selects 256 model shots per point and initial radius 0.10.
+All four validation scores are tied exactly; the first candidate in the declared order wins the tie. This outcome is not evidence of tuning superiority.
+Hoeffding, isotropic accepts 0 steps and changes 0/32 outputs, using 2,064,384 online shots in total.
+Bernstein, isotropic accepts 1 step and changes 1/32 outputs, using 2,064,384 online shots in total.
+Bernstein, shaped accepts 3 steps and changes 3/32 outputs, using 2,064,384 online shots in total.
+The paired expected-cut change from the isotropic to shaped variance-sensitive rule is 0.08 (95\% interval 0.00 to 0.19) percentage points at depth 3; positive values favor shaping.
+\begin{table}[t]
+\caption{Separate follow-up test comparison. Each deficit is a mean signed reference gap in percentage points with a 95\% graph-bootstrap interval, stratified within the two fixed reference banks (10,000 resamples; seed 5713). Each depth averages 16 graph means, with two shot repetitions per graph. Costs are mean online shots; add 8,192 final-validation shots per output and the separately reported tuning and bank costs.}\label{tab:followup}
+\centering\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrr}
+\toprule
+Method & \shortstack{$p=2$ deficit\\{[95\% interval]}} & \shortstack{$p=3$ deficit\\{[95\% interval]}} & \shortstack{$p=2$\\shots} & \shortstack{$p=3$\\shots} \\
+\midrule
+Descriptor anchor & 0.41 [0.22, 0.64] & 0.77 [0.44, 1.18] & 0 & 0 \\
+Fixed schedule & 2.94 [2.45, 3.46] & 2.74 [2.31, 3.19] & 0 & 0 \\
+Hoeffding, isotropic & 0.41 [0.22, 0.64] & 0.77 [0.44, 1.18] & 64,768 & 64,512 \\
+Bernstein, isotropic & 0.41 [0.22, 0.64] & 0.73 [0.42, 1.14] & 64,768 & 64,512 \\
+Bernstein, shaped & 0.37 [0.22, 0.56] & 0.66 [0.38, 1.01] & 64,768 & 64,512 \\
+SPSA & 0.21 [0.11, 0.35] & 0.41 [0.20, 0.70] & 64,512 & 64,512 \\
+COBYLA & 0.32 [0.24, 0.41] & 0.57 [0.37, 0.82] & 22,720 & 30,752 \\
+\bottomrule
+\end{tabular}
+\end{table}
+These graph-level intervals do not estimate uncertainty over a population of reference banks. Separate panel means follow; each panel draws its bank, validation split, test split and random streams together, so a difference between panels is not attributable to the reference bank alone:
+panel 1, depth 2, gives descriptor-anchor, isotropic Bernstein, shaped Bernstein and SPSA deficits of 0.46, 0.46, 0.46, 0.23 percentage points, respectively.
+panel 1, depth 3, gives descriptor-anchor, isotropic Bernstein, shaped Bernstein and SPSA deficits of 0.99, 0.92, 0.77, 0.51 percentage points, respectively.
+panel 2, depth 2, gives descriptor-anchor, isotropic Bernstein, shaped Bernstein and SPSA deficits of 0.35, 0.35, 0.29, 0.19 percentage points, respectively.
+panel 2, depth 3, gives descriptor-anchor, isotropic Bernstein, shaped Bernstein and SPSA deficits of 0.55, 0.55, 0.55, 0.31 percentage points, respectively.
+At depth 2, the initialization-only anchor meets gaps 0.002, 0.005, 0.01 and 0.02 on 16/32, 26/32, 28/32, 32/32 test runs, respectively. Repeated initialization-only records correspond to the same anchor within a graph.
+At depth 3, the initialization-only anchor meets gaps 0.002, 0.005, 0.01 and 0.02 on 6/32, 18/32, 24/32, 28/32 test runs, respectively. Repeated initialization-only records correspond to the same anchor within a graph.
+An exclusion sensitivity analysis removes the overlapping graph without refitting or rerunning any method.
+On these 15 graphs at depth 2, the paired expected-cut change from isotropic to shaped Bernstein is 0.03 percentage points; the lowest mean deficits are SPSA (0.22) and COBYLA (0.33). The shaped rule has deficit 0.39, compared with 0.43 for initialization alone.
+On these 15 graphs at depth 3, the paired expected-cut change from isotropic to shaped Bernstein is 0.08 percentage points; the lowest mean deficits are SPSA (0.43) and COBYLA (0.58). The shaped rule has deficit 0.67, compared with 0.78 for initialization alone.
+The held-out test runs consume 18,250,752 optimization shots and 3,670,016 additional validation shots. All follow-up best-found references together use 97,183 exact objective calls, including 40,409 bank-reference calls; these are classical simulation costs, not uncharged hardware shots. The added panels enlarge the tested regime but remain ideal-circuit, small-graph experiments with a fixed, disclosed tuning grid.
+\paragraph{Solver sensitivity limits structural-selection conclusions.}
+The separate transport audit repeats every canonical target--reference comparison with longer iterations, three regularizations, multiple starts, and independent conditional-gradient optimization. All saved couplings are checked by a direct four-index distortion calculation. Conditional-gradient stopping is checked by a transportation linear-program gap; this is a first-order stationarity diagnostic at the stated numerical tolerance, not a certificate of exact stationarity or global optimality. Table~\ref{tab:transport} reports solver failures alongside changed donors and resulting anchor quality. A target with any infeasible candidate is excluded from that selector's quality summary and explicitly counted; no finite score is substituted for an invalid solve.
+Quality means over different valid-target subsets are not paired policy comparisons and must not be used to rank those selectors directly.
+\begin{table}[t]
+\caption{Transport sensitivity on 384 canonical graph pairs. ``Unconv.'' and ``Infeas.'' count selected pairwise solver candidates; changed donors and valid targets count graphs out of 24. Depth-specific deficits are mean anchor-only signed reference gaps in percentage points over valid targets. The first two rows are reference points rather than audit solvers: the study's own capped entropic solver and the transport-free descriptor selector, both over all 24 targets. Feasibility, convergence, and useful donor selection are distinct properties.}\label{tab:transport}
+\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+Solver & Unconv. & Infeas. & \shortstack{Changed\\donors} & \shortstack{Valid\\targets} & \shortstack{$p=1$\\deficit} & \shortstack{$p=2$\\deficit} \\
+\midrule
+Original capped entropic (study) & 253 & 0 & -- & 24 & 0.29 & 0.90 \\
+Descriptor selector (no transport) & -- & -- & -- & 24 & 0.09 & 0.38 \\
+\midrule
+Entropic $\epsilon=0.02$ & 100 & 99 & 1 & 1 & 0.15 & 0.50 \\
+Entropic $\epsilon=0.05$ & 3 & 0 & 1 & 24 & 0.30 & 0.89 \\
+Entropic $\epsilon=0.1$ & 5 & 0 & 20 & 24 & 0.31 & 1.01 \\
+Entropic, three starts & 14 & 0 & 10 & 24 & 0.23 & 0.74 \\
+Conditional gradient, three starts & 0 & 0 & 21 & 24 & 0.24 & 0.65 \\
+\bottomrule
+\end{tabular}
+\end{table}

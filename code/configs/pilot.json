@@ -1,0 +1,63 @@
+{
+  "protocol_version": 1,
+  "seed": 20260918,
+  "families": [
+    "erdos_renyi",
+    "regular",
+    "barabasi_albert",
+    "watts_strogatz"
+  ],
+  "bank_sizes": [
+    8
+  ],
+  "bank_per_family_size": 1,
+  "test_sizes": [
+    10
+  ],
+  "test_per_family_size": 1,
+  "depths": [
+    1,
+    2
+  ],
+  "repetitions": 1,
+  "budgets": [
+    8192,
+    32768
+  ],
+  "reference_starts": 3,
+  "reference_maxiter": 80,
+  "validation_shots": 2048,
+  "target_gap": 0.02,
+  "methods": [
+    "uniform_iso",
+    "random_iso",
+    "descriptor_iso",
+    "descriptor_shape",
+    "gw_iso",
+    "gw_shape",
+    "local_iso",
+    "shuffled_gw",
+    "bad_prior",
+    "no_repair",
+    "fixed_radius",
+    "fixed_shots",
+    "cobyla",
+    "spsa"
+  ],
+  "optimizer": {
+    "radius": 0.4,
+    "min_radius": 0.025,
+    "max_radius": 0.8,
+    "model_shots": 256,
+    "baseline_shots": 1024,
+    "acceptance_looks": [
+      256,
+      1024,
+      4096,
+      16384
+    ],
+    "max_trials": 16,
+    "alpha": 0.05,
+    "eta": 0.1
+  }
+}

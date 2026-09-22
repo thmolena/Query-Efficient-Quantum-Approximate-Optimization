@@ -1,0 +1,52 @@
+{
+  "identity": "SHA-256 of the sorted compact JSON source_sha256 mapping",
+  "schema_version": 1,
+  "scope": "Exact source bytes recorded by each supplied experiment bundle; source identity does not imply equivalence of later implementations.",
+  "snapshots": [
+    {
+      "bundle_path": "results/study.json.gz",
+      "bundle_sha256": "94b462bee48cd1ec013e6e070284865a28140636bdc3edb58bd8db06bb9973a0",
+      "snapshot_id": "7abd4c80b4c75b523ff0049861673c7e1ffa7808fe86e823c95e9b78fb836a26",
+      "source_commit": "2868a22d7d13b8b30974199201ff5ceff153b648",
+      "source_dirty": false,
+      "source_sha256": {
+        "configs/paper.json": "60f611a72313075a0bdd4c829a847428e6bc02e6ef08f7deb0bdddbb5679b4d5",
+        "src/gcqaoa/__init__.py": "6ea60da17eb6bbd4f48ae4e842d5ffd51ed640913f11e511acd20f858eef2cb2",
+        "src/gcqaoa/experiment.py": "ee7c551a583b7669b6763d4656caa5d0d6735b53702714842050847575377f0f",
+        "src/gcqaoa/provenance.py": "46d2f0b4eeb9abcad0835923701657c5b36cbf78bd22368c4a4834aed7cf8230",
+        "src/gcqaoa/qaoa.py": "8f85c9619993d4dfbbfcd4264a698ee0b4217148277f510b243cff0cbc300964",
+        "src/gcqaoa/search.py": "5c3319d4f5c5cb0ea39056f2ec424c77b3b29761555f9e16473967dcc202980a"
+      },
+      "study": "study"
+    },
+    {
+      "bundle_path": "results/followup.json.gz",
+      "bundle_sha256": "84e4469f284532ea67a9afc378d04f94bf862d54312aa56a3d0b06585809982a",
+      "snapshot_id": "bfb6d8df4d8894ee34e387dda89bec304683cd0e7f7ac973df6c724c76de6ce5",
+      "source_sha256": {
+        "configs/followup.json": "67863f0dc58ff72ee5ad68f849fea156e2a70f67df840d8f3a32cfdad981fd5c",
+        "scripts/run_followup.py": "0c0ad494b2bd75f25a11e0e12e98265c1e27e3b10761e84073ecf46c9423c60d",
+        "src/gcqaoa/__init__.py": "6ea60da17eb6bbd4f48ae4e842d5ffd51ed640913f11e511acd20f858eef2cb2",
+        "src/gcqaoa/experiment.py": "743e22333f206838b321837bc3a1a5e8d50471b254f9d12b7e013ac3cf72ebef",
+        "src/gcqaoa/followup.py": "0cf24ca95823940f9997603af63e656bf269e1d7b13e31d4566b96852df8452a",
+        "src/gcqaoa/provenance.py": "ae6353e56b97cd04d5bb11dac1b518bee933fbec935d1d189d18573c92be56e1",
+        "src/gcqaoa/qaoa.py": "8f85c9619993d4dfbbfcd4264a698ee0b4217148277f510b243cff0cbc300964",
+        "src/gcqaoa/records.py": "7df0dbda83f5e7216e60291bf237bcb2a428a085f9d7fda8aa3faf59f2e3a9a2",
+        "src/gcqaoa/search.py": "c965921d29889c36de6469d5bfa4a1bbebb4baa4ae2c9bea6dae993439b28dcb"
+      },
+      "study": "followup"
+    },
+    {
+      "bundle_path": "results/transport.json.gz",
+      "bundle_sha256": "c04014de58b58d74256a46c9a8a930ff6d489ef3c6e38e534a86062a03f22cf4",
+      "snapshot_id": "a0f4dc027b81f6922ed58bcfcf4f28ec05be01c2fb0ab2fb86b5b544896fbbd8",
+      "source_sha256": {
+        "src/gcqaoa/experiment.py": "743e22333f206838b321837bc3a1a5e8d50471b254f9d12b7e013ac3cf72ebef",
+        "src/gcqaoa/qaoa.py": "8f85c9619993d4dfbbfcd4264a698ee0b4217148277f510b243cff0cbc300964",
+        "src/gcqaoa/search.py": "c965921d29889c36de6469d5bfa4a1bbebb4baa4ae2c9bea6dae993439b28dcb",
+        "src/gcqaoa/transport_audit.py": "ea0067487349d8e198c74dabe830490e3881a86b3e55bdb9e73bdad9e085fc06"
+      },
+      "study": "transport"
+    }
+  ]
+}

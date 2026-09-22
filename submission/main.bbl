@@ -1,0 +1,335 @@
+\begin{thebibliography}{40}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Barab{\'a}si and Albert(1999)]{barabasi1999}
+Albert-L{\'a}szl{\'o} Barab{\'a}si and R{\'e}ka Albert.
+\newblock Emergence of scaling in random networks.
+\newblock \emph{Science}, 286\penalty0 (5439):\penalty0 509--512, 1999.
+\newblock \doi{10.1126/science.286.5439.509}.
+
+\bibitem[Brand{\~a}o et~al.(2018)Brand{\~a}o, Broughton, Farhi, Gutmann, and
+  Neven]{brandao2018}
+Fernando G. S.~L. Brand{\~a}o, Michael Broughton, Edward Farhi, Sam Gutmann,
+  and Hartmut Neven.
+\newblock For fixed control parameters the quantum approximate optimization
+  algorithm's objective function value concentrates for typical instances,
+  2018.
+\newblock URL \url{https://arxiv.org/abs/1812.04170}.
+\newblock arXiv:1812.04170.
+
+\bibitem[Businger and Golub(1965)]{businger1965}
+Peter Businger and Gene~H. Golub.
+\newblock Linear least squares solutions by {Householder} transformations.
+\newblock \emph{Numerische Mathematik}, 7:\penalty0 269--276, 1965.
+\newblock \doi{10.1007/BF01436084}.
+
+\bibitem[Chen et~al.(2018)Chen, Menickelly, and Scheinberg]{chen2018}
+Ruobing Chen, Matt Menickelly, and Katya Scheinberg.
+\newblock Stochastic optimization using a trust-region method and random
+  models.
+\newblock \emph{Mathematical Programming}, 169:\penalty0 447--487, 2018.
+\newblock \doi{10.1007/s10107-017-1141-8}.
+\newblock arXiv:1504.04231.
+
+\bibitem[Conn et~al.(2008)Conn, Scheinberg, and Vicente]{conn2008}
+Andrew~R. Conn, Katya Scheinberg, and Lu{\'i}s~N. Vicente.
+\newblock Geometry of interpolation sets in derivative free optimization.
+\newblock \emph{Mathematical Programming}, 111:\penalty0 141--172, 2008.
+\newblock \doi{10.1007/s10107-006-0073-5}.
+
+\bibitem[Cuturi(2013)]{cuturi2013}
+Marco Cuturi.
+\newblock Sinkhorn distances: Lightspeed computation of optimal transport.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~26, 2013.
+\newblock URL
+  \url{https://papers.neurips.cc/paper_files/paper/2013/hash/af21d0c97db2e27e13572cbf59eb343d-Abstract.html}.
+
+\bibitem[Demetci et~al.(2022)Demetci, Santorella, Sandstede, Noble, and
+  Singh]{demetci2022}
+Pinar Demetci, Rebecca Santorella, Bj{\"o}rn Sandstede, William~Stafford Noble,
+  and Ritambhara Singh.
+\newblock {SCOT}: Single-cell multi-omics alignment with optimal transport.
+\newblock \emph{Journal of Computational Biology}, 29\penalty0 (1):\penalty0
+  3--18, 2022.
+\newblock \doi{10.1089/cmb.2021.0446}.
+
+\bibitem[Dzahini et~al.(2025)Dzahini, Larson, Menickelly, and
+  Wild]{dzahini2025}
+Kwassi~Joseph Dzahini, Jeffrey~M. Larson, Matt Menickelly, and Stefan~M. Wild.
+\newblock A noise-aware scalable subspace classical optimizer for the quantum
+  approximate optimization algorithm.
+\newblock In \emph{2025 IEEE International Conference on Quantum Computing and
+  Engineering (QCE)}, pages 20--30. IEEE, 2025.
+\newblock \doi{10.1109/QCE65121.2025.00013}.
+\newblock URL \url{https://doi.org/10.1109/QCE65121.2025.00013}.
+
+\bibitem[Efron and Tibshirani(1993)]{efron1993}
+Bradley Efron and Robert~J. Tibshirani.
+\newblock \emph{An Introduction to the Bootstrap}, volume~57 of
+  \emph{Monographs on Statistics and Applied Probability}.
+\newblock Chapman \& Hall, New York, 1993.
+\newblock ISBN 0-412-04231-2.
+
+\bibitem[Falla et~al.(2024)Falla, Langfitt, Alexeev, and Safro]{falla2024}
+Jose Falla, Quinn Langfitt, Yuri Alexeev, and Ilya Safro.
+\newblock Graph representation learning for parameter transferability in
+  quantum approximate optimization algorithm.
+\newblock \emph{Quantum Machine Intelligence}, 6:\penalty0 46, 2024.
+\newblock \doi{10.1007/s42484-024-00178-9}.
+
+\bibitem[Farhi et~al.(2014)Farhi, Goldstone, and Gutmann]{farhi2014}
+Edward Farhi, Jeffrey Goldstone, and Sam Gutmann.
+\newblock A quantum approximate optimization algorithm, 2014.
+\newblock URL \url{https://arxiv.org/abs/1411.4028}.
+\newblock arXiv:1411.4028.
+
+\bibitem[Galda et~al.(2023)Galda, Gupta, Falla, Liu, Lykov, Alexeev, and
+  Safro]{galda2023}
+Alexey Galda, Eesh Gupta, Jose Falla, Xiaoyuan Liu, Danylo Lykov, Yuri Alexeev,
+  and Ilya Safro.
+\newblock Similarity-based parameter transferability in the quantum approximate
+  optimization algorithm.
+\newblock \emph{Frontiers in Quantum Science and Technology}, 2:\penalty0
+  1200975, 2023.
+\newblock \doi{10.3389/frqst.2023.1200975}.
+\newblock arXiv:2307.05420.
+
+\bibitem[Gilbert(1959)]{gilbert1959}
+E.~N. Gilbert.
+\newblock Random graphs.
+\newblock \emph{The Annals of Mathematical Statistics}, 30\penalty0
+  (4):\penalty0 1141--1144, 1959.
+\newblock \doi{10.1214/aoms/1177706098}.
+
+\bibitem[Golub and Van~Loan(2013)]{golub2013}
+Gene~H. Golub and Charles~F. Van~Loan.
+\newblock \emph{Matrix Computations}.
+\newblock Johns Hopkins University Press, Baltimore, 4 edition, 2013.
+\newblock \doi{10.56021/9781421407944}.
+
+\bibitem[Ha et~al.(2024)Ha, Shashaani, and Menickelly]{ha2024}
+Yunsoo Ha, Sara Shashaani, and Matt Menickelly.
+\newblock Two-stage estimation and variance modeling for latency-constrained
+  variational quantum algorithms, 2024.
+\newblock URL \url{https://arxiv.org/abs/2401.08912}.
+\newblock arXiv:2401.08912.
+
+\bibitem[Hagberg et~al.(2008)Hagberg, Schult, and Swart]{hagberg2008}
+Aric~A. Hagberg, Daniel~A. Schult, and Pieter~J. Swart.
+\newblock Exploring network structure, dynamics, and function using {NetworkX}.
+\newblock In \emph{Proceedings of the 7th Python in Science Conference}, pages
+  11--15, Pasadena, CA, 2008.
+\newblock URL \url{https://aric.hagberg.org/papers/hagberg-2008-exploring.pdf}.
+
+\bibitem[Harris et~al.(2020)Harris, Millman, van~der Walt, Gommers, Virtanen,
+  Cournapeau, Wieser, Taylor, Berg, Smith, Kern, Picus, Hoyer, van Kerkwijk,
+  Brett, Haldane, Fern{\'a}ndez~del R{\'i}o, Wiebe, Peterson,
+  G{\'e}rard-Marchant, Sheppard, Reddy, Weckesser, Abbasi, Gohlke, and
+  Oliphant]{harris2020}
+Charles~R. Harris, K.~Jarrod Millman, St{\'e}fan~J. van~der Walt, Ralf Gommers,
+  Pauli Virtanen, David Cournapeau, Eric Wieser, Julian Taylor, Sebastian Berg,
+  Nathaniel~J. Smith, Robert Kern, Matti Picus, Stephan Hoyer, Marten~H. van
+  Kerkwijk, Matthew Brett, Allan Haldane, Jaime Fern{\'a}ndez~del R{\'i}o, Mark
+  Wiebe, Pearu Peterson, Pierre G{\'e}rard-Marchant, Kevin Sheppard, Tyler
+  Reddy, Warren Weckesser, Hameer Abbasi, Christoph Gohlke, and Travis~E.
+  Oliphant.
+\newblock Array programming with {NumPy}.
+\newblock \emph{Nature}, 585:\penalty0 357--362, 2020.
+\newblock \doi{10.1038/s41586-020-2649-2}.
+
+\bibitem[Hoeffding(1963)]{hoeffding1963}
+Wassily Hoeffding.
+\newblock Probability inequalities for sums of bounded random variables.
+\newblock \emph{Journal of the American Statistical Association}, 58\penalty0
+  (301):\penalty0 13--30, 1963.
+\newblock \doi{10.1080/01621459.1963.10500830}.
+
+\bibitem[Howard et~al.(2021)Howard, Ramdas, McAuliffe, and Sekhon]{howard2021}
+Steven~R. Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon.
+\newblock Time-uniform, nonparametric, nonasymptotic confidence sequences.
+\newblock \emph{The Annals of Statistics}, 49\penalty0 (2):\penalty0
+  1055--1080, 2021.
+\newblock \doi{10.1214/20-AOS1991}.
+\newblock URL \url{https://arxiv.org/abs/1810.08240}.
+
+\bibitem[Hunter(2007)]{hunter2007}
+J.~D. Hunter.
+\newblock Matplotlib: A {2D} graphics environment.
+\newblock \emph{Computing in Science \& Engineering}, 9\penalty0 (3):\penalty0
+  90--95, 2007.
+\newblock \doi{10.1109/MCSE.2007.55}.
+
+\bibitem[K{\"u}bler et~al.(2020)K{\"u}bler, Arrasmith, Cincio, and
+  Coles]{kubler2020}
+Jonas~M. K{\"u}bler, Andrew Arrasmith, Lukasz Cincio, and Patrick~J. Coles.
+\newblock An adaptive optimizer for measurement-frugal variational algorithms.
+\newblock \emph{Quantum}, 4:\penalty0 263, 2020.
+\newblock \doi{10.22331/q-2020-05-11-263}.
+\newblock URL \url{https://doi.org/10.22331/q-2020-05-11-263}.
+
+\bibitem[Lacoste-Julien(2016)]{lacostejulien2016}
+Simon Lacoste-Julien.
+\newblock Convergence rate of {Frank--Wolfe} for non-convex objectives, 2016.
+\newblock URL \url{https://arxiv.org/abs/1607.00345}.
+\newblock arXiv:1607.00345.
+
+\bibitem[Maurer and Pontil(2009)]{maurer2009}
+Andreas Maurer and Massimiliano Pontil.
+\newblock Empirical {Bernstein} bounds and sample variance penalization.
+\newblock In \emph{Proceedings of the 22nd Annual Conference on Learning
+  Theory}, 2009.
+\newblock \doi{10.48550/arXiv.0907.3740}.
+\newblock URL \url{https://www.cs.mcgill.ca/~colt2009/papers/012.pdf}.
+\newblock arXiv:0907.3740.
+
+\bibitem[M{\'e}moli(2011)]{memoli2011}
+Facundo M{\'e}moli.
+\newblock {Gromov--Wasserstein} distances and the metric approach to object
+  matching.
+\newblock \emph{Foundations of Computational Mathematics}, 11\penalty0
+  (4):\penalty0 417--487, 2011.
+\newblock \doi{10.1007/s10208-011-9093-5}.
+
+\bibitem[Nguyen and Safro(2026)]{nguyen2026}
+Kien~X. Nguyen and Ilya Safro.
+\newblock Graph-conditioned meta-optimizer for {QAOA} parameter generation on
+  multiple problem classes, 2026.
+\newblock URL \url{https://arxiv.org/abs/2604.25275}.
+\newblock arXiv:2604.25275.
+
+\bibitem[Nocedal and Wright(2006)]{nocedal2006}
+Jorge Nocedal and Stephen~J. Wright.
+\newblock \emph{Numerical Optimization}.
+\newblock Springer Series in Operations Research and Financial Engineering.
+  Springer, New York, 2 edition, 2006.
+\newblock \doi{10.1007/978-0-387-40065-5}.
+
+\bibitem[Patel and Mishra(2026)]{patel2026}
+Shubham Patel and Utkarsh Mishra.
+\newblock Improving the efficiency of {QAOA} using efficient parameter transfer
+  initialization and targeted-single-layer regularized optimization with
+  minimal performance degradation, 2026.
+\newblock URL \url{https://arxiv.org/abs/2601.15760}.
+\newblock arXiv:2601.15760.
+
+\bibitem[Peyr{\'e} et~al.(2016)Peyr{\'e}, Cuturi, and Solomon]{peyre2016}
+Gabriel Peyr{\'e}, Marco Cuturi, and Justin Solomon.
+\newblock {Gromov--Wasserstein} averaging of kernel and distance matrices.
+\newblock In \emph{Proceedings of the 33rd International Conference on Machine
+  Learning}, volume~48 of \emph{Proceedings of Machine Learning Research},
+  pages 2664--2672, 2016.
+\newblock URL \url{https://proceedings.mlr.press/v48/peyre16.html}.
+
+\bibitem[Powell(1994)]{powell1994}
+M.~J.~D. Powell.
+\newblock A direct search optimization method that models the objective and
+  constraint functions by linear interpolation.
+\newblock In Susana Gomez and Jean-Pierre Hennart, editors, \emph{Advances in
+  Optimization and Numerical Analysis}, volume 275 of \emph{Mathematics and Its
+  Applications}, pages 51--67. Springer, Dordrecht, 1994.
+\newblock \doi{10.1007/978-94-015-8330-5_4}.
+
+\bibitem[Sack and Serbyn(2021)]{sack2021}
+Stefan~H. Sack and Maksym Serbyn.
+\newblock Quantum annealing initialization of the quantum approximate
+  optimization algorithm.
+\newblock \emph{Quantum}, 5:\penalty0 491, 2021.
+\newblock \doi{10.22331/q-2021-07-01-491}.
+\newblock URL \url{https://doi.org/10.22331/q-2021-07-01-491}.
+
+\bibitem[Shashaani et~al.(2018)Shashaani, Hashemi, and
+  Pasupathy]{shashaani2018}
+Sara Shashaani, Fatemeh~S. Hashemi, and Raghu Pasupathy.
+\newblock {ASTRO-DF}: A class of adaptive sampling trust-region algorithms for
+  derivative-free stochastic optimization.
+\newblock \emph{SIAM Journal on Optimization}, 28\penalty0 (4):\penalty0
+  3145--3176, 2018.
+\newblock \doi{10.1137/15M1042425}.
+
+\bibitem[Spall(1992)]{spall1992}
+James~C. Spall.
+\newblock Multivariate stochastic approximation using a simultaneous
+  perturbation gradient approximation.
+\newblock \emph{IEEE Transactions on Automatic Control}, 37\penalty0
+  (3):\penalty0 332--341, 1992.
+\newblock \doi{10.1109/9.119632}.
+
+\bibitem[Steger and Wormald(1999)]{steger1999}
+A.~Steger and N.~C. Wormald.
+\newblock Generating random regular graphs quickly.
+\newblock \emph{Combinatorics, Probability and Computing}, 8\penalty0
+  (4):\penalty0 377--396, 1999.
+\newblock \doi{10.1017/S0963548399003867}.
+
+\bibitem[Streif and Leib(2020)]{streif2020}
+Michael Streif and Martin Leib.
+\newblock Training the quantum approximate optimization algorithm without
+  access to a quantum processing unit.
+\newblock \emph{Quantum Science and Technology}, 5\penalty0 (3):\penalty0
+  034008, 2020.
+\newblock \doi{10.1088/2058-9565/ab8c2b}.
+\newblock URL \url{https://doi.org/10.1088/2058-9565/ab8c2b}.
+
+\bibitem[Sung et~al.(2020)Sung, Yao, Harrigan, Rubin, Jiang, Lin, Babbush, and
+  McClean]{sung2020}
+Kevin~J. Sung, Jiahao Yao, Matthew~P. Harrigan, Nicholas~C. Rubin, Zhang Jiang,
+  Lin Lin, Ryan Babbush, and Jarrod~R. McClean.
+\newblock Using models to improve optimizers for variational quantum
+  algorithms.
+\newblock \emph{Quantum Science and Technology}, 5\penalty0 (4):\penalty0
+  044008, 2020.
+\newblock \doi{10.1088/2058-9565/abb6d9}.
+\newblock URL \url{https://doi.org/10.1088/2058-9565/abb6d9}.
+
+\bibitem[Virtanen et~al.(2020)Virtanen, Gommers, Oliphant, Haberland, Reddy,
+  Cournapeau, Burovski, Peterson, Weckesser, Bright, {van der Walt}, Brett,
+  Wilson, Millman, Mayorov, Nelson, Jones, Kern, Larson, Carey, Polat, Feng,
+  Moore, {VanderPlas}, Laxalde, Perktold, Cimrman, Henriksen, Quintero, Harris,
+  Archibald, Ribeiro, Pedregosa, {van Mulbregt}, and {SciPy 1.0
+  Contributors}]{scipy2020}
+Pauli Virtanen, Ralf Gommers, Travis~E. Oliphant, Matt Haberland, Tyler Reddy,
+  David Cournapeau, Evgeni Burovski, Pearu Peterson, Warren Weckesser, Jonathan
+  Bright, St{\'e}fan~J. {van der Walt}, Matthew Brett, Joshua Wilson, K.~Jarrod
+  Millman, Nikolay Mayorov, Andrew R.~J. Nelson, Eric Jones, Robert Kern, Eric
+  Larson, C~J Carey, {\.I}lhan Polat, Yu~Feng, Eric~W. Moore, Jake
+  {VanderPlas}, Denis Laxalde, Josef Perktold, Robert Cimrman, Ian Henriksen,
+  E.~A. Quintero, Charles~R. Harris, Anne~M. Archibald, Ant{\^o}nio~H. Ribeiro,
+  Fabian Pedregosa, Paul {van Mulbregt}, and {SciPy 1.0 Contributors}.
+\newblock {SciPy} 1.0: Fundamental algorithms for scientific computing in
+  {Python}.
+\newblock \emph{Nature Methods}, 17:\penalty0 261--272, 2020.
+\newblock \doi{10.1038/s41592-019-0686-2}.
+
+\bibitem[Watts and Strogatz(1998)]{watts1998}
+Duncan~J. Watts and Steven~H. Strogatz.
+\newblock Collective dynamics of 'small-world' networks.
+\newblock \emph{Nature}, 393:\penalty0 440--442, 1998.
+\newblock \doi{10.1038/30918}.
+
+\bibitem[Wurtz and Lykov(2021)]{wurtz2021}
+Jonathan Wurtz and Danylo Lykov.
+\newblock Fixed-angle conjectures for the quantum approximate optimization
+  algorithm on regular {MaxCut} graphs.
+\newblock \emph{Physical Review A}, 104\penalty0 (5):\penalty0 052419, 2021.
+\newblock \doi{10.1103/PhysRevA.104.052419}.
+\newblock URL \url{https://doi.org/10.1103/PhysRevA.104.052419}.
+
+\bibitem[Zhang(2023)]{zhang2023prima}
+Zaikun Zhang.
+\newblock {PRIMA}: Reference implementation for {Powell}'s methods with
+  modernization and amelioration, 2023.
+\newblock URL \url{https://www.libprima.net}.
+
+\bibitem[Zhou et~al.(2020)Zhou, Wang, Choi, Pichler, and Lukin]{zhou2020}
+Leo Zhou, Sheng-Tao Wang, Soonwon Choi, Hannes Pichler, and Mikhail~D. Lukin.
+\newblock Quantum approximate optimization algorithm: Performance, mechanism,
+  and implementation on near-term devices.
+\newblock \emph{Physical Review X}, 10:\penalty0 021067, 2020.
+\newblock \doi{10.1103/PhysRevX.10.021067}.
+
+\end{thebibliography}

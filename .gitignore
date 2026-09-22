@@ -1,0 +1,13 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.render-cache/
+.pdf-preview/
+.venv/
+.validation/
+*.egg-info/
+.env
+.env.*
+*.orig
+*.rej

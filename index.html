@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A reproducible MaxCut QAOA study separating parameter-transfer benefits from graph-conditioned search geometry and measurement costs.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Query-Efficient Quantum Approximate Optimization via Graph-Conditioned Trust Regions">
+  <meta property="og:description" content="Implementation, complete experiment records, and a manuscript separating QAOA initialization from finite-shot refinement.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Query-Efficient Quantum Approximate Optimization via Graph-Conditioned Trust Regions">
+  <meta name="twitter:description" content="Separating parameter transfer, search geometry, and measurement costs in MaxCut QAOA.">
+  <title>Query-Efficient Quantum Approximate Optimization via Graph-Conditioned Trust Regions · Molena Huynh</title>
+  <style>
+    :root { color-scheme: light; --paper:#faf9f5; --ink:#202923; --muted:#5b655f; --line:#d9ded5; --accent:#8c352d; --soft:#edf0e8; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:17px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    a { color:var(--accent); text-underline-offset:4px; }
+    a:hover { text-decoration-thickness:2px; }
+    a:focus-visible { outline:3px solid var(--accent); outline-offset:5px; }
+    .wrap { max-width:1160px; margin:auto; padding:0 44px; }
+    .skip { position:absolute; left:20px; top:-100px; background:white; padding:12px; }
+    .skip:focus { top:8px; }
+    header { display:flex; justify-content:space-between; gap:24px; align-items:center; padding:28px 0; border-bottom:1px solid var(--line); }
+    .brand { font-size:13px; font-weight:750; letter-spacing:.12em; text-transform:uppercase; }
+    nav { display:flex; flex-wrap:wrap; gap:24px; font-size:14px; }
+    nav a { color:var(--ink); text-decoration:none; }
+    .hero { padding:76px 0 58px; }
+    .eyebrow { color:var(--accent); font-size:12px; font-weight:750; letter-spacing:.12em; text-transform:uppercase; }
+    h1,h2,h3 { font-family:Georgia,"Times New Roman",serif; font-weight:400; line-height:1.12; }
+    h1 { max-width:950px; font-size:clamp(40px,5.3vw,68px); letter-spacing:-.035em; margin:22px 0 30px; }
+    .author { color:var(--muted); font-size:15px; }
+    .intro { max-width:770px; font-size:21px; line-height:1.55; margin-top:30px; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin:30px 0 0; }
+    .button { padding:11px 21px; border:1px solid var(--ink); color:var(--ink); font-size:14px; font-weight:650; text-decoration:none; }
+    .button.primary { background:var(--ink); color:var(--paper); }
+    .button:hover { background:var(--soft); color:var(--ink); }
+    .scope { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .scope div { padding:26px 0; }
+    .scope strong { display:block; font:40px/1.1 Georgia,serif; }
+    .scope span { display:block; margin-top:8px; color:var(--muted); font-size:13px; }
+    section { padding:60px 0; border-bottom:1px solid var(--line); scroll-margin-top:24px; }
+    .section-grid { display:grid; grid-template-columns:220px 1fr; gap:56px; }
+    .section-grid > div { min-width:0; }
+    h2 { font-size:32px; margin:0 0 22px; }
+    h3 { font-size:25px; margin:0 0 18px; }
+    p { margin:0 0 19px; }
+    .label { color:var(--muted); font-size:12px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px; }
+    .finding { font-family:Georgia,serif; font-size:28px; line-height:1.4; }
+    .note { background:var(--soft); border-left:3px solid var(--accent); padding:20px 24px; margin:28px 0; font-size:15px; }
+    .result-figure { margin:28px 0 12px; overflow-x:auto; }
+    .result-figure svg { display:block; width:100%; min-width:580px; height:auto; }
+    figcaption { color:var(--muted); font-size:13px; line-height:1.6; margin-top:10px; }
+    .table-scroll { overflow-x:auto; }
+    table { border-collapse:collapse; width:100%; font-size:15px; margin:24px 0 12px; }
+    caption { text-align:left; font-size:13px; color:var(--muted); margin-bottom:12px; }
+    th,td { border-bottom:1px solid var(--line); padding:12px 8px; text-align:left; }
+    th { font-weight:650; font-size:12px; }
+    th:last-child,td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+    .small { color:var(--muted); font-size:13px; }
+    .links { display:flex; flex-wrap:wrap; gap:12px 26px; margin:22px 0 0; font-size:14px; }
+    pre { background:#202923; color:#f1f3ec; padding:24px; overflow-x:auto; font-size:13px; line-height:1.75; border-radius:2px; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.86em; }
+    pre code { font-size:inherit; }
+    ol { padding-left:23px; }
+    li { margin-bottom:12px; }
+    footer { padding:32px 0 44px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:18px; font-size:12px; color:var(--muted); }
+    @media (max-width:720px) { .wrap { padding:0 23px; } header { align-items:flex-start; flex-direction:column; gap:14px; } nav { gap:18px; } .hero { padding:44px 0; } .intro { font-size:18px; } .scope strong { font-size:32px; } .scope span { max-width:90px; } .section-grid { grid-template-columns:1fr; gap:14px; } section { padding:38px 0; } .finding { font-size:25px; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+    @media print { body { background:white; } .wrap { max-width:none; padding:0; } nav,.actions,.skip { display:none; } section { break-inside:avoid; padding:25px 0; } .hero { padding-top:25px; } h1 { font-size:34px; } pre { white-space:pre-wrap; color:black; background:#eee; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <header>
+      <div class="brand">Quantum optimization / Research</div>
+      <nav aria-label="Main navigation"><a href="#findings">Findings</a><a href="#followup">Further checks</a><a href="#method">Method</a><a href="#reproduce">Reproduce</a><a href="#citation">Citation</a></nav>
+    </header>
+    <main id="main">
+      <div class="hero">
+        <div class="eyebrow">Finite-shot QAOA · Reproducible research</div>
+        <h1>Query-Efficient Quantum Approximate Optimization via Graph-Conditioned Trust Regions</h1>
+        <p class="author">Molena Huynh · North Carolina State University</p>
+        <p class="intro">Can graph information make QAOA optimization more economical? This study separates the effects of transferred starting parameters, search-region geometry, and uncertainty-aware acceptance.</p>
+        <div class="actions"><a class="button primary" href="submission/main.pdf">Read the manuscript</a><a class="button" href="#reproduce">Explore the code</a><a class="button" href="submission/main.tex">Manuscript source</a></div>
+      </div>
+      <div class="scope" aria-label="Canonical experiment scope">
+        <div><strong>24</strong><span>held-out test graphs</span></div>
+        <div><strong>14</strong><span>comparison policies</span></div>
+        <div><strong>4,032</strong><span>complete optimization runs</span></div>
+      </div>
+      <section id="findings" class="section-grid">
+        <div><div class="label">01 / Evidence</div><h2>What the study shows</h2></div>
+        <div>
+          <p class="finding">Good starting parameters help. The tested graph-conditioned shapes do not establish additional shot savings.</p>
+          <p>In the canonical benchmark, simple descriptor transfer gives strong initial solutions. Under the tested finite-shot acceptance rule, undisplaced donor-initialized trust-region policies accept no refinement steps. The results therefore distinguish initialization benefits from optimization improvements.</p>
+          <!-- BEGIN GENERATED CANONICAL RESULTS -->
+<figure class="result-figure">
+<svg viewBox="0 0 720 285" role="img" aria-labelledby="results-title results-description">
+<title id="results-title">Initialization and refinement at depth two</title>
+<desc id="results-description">Mean signed reference deficit with 95 percent graph-bootstrap intervals over 24 graphs. Smaller is better. Exact numerical values and online shot costs follow in the table.</desc>
+<g fill="none" stroke="#d7ddd4" stroke-width="1">
+<path d="M235.00 24 V225"/>
+<path d="M384.65 24 V225"/>
+<path d="M534.29 24 V225"/>
+</g>
+<g font-family="system-ui,sans-serif" font-size="14" fill="#22322a">
+<text x="8" y="49">Descriptor anchor only</text>
+<path d="M306.17 44 H399.47 M306.17 39 V49 M399.47 39 V49" fill="none" stroke="#0072b2" stroke-width="2"/>
+<circle cx="347.43" cy="44" r="4.5" fill="#0072b2"/>
+<text x="8" y="89">Descriptor, shaped</text>
+<path d="M306.17 84 H399.47 M306.17 79 V89 M399.47 79 V89" fill="none" stroke="#0072b2" stroke-width="2"/>
+<circle cx="347.43" cy="84" r="4.5" fill="#0072b2"/>
+<text x="8" y="129">GW, shaped</text>
+<path d="M394.95 124 H632.32 M394.95 119 V129 M632.32 119 V129" fill="none" stroke="#b25123" stroke-width="2"/>
+<circle cx="503.55" cy="124" r="4.5" fill="#b25123"/>
+<text x="8" y="169">COBYLA</text>
+<path d="M309.69 164 H362.81 M309.69 159 V169 M362.81 159 V169" fill="none" stroke="#3b6550" stroke-width="2"/>
+<circle cx="335.15" cy="164" r="4.5" fill="#3b6550"/>
+<text x="8" y="209">SPSA</text>
+<path d="M256.07 204 H285.11 M256.07 199 V209 M285.11 199 V209" fill="none" stroke="#3b6550" stroke-width="2"/>
+<circle cx="268.51" cy="204" r="4.5" fill="#3b6550"/>
+<text x="235.00" y="246" text-anchor="middle">0.0</text>
+<text x="384.65" y="246" text-anchor="middle">0.5</text>
+<text x="534.29" y="246" text-anchor="middle">1.0</text>
+<text x="458" y="274" text-anchor="middle">Signed reference deficit (percentage points)</text>
+</g></svg>
+<figcaption>Depth p = 2; 131,072-shot online cap. Points show means and bars show 95% percentile bootstrap intervals (10,000 resamples; seed 5713; n = 24 graphs). Three shot repetitions are averaged within each graph. Intervals are descriptive and unadjusted.</figcaption>
+</figure>
+<div class="table-scroll"><table>
+<caption>Canonical results and measured online costs. The descriptor anchor is evaluated before refinement.</caption>
+<thead><tr><th scope="col">Policy</th><th scope="col">Deficit, 95% CI (pp)</th><th scope="col">Mean online shots</th></tr></thead><tbody>
+<tr><th scope="row">Descriptor anchor only</th><td>0.38 [0.24, 0.55]</td><td>0</td></tr>
+<tr><th scope="row">Descriptor, shaped</th><td>0.38 [0.24, 0.55]</td><td>130,560</td></tr>
+<tr><th scope="row">GW, shaped</th><td>0.90 [0.53, 1.33]</td><td>130,560</td></tr>
+<tr><th scope="row">COBYLA</th><td>0.33 [0.25, 0.43]</td><td>23,282</td></tr>
+<tr><th scope="row">SPSA</th><td>0.11 [0.07, 0.17]</td><td>129,024</td></tr>
+</tbody></table></div>
+<p class="small">Deficit is the signed edge-normalized objective gap to a best-found depth-matched reference, not a certified optimum. Each optimized output also receives 16,384 independent validation shots. Anchor-only rows require no online search shots; offline donor construction and any validation cost remain separate.</p>
+<!-- END GENERATED CANONICAL RESULTS -->
+          <div class="note">Canonical scope: ideal shot simulation; QAOA depths 1–2; test graphs with 10–12 vertices. These results do not demonstrate hardware performance, quantum advantage, or a general benefit from graph-conditioned geometry.</div>
+          <div class="links"><a href="submission/figures/quality.pdf">Quality figure</a><a href="submission/figures/accounting.pdf">Resource accounting</a><a href="code/results/aggregate/summary.csv">Numerical summaries</a></div>
+        </div>
+      </section>
+      <section id="followup" class="section-grid">
+        <div><div class="label">02 / Further checks</div><h2>Depth, targets &amp; solver sensitivity</h2></div>
+        <div>
+          <!-- BEGIN GENERATED ADDITIONAL RESULTS -->
+<p>Two separately seeded panels add 448 held-out runs on 16 test graphs at depths 2 and 3, with a separate validation split. The bank uses 8/10-vertex graphs, validation uses 12, and tests use 12/14. Validation selects a common model-shot count and initial radius for the isotropic and shaped variance-sensitive rules before testing.</p>
+<p>1 follow-up test graph is isomorphic to a canonical test graph; 15 are structurally distinct from the canonical test set. There is also 1 bank-to-bank overlap between studies. All follow-up bank, validation, and test graphs are mutually nonisomorphic within that study. The manuscript also reports sensitivity after excluding the test overlap.</p>
+<div class="table-scroll"><table>
+<caption>Follow-up depth 3: mean signed deficit and 95% graph-bootstrap interval over 16 graph means (two shot repetitions each). The online cap is 65,536 shots; add 8,192 independent validation shots per output.</caption>
+<thead><tr><th scope="col">Policy</th><th scope="col">Deficit, 95% CI (pp)</th><th scope="col">Mean online shots</th></tr></thead><tbody>
+<tr><th scope="row">Descriptor anchor</th><td>0.77 [0.44, 1.18]</td><td>0</td></tr>
+<tr><th scope="row">Fixed schedule</th><td>2.74 [2.31, 3.19]</td><td>0</td></tr>
+<tr><th scope="row">Hoeffding, isotropic</th><td>0.77 [0.44, 1.18]</td><td>64,512</td></tr>
+<tr><th scope="row">Bernstein, isotropic</th><td>0.73 [0.42, 1.14]</td><td>64,512</td></tr>
+<tr><th scope="row">Bernstein, shaped</th><td>0.66 [0.38, 1.01]</td><td>64,512</td></tr>
+<tr><th scope="row">SPSA</th><td>0.41 [0.20, 0.70]</td><td>64,512</td></tr>
+<tr><th scope="row">COBYLA</th><td>0.57 [0.37, 0.82]</td><td>30,752</td></tr>
+</tbody></table></div>
+<p class="small">Intervals use 10,000 graph resamples within each bank and seed 5713, conditional on the two fixed reference banks; they are descriptive and unadjusted. Two banks do not estimate uncertainty over a population of reference banks. Tuning consumes 8,170,240 optimization shots plus 1,048,576 validation shots. Exact simulation, best-found reference construction, and solver preprocessing are separate classical costs.</p>
+<p>All four tuning candidates tie on validation scores at each depth; the declared candidate order selects 256 model shots and radius 0.1. This tie provides no evidence of tuning superiority. The variance-sensitive rules refine a few held-out outputs, while SPSA and COBYLA achieve lower mean deficits.</p>
+<p>The solver audit checks all 384 canonical graph pairs. Longer entropic runs at regularization 0.05 change 1 of 24 evaluable target donors; 3 pairwise candidates remain unconverged and 0 fail feasibility. An independent multistart conditional-gradient solver changes 21 of 24 evaluable donors. Feasibility or a small first-order gap does not certify a globally optimal graph comparison.</p>
+<!-- END GENERATED ADDITIONAL RESULTS -->
+          <div class="links"><a href="code/configs/followup.json">Follow-up protocol</a><a href="code/results/followup.json.gz" download>Follow-up records</a><a href="code/results/transport.json.gz" download>Transport records</a></div>
+        </div>
+      </section>
+      <section id="method" class="section-grid">
+        <div><div class="label">03 / Approach</div><h2>From graph to search</h2></div>
+        <div>
+          <ol>
+            <li><strong>Transfer a reference.</strong> Compare graph descriptors, structural transport scores, or exact local-neighborhood distributions against a separate reference bank.</li>
+            <li><strong>Construct the region.</strong> Align periodic QAOA angles and regularize the region shape at controlled volume and conditioning.</li>
+            <li><strong>Fit and test a step.</strong> Use a QR-based local linear model and fresh paired samples for finite-horizon acceptance decisions.</li>
+            <li><strong>Account for every query.</strong> Preserve model evaluations, rejected trials, unresolved decisions, validation shots, and preprocessing costs.</li>
+          </ol>
+          <p>The manuscript supplies a graph-local transfer bound, a finite-sample model-error bound, and a finite-horizon acceptance guarantee. Each statement identifies the assumptions connecting it to the implementation.</p>
+          <div class="links"><a href="code/src/gcqaoa/qaoa.py">Simulator source</a><a href="code/src/gcqaoa/search.py">Optimization source</a><a href="code/data/graphs.jsonl">Graph instances</a><a href="code/data/splits.json">Graph splits</a><a href="code/configs/paper.json">Canonical protocol</a><a href="code/docs/METHOD.md">Method definitions</a><a href="code/docs/EVIDENCE.md">Evidence guide</a><a href="code/docs/ATTRIBUTION.md">Scientific attribution</a></div>
+        </div>
+      </section>
+      <section id="reproduce" class="section-grid">
+        <div><div class="label">04 / Reproduction</div><h2>Inspect. Run. Verify.</h2></div>
+        <div>
+          <p>The folder includes exact graphs, reference parameters, complete run records, source snapshots, independent numerical checks, and figure-generation code. No Git history is needed. Use Python 3.13; full PDF verification also needs Tectonic or pdfLaTeX/BibTeX and Poppler.</p>
+          <pre><code>python3.13 -m venv code/.venv
+source code/.venv/bin/activate
+python -m pip install -r code/requirements-lock.txt
+python -m pip install --no-deps -e code
+python code/scripts/check_release.py
+python code/scripts/run_smoke.py --config code/configs/smoke.json</code></pre>
+          <p>Regenerate the saved analyses or run a new study with the commands in the README. Strict trajectory replay uses the documented OpenBLAS environment. New executions preserve the supplied evidence and write their own records, including interrupted runs. A full study takes several minutes on the recorded machine; exact state-vector simulation grows exponentially with vertex count. Numerical backends can change optimizer trajectories, as documented with the saved environment.</p>
+          <div class="links"><a href="README.md">Installation &amp; reproduction guide</a><a href="code/configs/paper.json">Study settings</a><a href="code/results/study.json.gz" download>Complete run records</a><a href="code/results/aggregate/release-manifest.json">Public-file inventory</a></div>
+        </div>
+      </section>
+      <section id="citation" class="section-grid">
+        <div><div class="label">05 / Record</div><h2>Provenance &amp; citation</h2></div>
+        <div>
+          <p>The accompanying manuscript reconstructs the earlier study with complete simulation records. The earlier arXiv version does not contain this evidence. The <a href="README.md#relation-to-the-earlier-preprint">README</a> explains the replacement of the earlier learned-Gaussian claims and the distinction between valid bounds and observed refinement.</p>
+          <p>Molena Huynh. <em>Query-Efficient Quantum Approximate Optimization via Graph-Conditioned Trust Regions.</em> arXiv:2604.24803 (2026).</p>
+          <p class="small">The <a href="code/results/aggregate/release-manifest.json">file inventory</a> identifies the supplied artifacts. When citing these reconstructed results, identify this manuscript revision and the study-bundle hash in the <a href="code/results/aggregate/figure_manifest.json">figure provenance</a>. Exact source snapshots preserve the numerical lineage independently of repository history.</p>
+          <div class="links"><a href="https://arxiv.org/abs/2604.24803">arXiv record</a><a href="code/docs/PROVENANCE.md">Source provenance</a></div>
+        </div>
+      </section>
+    </main>
+    <footer><span>© 2026 Molena Huynh. All rights reserved.</span><span><a href="code/LICENSE">Software rights</a> · <a href="README.md#citation-dependencies-and-rights">Manuscript &amp; figure rights</a></span></footer>
+  </div>
+</body>
+</html>

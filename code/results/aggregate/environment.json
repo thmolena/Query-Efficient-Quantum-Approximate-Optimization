@@ -1,0 +1,252 @@
+{
+  "binary_builds": {
+    "numpy": {
+      "build_dependencies": {
+        "blas": {
+          "found": true,
+          "name": "accelerate",
+          "openblas_configuration": "unknown",
+          "version": "unknown"
+        },
+        "lapack": {
+          "found": true,
+          "name": "accelerate",
+          "openblas_configuration": "unknown",
+          "version": "unknown"
+        }
+      },
+      "compilers": {
+        "c": {
+          "name": "clang",
+          "version": "15.0.0"
+        },
+        "c++": {
+          "name": "clang",
+          "version": "15.0.0"
+        },
+        "cython": {
+          "name": "cython",
+          "version": "3.2.4"
+        }
+      },
+      "version": "2.4.3"
+    },
+    "scipy": {
+      "build_dependencies": {
+        "blas": {
+          "found": true,
+          "has_ilp64": false,
+          "name": "Accelerate",
+          "openblas_configuration": "unknown",
+          "version": "unknown"
+        },
+        "lapack": {
+          "found": true,
+          "has_ilp64": false,
+          "name": "Accelerate",
+          "openblas_configuration": "unknown",
+          "version": "unknown"
+        }
+      },
+      "compilers": {
+        "c": {
+          "name": "clang",
+          "version": "15.0.0"
+        },
+        "c++": {
+          "name": "clang",
+          "version": "15.0.0"
+        },
+        "cython": {
+          "name": "cython",
+          "version": "3.2.4"
+        },
+        "fortran": {
+          "name": "gcc",
+          "version": "13.4.0"
+        },
+        "pythran": {
+          "version": "0.18.1"
+        }
+      },
+      "version": "1.17.1"
+    }
+  },
+  "cross_build_checks": {
+    "build_comparison": {
+      "miniforge_openblas": {
+        "c_compiler": "clang 19.1.7",
+        "configured_blas": {
+          "name": "blas",
+          "version": "3.9.0"
+        },
+        "configured_lapack": {
+          "name": "lapack",
+          "version": "3.9.0"
+        },
+        "numpy": "2.4.3",
+        "observed_library_resolution": "BLAS/LAPACK links resolve to libopenblas.0.dylib",
+        "scipy": "1.17.1",
+        "scipy_fortran_compiler": "gcc 14.3.0"
+      },
+      "pip_accelerate": {
+        "blas_lapack": "Apple Accelerate",
+        "blas_lapack_version": "unknown",
+        "c_compiler": "clang 15.0.0",
+        "numpy": "2.4.3",
+        "scipy": "1.17.1",
+        "scipy_fortran_compiler": "gcc 13.4.0"
+      }
+    },
+    "execution_run_id": "study-cc25ae93d418f22101d4",
+    "graph_file": "code/data/graphs.jsonl",
+    "gw_cases": [
+      {
+        "bank_index": 12,
+        "distance_matrix": "Unweighted shortest-path distance divided by graph diameter",
+        "epsilon": 0.05,
+        "function": "gcqaoa.search.structural_score",
+        "max_iter": 100,
+        "reference_graph_id": "bank_watts_strogatz_8_0",
+        "replays": {
+          "miniforge_openblas": {
+            "iterations": 100,
+            "marginal_error": 9.652001420334955e-13,
+            "replay_coupling_max_abs_difference_from_saved": 0.0,
+            "residual": 2.9267911769350317e-05,
+            "score": 0.091405787055737
+          },
+          "pip_accelerate": {
+            "iterations": 100,
+            "marginal_error": 9.212908214095705e-13,
+            "replay_coupling_max_abs_difference_from_saved": 0.0,
+            "residual": 2.383964140989181e-05,
+            "score": 0.16523093141910078
+          }
+        },
+        "target_graph_id": "test_regular_10_2",
+        "tol": 1e-09
+      },
+      {
+        "bank_index": 14,
+        "distance_matrix": "Unweighted shortest-path distance divided by graph diameter",
+        "epsilon": 0.05,
+        "function": "gcqaoa.search.structural_score",
+        "max_iter": 100,
+        "reference_graph_id": "bank_watts_strogatz_10_0",
+        "replays": {
+          "miniforge_openblas": {
+            "iterations": 100,
+            "marginal_error": 9.211659213193002e-13,
+            "replay_coupling_max_abs_difference_from_saved": 0.0,
+            "residual": 0.0017675595037147508,
+            "score": 0.10213415430408311
+          },
+          "pip_accelerate": {
+            "iterations": 100,
+            "marginal_error": 8.087697178638109e-13,
+            "replay_coupling_max_abs_difference_from_saved": 0.0,
+            "residual": 5.086950563120456e-07,
+            "score": 0.1341010853496752
+          }
+        },
+        "target_graph_id": "test_regular_10_2",
+        "tol": 1e-09
+      }
+    ],
+    "limitations": [
+      "Both GW witnesses reached the iteration limit with outer residual above tolerance; feasible couplings are not converged or globally certified solutions.",
+      "These controlled comparisons establish environment sensitivity for the witnesses, not a unique floating-point cause or an explanation of every changed trajectory.",
+      "Matching package version numbers does not guarantee identical numerical binary builds."
+    ],
+    "protocol": "Current frozen package and identical canonical graph inputs were used in both controlled replays.",
+    "reference_case": {
+      "depth": 2,
+      "function": "gcqaoa.experiment.reference",
+      "graph_id": "bank_regular_10_0",
+      "reference_maxiter": 180,
+      "reference_starts": 6,
+      "replays": {
+        "miniforge_openblas": {
+          "all_start_objectives": [
+            -0.7276169747424956,
+            -0.7276169747424959,
+            -0.7203207455106122,
+            -0.5000000000682454,
+            -0.7203207455106131,
+            -0.7276169747424959
+          ],
+          "exact_calls_per_start": [
+            60,
+            145,
+            120,
+            60,
+            70,
+            60
+          ],
+          "objective": -0.7276169747424959,
+          "replay_theta_max_abs_difference_from_saved": 0.0,
+          "selected_start_index": 1,
+          "theta": [
+            -2.6472982803154355,
+            0.9279515772182254,
+            -0.4856223620466689,
+            -0.2526171929854075
+          ]
+        },
+        "pip_accelerate": {
+          "all_start_objectives": [
+            -0.7276169747424961,
+            -0.7276169747424958,
+            -0.7203207455106129,
+            -0.5000000000682455,
+            -0.7203207455106131,
+            -0.7276169747424954
+          ],
+          "exact_calls_per_start": [
+            60,
+            145,
+            120,
+            60,
+            70,
+            60
+          ],
+          "objective": -0.7276169747424961,
+          "replay_theta_max_abs_difference_from_saved": 0.0,
+          "selected_start_index": 0,
+          "theta": [
+            0.4942943615046591,
+            0.9279515644539202,
+            0.48562235362355577,
+            0.2526171944649296
+          ]
+        }
+      },
+      "seed": 20320920,
+      "transfer_witness": {
+        "miniforge_theta_target_objective": -0.5045600711248122,
+        "pip_theta_target_objective": -0.7042446681325572,
+        "policy": "shuffled_gw",
+        "same_bank_anchor_index": 6,
+        "target_graph_id": "test_barabasi_albert_12_0"
+      }
+    },
+    "study_sha256": "94b462bee48cd1ec013e6e070284865a28140636bdc3edb58bd8db06bb9973a0"
+  },
+  "execution_run_id": "study-cc25ae93d418f22101d4",
+  "packages": {
+    "networkx": "3.6.1",
+    "numpy": "2.4.3",
+    "scipy": "1.17.1"
+  },
+  "platform": {
+    "implementation": "CPython",
+    "machine": "arm64",
+    "macos_version": "26.7",
+    "python": "3.13.12",
+    "system": "Darwin"
+  },
+  "scope": "Observed numerical binary builds for the released execution; version pins alone do not guarantee identical floating-point trajectories across builds.",
+  "source_commit": "2868a22d7d13b8b30974199201ff5ceff153b648",
+  "study_sha256": "94b462bee48cd1ec013e6e070284865a28140636bdc3edb58bd8db06bb9973a0"
+}

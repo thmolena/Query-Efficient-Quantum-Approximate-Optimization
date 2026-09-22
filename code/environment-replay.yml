@@ -1,0 +1,22 @@
+# Replay environment for macOS on Apple Silicon (osx-arm64).
+# Build identifiers preserve the recorded OpenBLAS numerical backend.
+# Install requirements-lock.txt and the editable project after creating this env.
+name: gcqaoa-replay
+channels:
+  - conda-forge
+variables:
+  PYTHONNOUSERSITE: "1"
+dependencies:
+  - python=3.13.12=h20e6be0_100_cp313
+  - numpy=2.4.3=py313he4a34aa_0
+  - scipy=1.17.1=py313hc753a45_0
+  - libopenblas=0.3.32=openmp_he657e61_0
+  - libblas=3.11.0=6_h51639a9_openblas
+  - libcblas=3.11.0=6_hb0561ab_openblas
+  - liblapack=3.11.0=6_hd9741b5_openblas
+  - libgfortran=15.2.0=h07b0088_18
+  - libgfortran5=15.2.0=hdae7583_18
+  - libgcc=15.2.0=hcbb3090_18
+  - libcxx=21.1.8=h55c6f16_2
+  - llvm-openmp=22.1.4=hc7d1edf_0
+  - pip

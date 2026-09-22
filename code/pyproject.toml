@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools==81.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gcqaoa"
+version = "0.1.0"
+description = "Reproducible graph-conditioned MaxCut QAOA transfer and finite-shot search"
+requires-python = ">=3.13,<3.14"
+dependencies = ["numpy>=2.0", "scipy>=1.14", "networkx>=3.3", "matplotlib>=3.9", "pypdf>=6.13.3"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+gcqaoa-study = "gcqaoa.experiment:main"
+gcqaoa-report = "gcqaoa.report:main"
+gcqaoa-verify = "gcqaoa.verify:main"
+gcqaoa-artifacts = "gcqaoa.artifacts:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-p no:cacheprovider"

@@ -1,0 +1,58 @@
+{
+  "disjointness": "pairwise exact graph nonisomorphism across both splits",
+  "provenance": {
+    "config_path": "configs/paper.json",
+    "config_sha256": "60f611a72313075a0bdd4c829a847428e6bc02e6ef08f7deb0bdddbb5679b4d5",
+    "execution_run_id": "study-cc25ae93d418f22101d4",
+    "source_commit": "2868a22d7d13b8b30974199201ff5ceff153b648",
+    "source_dirty": false,
+    "study_path": "code/results/study.json.gz",
+    "study_sha256": "94b462bee48cd1ec013e6e070284865a28140636bdc3edb58bd8db06bb9973a0"
+  },
+  "splits": {
+    "bank": [
+      "bank_erdos_renyi_8_0",
+      "bank_erdos_renyi_8_1",
+      "bank_erdos_renyi_10_0",
+      "bank_erdos_renyi_10_1",
+      "bank_regular_8_0",
+      "bank_regular_8_1",
+      "bank_regular_10_0",
+      "bank_regular_10_1",
+      "bank_barabasi_albert_8_0",
+      "bank_barabasi_albert_8_1",
+      "bank_barabasi_albert_10_0",
+      "bank_barabasi_albert_10_1",
+      "bank_watts_strogatz_8_0",
+      "bank_watts_strogatz_8_1",
+      "bank_watts_strogatz_10_0",
+      "bank_watts_strogatz_10_1"
+    ],
+    "test": [
+      "test_erdos_renyi_10_0",
+      "test_erdos_renyi_10_1",
+      "test_erdos_renyi_10_2",
+      "test_erdos_renyi_12_0",
+      "test_erdos_renyi_12_1",
+      "test_erdos_renyi_12_2",
+      "test_regular_10_0",
+      "test_regular_10_1",
+      "test_regular_10_2",
+      "test_regular_12_0",
+      "test_regular_12_1",
+      "test_regular_12_2",
+      "test_barabasi_albert_10_0",
+      "test_barabasi_albert_10_1",
+      "test_barabasi_albert_10_2",
+      "test_barabasi_albert_12_0",
+      "test_barabasi_albert_12_1",
+      "test_barabasi_albert_12_2",
+      "test_watts_strogatz_10_0",
+      "test_watts_strogatz_10_1",
+      "test_watts_strogatz_10_2",
+      "test_watts_strogatz_12_0",
+      "test_watts_strogatz_12_1",
+      "test_watts_strogatz_12_2"
+    ]
+  }
+}

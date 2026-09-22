@@ -1,0 +1,2511 @@
+{
+  "provenance": {
+    "config_path": "configs/paper.json",
+    "config_sha256": "60f611a72313075a0bdd4c829a847428e6bc02e6ef08f7deb0bdddbb5679b4d5",
+    "execution_run_id": "study-cc25ae93d418f22101d4",
+    "source_commit": "2868a22d7d13b8b30974199201ff5ceff153b648",
+    "source_dirty": false,
+    "study_path": "code/results/study.json.gz",
+    "study_sha256": "94b462bee48cd1ec013e6e070284865a28140636bdc3edb58bd8db06bb9973a0"
+  },
+  "reference_status": "best found among saved exact-objective multistarts; not certified QAOA optima",
+  "references": {
+    "bank_barabasi_albert_10_0:p1": {
+      "exact_calls": 201,
+      "objective": -0.6398012419961753,
+      "seconds": 0.027330375000019558,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6398012419961743,
+          "success": true,
+          "theta": [
+            0.5459231916534106,
+            0.3483812281713692
+          ]
+        },
+        {
+          "calls": 42,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6398012419961752,
+          "success": true,
+          "theta": [
+            0.5459232407423915,
+            0.3483812317913
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6398012419961745,
+          "success": true,
+          "theta": [
+            0.5459232812269827,
+            0.34838123148324174
+          ]
+        },
+        {
+          "calls": 48,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6398012419961752,
+          "success": true,
+          "theta": [
+            -0.5459232657013797,
+            -0.3483812513735571
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6398012419961753,
+          "success": true,
+          "theta": [
+            -0.54592325014658,
+            -0.348381256551737
+          ]
+        },
+        {
+          "calls": 39,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5502083292662365,
+          "success": true,
+          "theta": [
+            -2.7129993401011903,
+            -0.40489224044468924
+          ]
+        }
+      ],
+      "theta": [
+        -0.54592325014658,
+        -0.348381256551737
+      ]
+    },
+    "bank_barabasi_albert_10_0:p2": {
+      "exact_calls": 680,
+      "objective": -0.6921943581111055,
+      "seconds": 0.14528291699934925,
+      "starts": [
+        {
+          "calls": 55,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6921943581111036,
+          "success": true,
+          "theta": [
+            0.4000737300961341,
+            0.7735209831678214,
+            0.4389129576519275,
+            0.25286637017471447
+          ]
+        },
+        {
+          "calls": 110,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6921943581111055,
+          "success": true,
+          "theta": [
+            -0.4000736765275148,
+            -0.7735210278888998,
+            -0.4389129811308432,
+            -0.2528664033154646
+          ]
+        },
+        {
+          "calls": 95,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6759932490784858,
+          "success": true,
+          "theta": [
+            0.7177073962186489,
+            -0.24290290394571246,
+            -0.3550108201671858,
+            0.7177323720282025
+          ]
+        },
+        {
+          "calls": 150,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5523770932016916,
+          "success": true,
+          "theta": [
+            2.1225078527494903,
+            1.4449209251089723,
+            -0.0847927064293168,
+            -0.4348810747591985
+          ]
+        },
+        {
+          "calls": 80,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6759932490784855,
+          "success": true,
+          "theta": [
+            0.7177074166750268,
+            -0.24290291447640167,
+            -0.35501081186210776,
+            0.7177323523645605
+          ]
+        },
+        {
+          "calls": 190,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.675993249078485,
+          "success": true,
+          "theta": [
+            -0.7177074387216358,
+            0.24290293079337744,
+            0.3550107768612236,
+            -0.7177323380523961
+          ]
+        }
+      ],
+      "theta": [
+        -0.4000736765275148,
+        -0.7735210278888998,
+        -0.4389129811308432,
+        -0.2528664033154646
+      ]
+    },
+    "bank_barabasi_albert_10_1:p1": {
+      "exact_calls": 204,
+      "objective": -0.6509323954093513,
+      "seconds": 0.02939470799992705,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6509323954093511,
+          "success": true,
+          "theta": [
+            0.569054638659392,
+            0.3582919097427093
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6509323954093503,
+          "success": true,
+          "theta": [
+            -0.569054705331308,
+            -0.3582919230307664
+          ]
+        },
+        {
+          "calls": 42,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5324964653555762,
+          "success": true,
+          "theta": [
+            2.3613724267962297,
+            -0.44569124941700466
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6509323954093513,
+          "success": true,
+          "theta": [
+            -0.5690546542265644,
+            -0.3582919194880536
+          ]
+        },
+        {
+          "calls": 39,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5324964653554956,
+          "success": true,
+          "theta": [
+            -2.3613695216197508,
+            0.44569093666827575
+          ]
+        },
+        {
+          "calls": 42,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5324964653555773,
+          "success": true,
+          "theta": [
+            -2.361372868323929,
+            0.4456914000447143
+          ]
+        }
+      ],
+      "theta": [
+        -0.5690546542265644,
+        -0.3582919194880536
+      ]
+    },
+    "bank_barabasi_albert_10_1:p2": {
+      "exact_calls": 685,
+      "objective": -0.7154858866962017,
+      "seconds": 0.14940595799998846,
+      "starts": [
+        {
+          "calls": 55,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7154858866962017,
+          "success": true,
+          "theta": [
+            0.4181556152725596,
+            0.7882994206612497,
+            0.46876328605277373,
+            0.2809277660053615
+          ]
+        },
+        {
+          "calls": 135,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5374627912832461,
+          "success": true,
+          "theta": [
+            2.70873295490877,
+            0.729788133656911,
+            -0.367606567492712,
+            0.25116575766117366
+          ]
+        },
+        {
+          "calls": 145,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5374627912832468,
+          "success": true,
+          "theta": [
+            2.7087328791997436,
+            0.7297881765385683,
+            -0.3676065935150697,
+            0.25116568221836433
+          ]
+        },
+        {
+          "calls": 115,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6517292790029043,
+          "success": true,
+          "theta": [
+            3.0351816556060136,
+            2.662335708692159,
+            -0.20086568711553643,
+            -0.3537590442998079
+          ]
+        },
+        {
+          "calls": 80,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6989556130916561,
+          "success": true,
+          "theta": [
+            0.7522706224179023,
+            -0.2714086016108883,
+            -0.36489318009327515,
+            0.7398041401759734
+          ]
+        },
+        {
+          "calls": 155,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5418168699519383,
+          "success": true,
+          "theta": [
+            -1.9873884672894915,
+            -2.2145530717214945,
+            0.3581254884021974,
+            -0.2200202724720468
+          ]
+        }
+      ],
+      "theta": [
+        0.4181556152725596,
+        0.7882994206612497,
+        0.46876328605277373,
+        0.2809277660053615
+      ]
+    },
+    "bank_barabasi_albert_8_0:p1": {
+      "exact_calls": 201,
+      "objective": -0.6428802622822725,
+      "seconds": 0.017020291999870096,
+      "starts": [
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6428802622822725,
+          "success": true,
+          "theta": [
+            0.5623182885630129,
+            0.3400354938907957
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6428802622822725,
+          "success": true,
+          "theta": [
+            -2.5792743701775676,
+            0.34003549335905214
+          ]
+        },
+        {
+          "calls": 39,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6428802622822725,
+          "success": true,
+          "theta": [
+            2.579274358040129,
+            -0.34003551450317276
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6428802622822718,
+          "success": true,
+          "theta": [
+            0.5623182655273906,
+            0.3400354821601841
+          ]
+        },
+        {
+          "calls": 39,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6428802622822725,
+          "success": true,
+          "theta": [
+            -2.5792743456729985,
+            0.3400355066852163
+          ]
+        },
+        {
+          "calls": 45,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6428802622822724,
+          "success": true,
+          "theta": [
+            2.579274332397434,
+            -0.3400355073794614
+          ]
+        }
+      ],
+      "theta": [
+        0.5623182885630129,
+        0.3400354938907957
+      ]
+    },
+    "bank_barabasi_albert_8_0:p2": {
+      "exact_calls": 805,
+      "objective": -0.6871164175035346,
+      "seconds": 0.09489008400032617,
+      "starts": [
+        {
+          "calls": 65,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6871164175035346,
+          "success": true,
+          "theta": [
+            0.40652788893577707,
+            0.8306469015165403,
+            0.43378359134097977,
+            0.23297465060340317
+          ]
+        },
+        {
+          "calls": 150,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6789749143137063,
+          "success": true,
+          "theta": [
+            -0.8445590421828468,
+            0.2930465415595105,
+            0.32790517627237925,
+            -0.6618690396460001
+          ]
+        },
+        {
+          "calls": 190,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6778211583771112,
+          "success": true,
+          "theta": [
+            2.6120517321995464,
+            1.2478323103915372,
+            -0.20363648112315336,
+            0.23106587844733628
+          ]
+        },
+        {
+          "calls": 175,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6789749143137063,
+          "success": true,
+          "theta": [
+            -2.2970334926201024,
+            -0.2930466439295447,
+            -0.3279050957878848,
+            0.6618689328819451
+          ]
+        },
+        {
+          "calls": 115,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6789749143137047,
+          "success": true,
+          "theta": [
+            -0.844559200302962,
+            -2.8485460356607284,
+            0.32790515943743737,
+            -0.6618689887546887
+          ]
+        },
+        {
+          "calls": 110,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6871164175035267,
+          "success": true,
+          "theta": [
+            2.7350648654078746,
+            2.3109458597356003,
+            -0.43378365067388724,
+            -0.23297464693295167
+          ]
+        }
+      ],
+      "theta": [
+        0.40652788893577707,
+        0.8306469015165403,
+        0.43378359134097977,
+        0.23297465060340317
+      ]
+    },
+    "bank_barabasi_albert_8_1:p1": {
+      "exact_calls": 288,
+      "objective": -0.6413588802254879,
+      "seconds": 0.024341375000403787,
+      "starts": [
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6413588802254879,
+          "success": true,
+          "theta": [
+            0.5552853797539243,
+            0.3412987864076946
+          ]
+        },
+        {
+          "calls": 48,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.585837858479034,
+          "success": true,
+          "theta": [
+            -2.6528863233697857,
+            0.343806358732633
+          ]
+        },
+        {
+          "calls": 57,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5858378584790338,
+          "success": true,
+          "theta": [
+            -2.6528863567008463,
+            0.34380635782208646
+          ]
+        },
+        {
+          "calls": 30,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6413588802254878,
+          "success": true,
+          "theta": [
+            0.5552853828177806,
+            0.3412987816708941
+          ]
+        },
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5858378584790311,
+          "success": true,
+          "theta": [
+            2.6528863821160655,
+            -0.34380641683018076
+          ]
+        },
+        {
+          "calls": 108,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6413588802254878,
+          "success": true,
+          "theta": [
+            0.5552853904994244,
+            0.34129878471979413
+          ]
+        }
+      ],
+      "theta": [
+        0.5552853797539243,
+        0.3412987864076946
+      ]
+    },
+    "bank_barabasi_albert_8_1:p2": {
+      "exact_calls": 695,
+      "objective": -0.6914459061423281,
+      "seconds": 0.08406733399988298,
+      "starts": [
+        {
+          "calls": 65,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6914459061423281,
+          "success": true,
+          "theta": [
+            0.3982756059287631,
+            0.7961044169610481,
+            0.4332142532798964,
+            0.24389653048337467
+          ]
+        },
+        {
+          "calls": 155,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6125883488140795,
+          "success": true,
+          "theta": [
+            2.4208418827548988,
+            0.3038624693908769,
+            0.3584567195822421,
+            -0.722725640309485
+          ]
+        },
+        {
+          "calls": 85,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6584447371292429,
+          "success": true,
+          "theta": [
+            -2.893228124175749,
+            -2.5005620307578336,
+            0.43453441701715323,
+            0.2928152662663943
+          ]
+        },
+        {
+          "calls": 100,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6453277637601593,
+          "success": true,
+          "theta": [
+            -0.5479008475763552,
+            -3.017031889087625,
+            -0.4193573494687821,
+            0.11438747770914892
+          ]
+        },
+        {
+          "calls": 205,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6125883488140798,
+          "success": true,
+          "theta": [
+            -2.4208418236250555,
+            -0.3038625266367152,
+            -0.358456647901847,
+            0.7227255517982123
+          ]
+        },
+        {
+          "calls": 85,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6044212421585088,
+          "success": true,
+          "theta": [
+            -2.7852762067687675,
+            0.7626346839319909,
+            0.4213310275427704,
+            0.21736759133155892
+          ]
+        }
+      ],
+      "theta": [
+        0.3982756059287631,
+        0.7961044169610481,
+        0.4332142532798964,
+        0.24389653048337467
+      ]
+    },
+    "bank_erdos_renyi_10_0:p1": {
+      "exact_calls": 198,
+      "objective": -0.6359551708137734,
+      "seconds": 0.02833220899992739,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6359551708137734,
+          "success": true,
+          "theta": [
+            0.5248296521807023,
+            0.33081074870285443
+          ]
+        },
+        {
+          "calls": 30,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6359551708137734,
+          "success": true,
+          "theta": [
+            -0.5248296716605916,
+            -0.33081075774115903
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5499016110674473,
+          "success": true,
+          "theta": [
+            2.432460898649312,
+            0.5254807531430723
+          ]
+        },
+        {
+          "calls": 45,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6359551708137732,
+          "success": true,
+          "theta": [
+            -0.5248296799732204,
+            -0.3308107680472233
+          ]
+        },
+        {
+          "calls": 45,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6359551708137734,
+          "success": true,
+          "theta": [
+            -0.5248296593304151,
+            -0.3308107629872863
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6359551708137732,
+          "success": true,
+          "theta": [
+            -0.524829674081972,
+            -0.33081076278759364
+          ]
+        }
+      ],
+      "theta": [
+        0.5248296521807023,
+        0.33081074870285443
+      ]
+    },
+    "bank_erdos_renyi_10_0:p2": {
+      "exact_calls": 850,
+      "objective": -0.6847991974141092,
+      "seconds": 0.18354441599967686,
+      "starts": [
+        {
+          "calls": 50,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6847991974141092,
+          "success": true,
+          "theta": [
+            0.43500413051683307,
+            0.8815630100276142,
+            0.4315183429064757,
+            0.2408773129762476
+          ]
+        },
+        {
+          "calls": 205,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6723096423730122,
+          "success": true,
+          "theta": [
+            -0.5252877853744762,
+            1.2990026767246574,
+            -0.2210607965411686,
+            0.21883176315938035
+          ]
+        },
+        {
+          "calls": 90,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6396492057978149,
+          "success": true,
+          "theta": [
+            2.646263708458127,
+            -2.1070435712932842,
+            0.1373871682963307,
+            0.3189020936569267
+          ]
+        },
+        {
+          "calls": 200,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6396492057978138,
+          "success": true,
+          "theta": [
+            2.6462635779892283,
+            -2.107043404017638,
+            0.1373871300469841,
+            0.31890210016173093
+          ]
+        },
+        {
+          "calls": 130,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5733788650041227,
+          "success": true,
+          "theta": [
+            -2.2914899837072435,
+            -1.3200150256901342,
+            -0.33518055999821533,
+            0.37566095239907193
+          ]
+        },
+        {
+          "calls": 175,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6723096423730169,
+          "success": true,
+          "theta": [
+            0.5252878575146078,
+            -1.2990026807954456,
+            0.22106069826405506,
+            -0.2188318411557275
+          ]
+        }
+      ],
+      "theta": [
+        0.43500413051683307,
+        0.8815630100276142,
+        0.4315183429064757,
+        0.2408773129762476
+      ]
+    },
+    "bank_erdos_renyi_10_1:p1": {
+      "exact_calls": 186,
+      "objective": -0.6253730193975304,
+      "seconds": 0.025797874999625492,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6253730193975304,
+          "success": true,
+          "theta": [
+            0.49466580068076516,
+            0.33447452467757843
+          ]
+        },
+        {
+          "calls": 51,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6253730193975303,
+          "success": true,
+          "theta": [
+            -0.4946657801033547,
+            -0.33447453822271567
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6253730193975304,
+          "success": true,
+          "theta": [
+            -0.49466578577856435,
+            -0.3344745401942401
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5063672964896335,
+          "success": true,
+          "theta": [
+            1.8136817547129933,
+            -0.41731649968089535
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5063672964896166,
+          "success": true,
+          "theta": [
+            -1.8136818357764937,
+            0.4173159244623943
+          ]
+        },
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6253730193975301,
+          "success": true,
+          "theta": [
+            0.49466578556272545,
+            0.33447451806513895
+          ]
+        }
+      ],
+      "theta": [
+        0.49466580068076516,
+        0.33447452467757843
+      ]
+    },
+    "bank_erdos_renyi_10_1:p2": {
+      "exact_calls": 755,
+      "objective": -0.6797639346725577,
+      "seconds": 0.16391999999996187,
+      "starts": [
+        {
+          "calls": 50,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6797639346725577,
+          "success": true,
+          "theta": [
+            0.39068975070063017,
+            0.7485597586816102,
+            0.45275162292999993,
+            0.2716633758710625
+          ]
+        },
+        {
+          "calls": 175,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6797639346725572,
+          "success": true,
+          "theta": [
+            0.3906897469304993,
+            0.7485597704674181,
+            0.45275160462388175,
+            0.27166335616134174
+          ]
+        },
+        {
+          "calls": 160,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6278495936045597,
+          "success": true,
+          "theta": [
+            -2.240173139086973,
+            2.744305561594807,
+            0.056524298546230645,
+            0.3478060617563239
+          ]
+        },
+        {
+          "calls": 190,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6267563627582515,
+          "success": true,
+          "theta": [
+            -0.4777446555792637,
+            -2.8011888751006517,
+            -0.3553533363704991,
+            -0.08646996984242816
+          ]
+        },
+        {
+          "calls": 85,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6299209711500136,
+          "success": true,
+          "theta": [
+            -2.9672433990505724,
+            -2.701510223720969,
+            -0.44279722202730126,
+            0.3132418009783795
+          ]
+        },
+        {
+          "calls": 95,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6628739645150182,
+          "success": true,
+          "theta": [
+            -0.48108628835415246,
+            1.1500103687141063,
+            -0.1998805996813473,
+            0.25014978643825003
+          ]
+        }
+      ],
+      "theta": [
+        0.39068975070063017,
+        0.7485597586816102,
+        0.45275162292999993,
+        0.2716633758710625
+      ]
+    },
+    "bank_erdos_renyi_8_0:p1": {
+      "exact_calls": 234,
+      "objective": -0.6684454676437082,
+      "seconds": 0.020650292000027548,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6684454676437082,
+          "success": true,
+          "theta": [
+            0.6047436944107356,
+            0.36046648554711025
+          ]
+        },
+        {
+          "calls": 75,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6684454676437082,
+          "success": true,
+          "theta": [
+            0.6047436675254589,
+            0.3604664887604896
+          ]
+        },
+        {
+          "calls": 45,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.668445467643708,
+          "success": true,
+          "theta": [
+            0.604743660033547,
+            0.36046648631984746
+          ]
+        },
+        {
+          "calls": 42,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5077408859359113,
+          "success": true,
+          "theta": [
+            -2.8219306069115575,
+            0.3080385213478245
+          ]
+        },
+        {
+          "calls": 30,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5077408859359195,
+          "success": true,
+          "theta": [
+            -2.8219303145617842,
+            0.30803854600577263
+          ]
+        },
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6684454676437079,
+          "success": true,
+          "theta": [
+            -0.6047436593779114,
+            -0.3604664848263578
+          ]
+        }
+      ],
+      "theta": [
+        0.6047436944107356,
+        0.36046648554711025
+      ]
+    },
+    "bank_erdos_renyi_8_0:p2": {
+      "exact_calls": 730,
+      "objective": -0.7390000763827571,
+      "seconds": 0.08943541699954949,
+      "starts": [
+        {
+          "calls": 60,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7390000763827571,
+          "success": true,
+          "theta": [
+            0.47028146056962017,
+            0.8697543748329384,
+            0.48369092653347723,
+            0.28236322449961415
+          ]
+        },
+        {
+          "calls": 160,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6700945799048783,
+          "success": true,
+          "theta": [
+            -2.3015738429883745,
+            2.911604980126679,
+            -0.03789907151405092,
+            0.3625826856542598
+          ]
+        },
+        {
+          "calls": 185,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6700945799048773,
+          "success": true,
+          "theta": [
+            2.3015734323028294,
+            -2.911604556055517,
+            0.03789905941978766,
+            -0.3625827013180179
+          ]
+        },
+        {
+          "calls": 110,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7273076413469022,
+          "success": true,
+          "theta": [
+            0.873023343330332,
+            -0.34200149873719576,
+            -0.35089045401779706,
+            0.7230920990797012
+          ]
+        },
+        {
+          "calls": 110,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7390000763827566,
+          "success": true,
+          "theta": [
+            -0.47028146493797074,
+            -0.8697543795602014,
+            -0.4836909341334184,
+            -0.2823632438090238
+          ]
+        },
+        {
+          "calls": 105,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6700945799048783,
+          "success": true,
+          "theta": [
+            -2.301573654490408,
+            2.9116047917412615,
+            -0.03789907092578826,
+            0.3625826953325182
+          ]
+        }
+      ],
+      "theta": [
+        0.47028146056962017,
+        0.8697543748329384,
+        0.48369092653347723,
+        0.28236322449961415
+      ]
+    },
+    "bank_erdos_renyi_8_1:p1": {
+      "exact_calls": 228,
+      "objective": -0.647678435193554,
+      "seconds": 0.020016459000544273,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6476784351935532,
+          "success": true,
+          "theta": [
+            0.5922762892244888,
+            0.33384465215041303
+          ]
+        },
+        {
+          "calls": 36,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6476784351935538,
+          "success": true,
+          "theta": [
+            0.5922763215982898,
+            0.33384462562481776
+          ]
+        },
+        {
+          "calls": 30,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.647678435193554,
+          "success": true,
+          "theta": [
+            -0.5922763247800309,
+            -0.33384464213259946
+          ]
+        },
+        {
+          "calls": 45,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5107091579240707,
+          "success": true,
+          "theta": [
+            -2.0910455201808418,
+            0.3348102573352414
+          ]
+        },
+        {
+          "calls": 48,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.647678435193553,
+          "success": true,
+          "theta": [
+            -0.5922763079304376,
+            -0.3338446620675117
+          ]
+        },
+        {
+          "calls": 48,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5107091579240719,
+          "success": true,
+          "theta": [
+            2.091045473379367,
+            -0.3348103145063379
+          ]
+        }
+      ],
+      "theta": [
+        -0.5922763247800309,
+        -0.33384464213259946
+      ]
+    },
+    "bank_erdos_renyi_8_1:p2": {
+      "exact_calls": 570,
+      "objective": -0.7087818231787789,
+      "seconds": 0.06909058299970638,
+      "starts": [
+        {
+          "calls": 50,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7087818231787788,
+          "success": true,
+          "theta": [
+            0.4236411966803808,
+            0.9203290597812757,
+            0.4087196866863472,
+            0.24891135946411969
+          ]
+        },
+        {
+          "calls": 120,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7087818231787789,
+          "success": true,
+          "theta": [
+            -0.42364117207531127,
+            -0.9203290253149365,
+            -0.40871971836524446,
+            -0.2489113828862357
+          ]
+        },
+        {
+          "calls": 115,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5399492640091468,
+          "success": true,
+          "theta": [
+            -2.0738718935322416,
+            -1.4570659036078224,
+            -0.46445090299420566,
+            0.7378540018159532
+          ]
+        },
+        {
+          "calls": 75,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6996940610919105,
+          "success": true,
+          "theta": [
+            0.7826754192886951,
+            -0.24829903297241795,
+            -0.4458629462839065,
+            -0.7691337780797468
+          ]
+        },
+        {
+          "calls": 90,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6996940610919111,
+          "success": true,
+          "theta": [
+            0.7826754389901049,
+            -0.2482990261624911,
+            -0.4458629226561599,
+            -0.7691337973788371
+          ]
+        },
+        {
+          "calls": 120,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6539037981035083,
+          "success": true,
+          "theta": [
+            -0.6010928444779591,
+            2.965270155540658,
+            -0.3370309926094666,
+            -0.10284071963916275
+          ]
+        }
+      ],
+      "theta": [
+        -0.42364117207531127,
+        -0.9203290253149365,
+        -0.40871971836524446,
+        -0.2489113828862357
+      ]
+    },
+    "bank_regular_10_0:p1": {
+      "exact_calls": 225,
+      "objective": -0.6718878506576775,
+      "seconds": 0.03083779099961248,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6718878506576766,
+          "success": true,
+          "theta": [
+            0.5882136503482873,
+            0.3650683537802122
+          ]
+        },
+        {
+          "calls": 69,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6718878506576773,
+          "success": true,
+          "theta": [
+            -2.553379048992921,
+            -0.36506836322563746
+          ]
+        },
+        {
+          "calls": 30,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6718878506576774,
+          "success": true,
+          "theta": [
+            0.5882136155237365,
+            0.36506834804125354
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6718878506576774,
+          "success": true,
+          "theta": [
+            -2.553379035745593,
+            -0.3650683626909989
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6718878506576762,
+          "success": true,
+          "theta": [
+            -2.553379032272673,
+            -0.36506838161190136
+          ]
+        },
+        {
+          "calls": 57,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6718878506576775,
+          "success": true,
+          "theta": [
+            -2.553379048548316,
+            -0.3650683566904434
+          ]
+        }
+      ],
+      "theta": [
+        -2.553379048548316,
+        -0.3650683566904434
+      ]
+    },
+    "bank_regular_10_0:p2": {
+      "exact_calls": 515,
+      "objective": -0.7276169747424961,
+      "seconds": 0.11130750000029366,
+      "starts": [
+        {
+          "calls": 60,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7276169747424961,
+          "success": true,
+          "theta": [
+            0.4942943615046591,
+            0.9279515644539202,
+            0.48562235362355577,
+            0.2526171944649296
+          ]
+        },
+        {
+          "calls": 145,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7276169747424958,
+          "success": true,
+          "theta": [
+            -2.64729832347137,
+            0.927951525472527,
+            -0.4856223823081995,
+            -0.2526172108235698
+          ]
+        },
+        {
+          "calls": 120,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7203207455106129,
+          "success": true,
+          "theta": [
+            -2.2646401002225183,
+            -0.36030793332302924,
+            0.33314233840134166,
+            -0.6959587020749362
+          ]
+        },
+        {
+          "calls": 60,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5000000000682455,
+          "success": true,
+          "theta": [
+            -1.5707937628199968,
+            0.5976457578894236,
+            0.761610089237065,
+            -5.087417252325199e-05
+          ]
+        },
+        {
+          "calls": 70,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7203207455106131,
+          "success": true,
+          "theta": [
+            -0.8769525861711194,
+            0.36030796494725204,
+            0.3331423334450687,
+            -0.6959587056730436
+          ]
+        },
+        {
+          "calls": 60,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7276169747424954,
+          "success": true,
+          "theta": [
+            -0.49429433552355206,
+            2.213641065851901,
+            -0.48562237760793514,
+            0.25261720210947036
+          ]
+        }
+      ],
+      "theta": [
+        0.4942943615046591,
+        0.9279515644539202,
+        0.48562235362355577,
+        0.2526171944649296
+      ]
+    },
+    "bank_regular_10_1:p1": {
+      "exact_calls": 150,
+      "objective": -0.6924500897298753,
+      "seconds": 0.020926082999721984,
+      "starts": [
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6924500897298752,
+          "success": true,
+          "theta": [
+            0.6154796975304091,
+            0.3926990725269781
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6924500897298749,
+          "success": true,
+          "theta": [
+            2.5261129410946452,
+            0.39269906554265677
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6924500897298751,
+          "success": true,
+          "theta": [
+            0.6154797230278244,
+            0.39269907500987866
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6924500897298728,
+          "success": true,
+          "theta": [
+            0.6154797078612431,
+            0.392699041920896
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6924500897298749,
+          "success": true,
+          "theta": [
+            -2.526112929409217,
+            -0.3926990913361024
+          ]
+        },
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6924500897298753,
+          "success": true,
+          "theta": [
+            0.6154797025109744,
+            0.3926990769843528
+          ]
+        }
+      ],
+      "theta": [
+        0.6154797025109744,
+        0.3926990769843528
+      ]
+    },
+    "bank_regular_10_1:p2": {
+      "exact_calls": 635,
+      "objective": -0.7879762353406516,
+      "seconds": 0.13737495799978205,
+      "starts": [
+        {
+          "calls": 65,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.787976235340651,
+          "success": true,
+          "theta": [
+            0.4706416584866835,
+            0.8317504973062597,
+            0.581398068693191,
+            0.34184539749054244
+          ]
+        },
+        {
+          "calls": 70,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.750561088975096,
+          "success": true,
+          "theta": [
+            2.4575137407820398,
+            1.3122802282515584,
+            0.18260501105498217,
+            -0.33025180851408015
+          ]
+        },
+        {
+          "calls": 230,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7505610889750972,
+          "success": true,
+          "theta": [
+            -2.457513823710043,
+            -1.3122801305163494,
+            -0.18260503736794387,
+            0.33025178141938527
+          ]
+        },
+        {
+          "calls": 75,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7772529060197839,
+          "success": true,
+          "theta": [
+            -0.8535087397667072,
+            0.4011176431015935,
+            0.3520687199847097,
+            -0.7598083640045147
+          ]
+        },
+        {
+          "calls": 105,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7879762353406516,
+          "success": true,
+          "theta": [
+            -2.6709509797827917,
+            -2.30984213943728,
+            -0.5813980868112532,
+            0.3418454118342795
+          ]
+        },
+        {
+          "calls": 90,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7505610889750955,
+          "success": true,
+          "theta": [
+            0.6840788403462978,
+            1.8293125039665536,
+            0.18260499708103217,
+            0.3302517885449312
+          ]
+        }
+      ],
+      "theta": [
+        -2.6709509797827917,
+        -2.30984213943728,
+        -0.5813980868112532,
+        0.3418454118342795
+      ]
+    },
+    "bank_regular_8_0:p1": {
+      "exact_calls": 216,
+      "objective": -0.6672434331473422,
+      "seconds": 0.018737749999672815,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.667243433147342,
+          "success": true,
+          "theta": [
+            0.581457830638247,
+            0.35858472869168034
+          ]
+        },
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6672434331473387,
+          "success": true,
+          "theta": [
+            -2.5601348971345224,
+            -0.35858477411845563
+          ]
+        },
+        {
+          "calls": 63,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.667243433147342,
+          "success": true,
+          "theta": [
+            -0.5814578054729704,
+            -0.35858475806032075
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6672434331473418,
+          "success": true,
+          "theta": [
+            2.560134802815316,
+            0.35858472436263944
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6672434331473422,
+          "success": true,
+          "theta": [
+            -2.560134834240662,
+            -0.35858475219565467
+          ]
+        },
+        {
+          "calls": 51,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6672434331473422,
+          "success": true,
+          "theta": [
+            -0.5814578291500596,
+            -0.35858474410917607
+          ]
+        }
+      ],
+      "theta": [
+        -2.560134834240662,
+        -0.35858475219565467
+      ]
+    },
+    "bank_regular_8_0:p2": {
+      "exact_calls": 545,
+      "objective": -0.73202039037979,
+      "seconds": 0.06501012500029901,
+      "starts": [
+        {
+          "calls": 55,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7320203903797899,
+          "success": true,
+          "theta": [
+            0.5085246007654289,
+            0.9279419107005955,
+            0.49295020271920564,
+            0.27566286292515807
+          ]
+        },
+        {
+          "calls": 100,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7142131843174209,
+          "success": true,
+          "theta": [
+            -2.4587264630002785,
+            -1.5045436336907054,
+            -0.24195397949702735,
+            0.25455410388877886
+          ]
+        },
+        {
+          "calls": 130,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7142131843174238,
+          "success": true,
+          "theta": [
+            0.682866173439451,
+            1.637049188357599,
+            0.24195391566368807,
+            0.2545541098910302
+          ]
+        },
+        {
+          "calls": 100,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7320203903797853,
+          "success": true,
+          "theta": [
+            0.5085246266861145,
+            -2.2136507843334448,
+            0.49295025949290405,
+            -0.2756629326168447
+          ]
+        },
+        {
+          "calls": 105,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7142131843174235,
+          "success": true,
+          "theta": [
+            -0.6828662203466527,
+            -1.6370491087276777,
+            -0.2419539297459341,
+            -0.25455413420450945
+          ]
+        },
+        {
+          "calls": 55,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.73202039037979,
+          "success": true,
+          "theta": [
+            2.6330680236026307,
+            2.213650705715713,
+            0.49295021656357063,
+            -0.2756628846924678
+          ]
+        }
+      ],
+      "theta": [
+        2.6330680236026307,
+        2.213650705715713,
+        0.49295021656357063,
+        -0.2756628846924678
+      ]
+    },
+    "bank_regular_8_1:p1": {
+      "exact_calls": 150,
+      "objective": -0.6792176302093298,
+      "seconds": 0.01280429100006586,
+      "starts": [
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6792176302093298,
+          "success": true,
+          "theta": [
+            0.5984200617171731,
+            0.37512378312948624
+          ]
+        },
+        {
+          "calls": 30,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6792176302093293,
+          "success": true,
+          "theta": [
+            -0.598420064169837,
+            -0.37512379929019674
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6792176302093292,
+          "success": true,
+          "theta": [
+            -0.598420050457289,
+            -0.3751238033595509
+          ]
+        },
+        {
+          "calls": 12,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.49999999999999994,
+          "success": true,
+          "theta": [
+            1.5707963278869812,
+            -0.3956330421689768
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6792176302093296,
+          "success": true,
+          "theta": [
+            -0.5984200595963478,
+            -0.37512379604595963
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6792176302093293,
+          "success": true,
+          "theta": [
+            -2.5431726075118317,
+            -0.37512379811016755
+          ]
+        }
+      ],
+      "theta": [
+        0.5984200617171731,
+        0.37512378312948624
+      ]
+    },
+    "bank_regular_8_1:p2": {
+      "exact_calls": 715,
+      "objective": -0.7489381061243225,
+      "seconds": 0.08528025000032358,
+      "starts": [
+        {
+          "calls": 55,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7489381061243225,
+          "success": true,
+          "theta": [
+            0.467553657343859,
+            0.8494883591925766,
+            0.528191734362891,
+            0.29105768136414323
+          ]
+        },
+        {
+          "calls": 95,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7258902904952418,
+          "success": true,
+          "theta": [
+            -2.47775866180697,
+            -1.343278380771981,
+            -0.19332127359826246,
+            0.28841016041766254
+          ]
+        },
+        {
+          "calls": 105,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.725890290495242,
+          "success": true,
+          "theta": [
+            -2.4777586481662763,
+            1.7983142698031358,
+            -0.19332125895201546,
+            -0.2884101734477347
+          ]
+        },
+        {
+          "calls": 235,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7426301431113441,
+          "success": true,
+          "theta": [
+            2.2772369456264663,
+            -2.7758449949248054,
+            -0.3356582601438811,
+            -0.7226036210979543
+          ]
+        },
+        {
+          "calls": 80,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7426301431113453,
+          "success": true,
+          "theta": [
+            0.8643558012236774,
+            -0.3657477325435141,
+            -0.3356582118597898,
+            0.7226035642952455
+          ]
+        },
+        {
+          "calls": 145,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7426301431113385,
+          "success": true,
+          "theta": [
+            -0.8643559266600929,
+            -2.7758449032898587,
+            0.33565812950024343,
+            0.7226034466938995
+          ]
+        }
+      ],
+      "theta": [
+        0.467553657343859,
+        0.8494883591925766,
+        0.528191734362891,
+        0.29105768136414323
+      ]
+    },
+    "bank_watts_strogatz_10_0:p1": {
+      "exact_calls": 186,
+      "objective": -0.6295212126732024,
+      "seconds": 0.02553295799953048,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6295212126732024,
+          "success": true,
+          "theta": [
+            0.49101576807374503,
+            0.34263092846815035
+          ]
+        },
+        {
+          "calls": 39,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5308995786256927,
+          "success": true,
+          "theta": [
+            -2.4783878723649964,
+            0.41205613932990004
+          ]
+        },
+        {
+          "calls": 39,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5308995786257107,
+          "success": true,
+          "theta": [
+            2.478388322652571,
+            -0.4120561315397931
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6295212126732024,
+          "success": true,
+          "theta": [
+            -0.49101578573778637,
+            -0.3426309437446694
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6295212126732023,
+          "success": true,
+          "theta": [
+            -0.4910157797991186,
+            -0.3426309512203667
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5308995786257107,
+          "success": true,
+          "theta": [
+            2.4783882813954765,
+            -0.4120561754030335
+          ]
+        }
+      ],
+      "theta": [
+        0.49101576807374503,
+        0.34263092846815035
+      ]
+    },
+    "bank_watts_strogatz_10_0:p2": {
+      "exact_calls": 955,
+      "objective": -0.6920644985566904,
+      "seconds": 0.20613370800037956,
+      "starts": [
+        {
+          "calls": 55,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6920644985566904,
+          "success": true,
+          "theta": [
+            0.3903349205895479,
+            0.7216625894577717,
+            0.46201191249776263,
+            0.2865440081664339
+          ]
+        },
+        {
+          "calls": 285,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.670655068161111,
+          "success": true,
+          "theta": [
+            0.46355995796315685,
+            -1.0924803077768512,
+            0.1975943727235282,
+            -0.2678596898428376
+          ]
+        },
+        {
+          "calls": 165,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.535803388874742,
+          "success": true,
+          "theta": [
+            -2.560668973796492,
+            -1.1226006956564913,
+            0.27798000247353727,
+            -0.226155372656625
+          ]
+        },
+        {
+          "calls": 160,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6316699513596208,
+          "success": true,
+          "theta": [
+            -0.4833269319999012,
+            -1.8642676042386046,
+            -0.33711533690838286,
+            0.06585973169042647
+          ]
+        },
+        {
+          "calls": 85,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6920644985566892,
+          "success": true,
+          "theta": [
+            0.3903349011455761,
+            0.7216625890869448,
+            0.46201191140751985,
+            0.2865439887909105
+          ]
+        },
+        {
+          "calls": 205,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6296556450626395,
+          "success": true,
+          "theta": [
+            3.018919830006367,
+            -2.5325129257689682,
+            0.06413517573631977,
+            0.3451420929345934
+          ]
+        }
+      ],
+      "theta": [
+        0.3903349205895479,
+        0.7216625894577717,
+        0.46201191249776263,
+        0.2865440081664339
+      ]
+    },
+    "bank_watts_strogatz_10_1:p1": {
+      "exact_calls": 192,
+      "objective": -0.6303093466256939,
+      "seconds": 0.02616566699998657,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6303093466256939,
+          "success": true,
+          "theta": [
+            0.49564304489743227,
+            0.3433954325166231
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.49999999999999045,
+          "success": true,
+          "theta": [
+            1.570795961450023,
+            -0.173779150432398
+          ]
+        },
+        {
+          "calls": 63,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6303093466256916,
+          "success": true,
+          "theta": [
+            0.49564311280075213,
+            0.3433954563077244
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5314976776044895,
+          "success": true,
+          "theta": [
+            -2.738131154024592,
+            0.3286230379298367
+          ]
+        },
+        {
+          "calls": 36,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5036316125079243,
+          "success": true,
+          "theta": [
+            1.881836882377021,
+            0.3991295356090996
+          ]
+        },
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5,
+          "success": true,
+          "theta": [
+            1.570796327721319,
+            -0.24609425930325157
+          ]
+        }
+      ],
+      "theta": [
+        0.49564304489743227,
+        0.3433954325166231
+      ]
+    },
+    "bank_watts_strogatz_10_1:p2": {
+      "exact_calls": 590,
+      "objective": -0.6852108951766964,
+      "seconds": 0.12783808299991506,
+      "starts": [
+        {
+          "calls": 50,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6852108951766964,
+          "success": true,
+          "theta": [
+            0.3819205537160095,
+            0.7162927482944923,
+            0.4640355638753795,
+            0.27384773697112785
+          ]
+        },
+        {
+          "calls": 100,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6305413164894491,
+          "success": true,
+          "theta": [
+            -0.4936536078365994,
+            -1.8424164571073591,
+            -0.3403032053159355,
+            0.022272768230214957
+          ]
+        },
+        {
+          "calls": 65,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6852108951766961,
+          "success": true,
+          "theta": [
+            -0.38192054117787766,
+            -0.7162927317143497,
+            -0.46403558764726616,
+            -0.27384775838167263
+          ]
+        },
+        {
+          "calls": 110,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6742516554594559,
+          "success": true,
+          "theta": [
+            0.6917793356898536,
+            -0.24032863003636873,
+            -0.35905102960792945,
+            0.7293772130035263
+          ]
+        },
+        {
+          "calls": 115,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6674918582150262,
+          "success": true,
+          "theta": [
+            -0.478261973670437,
+            1.1045010015289058,
+            -0.19110392703332846,
+            0.2626044565532324
+          ]
+        },
+        {
+          "calls": 150,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.531594728781847,
+          "success": true,
+          "theta": [
+            1.4940204412323093,
+            2.054910143799356,
+            -0.022648680128669385,
+            0.33056679203025885
+          ]
+        }
+      ],
+      "theta": [
+        0.3819205537160095,
+        0.7162927482944923,
+        0.4640355638753795,
+        0.27384773697112785
+      ]
+    },
+    "bank_watts_strogatz_8_0:p1": {
+      "exact_calls": 216,
+      "objective": -0.623853619353492,
+      "seconds": 0.01898320899999817,
+      "starts": [
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.623853619353492,
+          "success": true,
+          "theta": [
+            0.48664344713474383,
+            0.3311377960482418
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.623853619353492,
+          "success": true,
+          "theta": [
+            -0.48664347052745205,
+            -0.33113781421874383
+          ]
+        },
+        {
+          "calls": 30,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5772226938026492,
+          "success": true,
+          "theta": [
+            2.6894518579605844,
+            -0.3536152078883115
+          ]
+        },
+        {
+          "calls": 51,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6238536193534919,
+          "success": true,
+          "theta": [
+            0.48664345426051625,
+            0.3311377897035288
+          ]
+        },
+        {
+          "calls": 39,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5772226938026491,
+          "success": true,
+          "theta": [
+            -2.6894518420171836,
+            0.3536152086695381
+          ]
+        },
+        {
+          "calls": 48,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5009284794742127,
+          "success": true,
+          "theta": [
+            -1.7569134117573966,
+            -0.3315215356568328
+          ]
+        }
+      ],
+      "theta": [
+        0.48664344713474383,
+        0.3311377960482418
+      ]
+    },
+    "bank_watts_strogatz_8_0:p2": {
+      "exact_calls": 635,
+      "objective": -0.6874772204505395,
+      "seconds": 0.07793825000044308,
+      "starts": [
+        {
+          "calls": 55,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6874772204505395,
+          "success": true,
+          "theta": [
+            0.3954294391983413,
+            0.714262639781075,
+            0.4775956174938356,
+            0.29860980797396786
+          ]
+        },
+        {
+          "calls": 85,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5075700389146153,
+          "success": true,
+          "theta": [
+            -0.6250153030800436,
+            -0.9452961005346969,
+            0.14526837571207574,
+            -0.7838765029116912
+          ]
+        },
+        {
+          "calls": 140,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6722888703523175,
+          "success": true,
+          "theta": [
+            0.6811490654380838,
+            -0.2342499043872306,
+            -0.3761309279260294,
+            0.7470326289420948
+          ]
+        },
+        {
+          "calls": 75,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.663389999014935,
+          "success": true,
+          "theta": [
+            0.47865298867824,
+            -1.120825567303383,
+            0.18255984577696838,
+            -0.2691752014511284
+          ]
+        },
+        {
+          "calls": 130,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6296667720250975,
+          "success": true,
+          "theta": [
+            -0.44451385088581885,
+            -2.148302612166427,
+            -0.28264833159162195,
+            0.13054859203226887
+          ]
+        },
+        {
+          "calls": 150,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6019088712339761,
+          "success": true,
+          "theta": [
+            -2.517646310450468,
+            -0.27929223417737514,
+            -0.3857161768659223,
+            0.7626101806930148
+          ]
+        }
+      ],
+      "theta": [
+        0.3954294391983413,
+        0.714262639781075,
+        0.4775956174938356,
+        0.29860980797396786
+      ]
+    },
+    "bank_watts_strogatz_8_1:p1": {
+      "exact_calls": 165,
+      "objective": -0.629758955848208,
+      "seconds": 0.014266666999901645,
+      "starts": [
+        {
+          "calls": 21,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6297589558482078,
+          "success": true,
+          "theta": [
+            0.49638550224633216,
+            0.3407737096545336
+          ]
+        },
+        {
+          "calls": 36,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.629758955848208,
+          "success": true,
+          "theta": [
+            0.4963855040130194,
+            0.34077371611204255
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6297589558482077,
+          "success": true,
+          "theta": [
+            -0.4963855210006396,
+            -0.34077373492857055
+          ]
+        },
+        {
+          "calls": 33,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5224415013571395,
+          "success": true,
+          "theta": [
+            -2.609546615361224,
+            0.7380823855837555
+          ]
+        },
+        {
+          "calls": 24,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6297589558482077,
+          "success": true,
+          "theta": [
+            0.49638551114257856,
+            0.3407737112176681
+          ]
+        },
+        {
+          "calls": 27,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.49999999999997696,
+          "success": true,
+          "theta": [
+            1.5707956066164446,
+            -0.10620798059719638
+          ]
+        }
+      ],
+      "theta": [
+        0.4963855040130194,
+        0.34077371611204255
+      ]
+    },
+    "bank_watts_strogatz_8_1:p2": {
+      "exact_calls": 960,
+      "objective": -0.7267227977984555,
+      "seconds": 0.11634841700015386,
+      "starts": [
+        {
+          "calls": 70,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7267227977984552,
+          "success": true,
+          "theta": [
+            0.4102311884016161,
+            0.6769095708312265,
+            0.5174846360767549,
+            0.35524307052159076
+          ]
+        },
+        {
+          "calls": 130,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5847224327520557,
+          "success": true,
+          "theta": [
+            -0.9872507423186363,
+            2.507912477966448,
+            0.46698801585238736,
+            -0.7416068759679495
+          ]
+        },
+        {
+          "calls": 115,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6077974269908564,
+          "success": true,
+          "theta": [
+            -2.5280113658192365,
+            -2.008009337129133,
+            -0.7578685198267539,
+            -0.3620488772479167
+          ]
+        },
+        {
+          "calls": 455,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.7267227977984555,
+          "success": true,
+          "theta": [
+            0.4102312003072419,
+            0.6769095838092634,
+            0.5174846466050063,
+            0.35524308293648277
+          ]
+        },
+        {
+          "calls": 125,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.6704616961890761,
+          "success": true,
+          "theta": [
+            -2.7269477776645927,
+            2.5072851121432755,
+            0.6971052719623243,
+            -0.34872614324642903
+          ]
+        },
+        {
+          "calls": 65,
+          "message": "Optimization terminated successfully.",
+          "objective": -0.5847224327520557,
+          "success": true,
+          "theta": [
+            0.9872507919987692,
+            -2.5079124220680624,
+            -0.4669880146044503,
+            0.7416068945616219
+          ]
+        }
+      ],
+      "theta": [
+        0.4102312003072419,
+        0.6769095838092634,
+        0.5174846466050063,
+        0.35524308293648277
+      ]
+    }
+  },
+  "resource_units": "exact simulator objective calls; no assigned hardware-shot equivalent"
+}

@@ -1,0 +1,598 @@
+% Source annotations record attribution and verification scope, not new results.
+% The manuscript cites every entry; plainnat does not print annote fields.
+@misc{farhi2014,
+  author = {Farhi, Edward and Goldstone, Jeffrey and Gutmann, Sam},
+  title = {A Quantum Approximate Optimization Algorithm},
+  year = {2014},
+  eprint = {1411.4028},
+  note = {arXiv:1411.4028},
+  url = {https://arxiv.org/abs/1411.4028},
+  archivePrefix = {arXiv},
+  primaryClass = {quant-ph},
+  doi = {10.48550/arXiv.1411.4028},
+  annote = {Introduction and rooted-neighborhood analysis: QAOA state and objective, Equations (6)--(8), and edge-local decomposition, Equations (13)--(25). Relevant full text and bibliographic record checked. The present finite-graph total-variation and donor-regret statements are derived in this manuscript.}
+}
+
+@misc{brandao2018,
+  author = {Brand{\~a}o, Fernando G. S. L. and Broughton, Michael and Farhi, Edward and Gutmann, Sam and Neven, Hartmut},
+  title = {For Fixed Control Parameters the Quantum Approximate Optimization Algorithm's Objective Function Value Concentrates for Typical Instances},
+  year = {2018},
+  eprint = {1812.04170},
+  archivePrefix = {arXiv},
+  primaryClass = {quant-ph},
+  note = {arXiv:1812.04170},
+  doi = {10.48550/arXiv.1812.04170},
+  url = {https://arxiv.org/abs/1812.04170},
+  annote = {Introduction and rooted-neighborhood discussion: fixed-depth
+    concentration for specified sparse graph ensembles motivates parameter
+    reuse. Full text, Section II, checked. It does not prove uniform transfer
+    between arbitrary finite graph pairs; the finite-pair bound is derived
+    separately in this manuscript.}
+}
+
+@article{streif2020,
+  author = {Streif, Michael and Leib, Martin},
+  title = {Training the Quantum Approximate Optimization Algorithm without Access to a Quantum Processing Unit},
+  journal = {Quantum Science and Technology},
+  volume = {5},
+  number = {3},
+  pages = {034008},
+  year = {2020},
+  doi = {10.1088/2058-9565/ab8c2b},
+  url = {https://doi.org/10.1088/2058-9565/ab8c2b},
+  annote = {Introduction and baseline limitations: offline parameter
+    determination using representative local trees and tensor-network
+    calculations. Author manuscript arXiv:1908.08862, Sections 2.2--2.3,
+    and published metadata checked. Classical cost depends on depth;
+    this is related work, not an implemented comparator.}
+}
+
+@article{sack2021,
+  author = {Sack, Stefan H. and Serbyn, Maksym},
+  title = {Quantum Annealing Initialization of the Quantum Approximate Optimization Algorithm},
+  journal = {Quantum},
+  volume = {5},
+  pages = {491},
+  year = {2021},
+  doi = {10.22331/q-2021-07-01-491},
+  url = {https://doi.org/10.22331/q-2021-07-01-491},
+  annote = {Introduction and baseline limitations: Trotterized quantum
+    annealing initialization followed by local optimization. Full author
+    text arXiv:2101.05742, Section 3, and published metadata checked.
+    The study's fixed schedule is not a reproduction of this procedure.}
+}
+
+@article{wurtz2021,
+  author = {Wurtz, Jonathan and Lykov, Danylo},
+  title = {Fixed-Angle Conjectures for the Quantum Approximate Optimization Algorithm on Regular {MaxCut} Graphs},
+  journal = {Physical Review A},
+  volume = {104},
+  number = {5},
+  pages = {052419},
+  year = {2021},
+  doi = {10.1103/PhysRevA.104.052419},
+  url = {https://doi.org/10.1103/PhysRevA.104.052419},
+  annote = {Introduction and baseline limitations: precomputed tree angles
+    and evidence for fixed-angle conjectures on regular MaxCut graphs.
+    Full author text arXiv:2107.00677, Sections IV--VI, and published
+    metadata checked. The conjectures are not described as universal
+    transfer theorems or as tested baselines in the present study.}
+}
+
+@article{sung2020,
+  author = {Sung, Kevin J. and Yao, Jiahao and Harrigan, Matthew P. and Rubin, Nicholas C. and Jiang, Zhang and Lin, Lin and Babbush, Ryan and McClean, Jarrod R.},
+  title = {Using Models to Improve Optimizers for Variational Quantum Algorithms},
+  journal = {Quantum Science and Technology},
+  volume = {5},
+  number = {4},
+  pages = {044008},
+  year = {2020},
+  doi = {10.1088/2058-9565/abb6d9},
+  url = {https://doi.org/10.1088/2058-9565/abb6d9},
+  annote = {Introduction and Discussion: existing local quadratic models
+    use nearby new and previous samples, with distinct sampling and
+    communication costs. Full author text arXiv:2005.11011, Sections II B
+    and III B, and published metadata checked. Related work only; the
+    present affine model does not reproduce these optimizers.}
+}
+
+@article{kubler2020,
+  author = {K{\"u}bler, Jonas M. and Arrasmith, Andrew and Cincio, Lukasz and Coles, Patrick J.},
+  title = {An Adaptive Optimizer for Measurement-Frugal Variational Algorithms},
+  journal = {Quantum},
+  volume = {4},
+  pages = {263},
+  year = {2020},
+  doi = {10.22331/q-2020-05-11-263},
+  url = {https://doi.org/10.22331/q-2020-05-11-263},
+  annote = {Introduction and Discussion: iCANS allocates measurement shots
+    separately to gradient components using estimated gradients and
+    variances. Full author text arXiv:1909.09083, Section III and
+    Algorithm 1, and published metadata checked. It is a gradient-based
+    literature comparator, not the implemented acceptance policy.}
+}
+
+@inproceedings{dzahini2025,
+  author = {Dzahini, Kwassi Joseph and Larson, Jeffrey M. and Menickelly, Matt and Wild, Stefan M.},
+  title = {A Noise-Aware Scalable Subspace Classical Optimizer for the Quantum Approximate Optimization Algorithm},
+  booktitle = {2025 IEEE International Conference on Quantum Computing and Engineering (QCE)},
+  pages = {20--30},
+  year = {2025},
+  publisher = {IEEE},
+  doi = {10.1109/QCE65121.2025.00013},
+  url = {https://doi.org/10.1109/QCE65121.2025.00013},
+  annote = {Introduction and Discussion: ANASTAARS uses linear or quadratic
+    interpolation in adaptive random subspaces, sample reuse, and a
+    noise-adjusted reduction ratio. Full author text arXiv:2507.10992v1,
+    Sections 3--4, and publisher-deposited metadata checked. This prior
+    method limits novelty claims; it is not an experimental baseline here.}
+}
+
+@article{memoli2011,
+  author = {M{\'e}moli, Facundo},
+  title = {{Gromov--Wasserstein} Distances and the Metric Approach to Object Matching},
+  journal = {Foundations of Computational Mathematics},
+  volume = {11},
+  number = {4},
+  pages = {417--487},
+  year = {2011},
+  doi = {10.1007/s10208-011-9093-5},
+  annote = {Introduction and structural comparison: foundational GW
+    attribution. Publisher metadata and abstract checked; full text was
+    not accessed. The discrete distortion and computational statements
+    are separately supported by the full text of Peyre et al. (2016),
+    Sections 2.1--2.3. No solver guarantee is inferred from this citation.}
+}
+
+@inproceedings{cuturi2013,
+  author = {Cuturi, Marco},
+  title = {Sinkhorn Distances: Lightspeed Computation of Optimal Transport},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume = {26},
+  year = {2013},
+  url = {https://papers.neurips.cc/paper_files/paper/2013/hash/af21d0c97db2e27e13572cbf59eb343d-Abstract.html},
+  annote = {Methods, entropic structural comparison: diagonal scaling of
+    a fixed-cost entropic kernel. Full author text arXiv:1306.0895,
+    Section 4.1 and Algorithm 1, and published title checked. This
+    attributes the inner scaling principle, not convergence of the
+    study's damped finite-iteration nonconvex GW routine.}
+}
+
+@article{businger1965,
+  author = {Businger, Peter and Golub, Gene H.},
+  title = {Linear Least Squares Solutions by {Householder} Transformations},
+  journal = {Numerische Mathematik},
+  volume = {7},
+  pages = {269--276},
+  year = {1965},
+  doi = {10.1007/BF01436084},
+  annote = {Methods, interpolation geometry: ordinary column-pivoted QR
+    selects columns by remaining norm. Full text, Sections 1 and 4,
+    pages 270--272, and metadata checked. This is not a claim of strong
+    rank-revealing QR or globally optimal interpolation geometry.}
+}
+
+@article{conn2008,
+  author = {Conn, Andrew R. and Scheinberg, Katya and Vicente, Lu{\'i}s N.},
+  title = {Geometry of Interpolation Sets in Derivative Free Optimization},
+  journal = {Mathematical Programming},
+  volume = {111},
+  pages = {141--172},
+  year = {2008},
+  doi = {10.1007/s10107-006-0073-5},
+  annote = {Introduction and local-model analysis: inverse interpolation
+    matrices, poisedness, smoothness-based model errors, and QR geometry.
+    Author full text, Theorems 3.3 and 4.1 and Section 5.2, checked.
+    Replaces the general 2009 textbook citation with the specific result.
+    Full rank alone is not asserted to meet all fully-linear-model
+    hypotheses. The present weighted probabilistic bound is derived here.}
+}
+
+@misc{lacostejulien2016,
+  author = {Lacoste-Julien, Simon},
+  title = {Convergence Rate of {Frank--Wolfe} for Non-Convex Objectives},
+  year = {2016},
+  eprint = {1607.00345},
+  archivePrefix = {arXiv},
+  primaryClass = {math.OC},
+  note = {arXiv:1607.00345},
+  url = {https://arxiv.org/abs/1607.00345},
+  annote = {Methods, transport sensitivity: conditional-gradient gap and
+    exact segment minimization on a compact convex feasible set. Full text,
+    Equation 2, Algorithm 1, and Theorem 1, checked. The implemented SciPy
+    HiGHS linear subproblem and floating-point gap are numerical diagnostics,
+    not exact stationarity or global-optimality certificates.}
+}
+
+@article{howard2021,
+  author = {Howard, Steven R. and Ramdas, Aaditya and McAuliffe, Jon and Sekhon, Jasjeet},
+  title = {Time-Uniform, Nonparametric, Nonasymptotic Confidence Sequences},
+  journal = {The Annals of Statistics},
+  volume = {49},
+  number = {2},
+  pages = {1055--1080},
+  year = {2021},
+  doi = {10.1214/20-AOS1991},
+  eprint = {1810.08240},
+  archivePrefix = {arXiv},
+  url = {https://arxiv.org/abs/1810.08240},
+  annote = {Discussion, possible extensions: time-uniform empirical
+    Bernstein confidence sequences. Full author text arXiv:1810.08240,
+    Section 4.1 and Theorem 4, checked. Predictable squared prediction
+    errors differ from the present fixed-look pooled sample variance;
+    neither an implementation nor measurement savings are claimed here.}
+}
+@article{zhou2020,
+  author = {Zhou, Leo and Wang, Sheng-Tao and Choi, Soonwon and Pichler, Hannes and Lukin, Mikhail D.},
+  title = {Quantum Approximate Optimization Algorithm: Performance, Mechanism, and Implementation on Near-Term Devices},
+  journal = {Physical Review X},
+  volume = {10},
+  pages = {021067},
+  year = {2020},
+  doi = {10.1103/PhysRevX.10.021067},
+  annote = {Introduction: observed parameter patterns, interpolation, and Fourier initialization. Published full text, Appendix B, and metadata checked. This is motivation for parameter setting, not evidence of savings for the present refinement policy.}
+}
+@article{galda2023,
+  author = {Galda, Alexey and Gupta, Eesh and Falla, Jose and Liu, Xiaoyuan and Lykov, Danylo and Alexeev, Yuri and Safro, Ilya},
+  title = {Similarity-Based Parameter Transferability in the Quantum Approximate Optimization Algorithm},
+  year = {2023},
+  eprint = {2307.05420},
+  note = {arXiv:2307.05420},
+  archivePrefix = {arXiv},
+  primaryClass = {quant-ph},
+  journal = {Frontiers in Quantum Science and Technology},
+  volume = {2},
+  pages = {1200975},
+  doi = {10.3389/frqst.2023.1200975},
+  annote = {Introduction and transfer discussion: local subgraph structure and degree parity motivate parameter transfer. Published Sections 3.4--3.6 and complete author list checked. The 2023 published record is retained without adding the overlapping 2021 preprint as a separate reference. No shortest-path GW transfer theorem is attributed to this work.}
+}
+@article{demetci2022,
+  author = {Demetci, Pinar and Santorella, Rebecca and Sandstede, Bj{\"o}rn and Noble, William Stafford and Singh, Ritambhara},
+  title = {{SCOT}: Single-Cell Multi-Omics Alignment with Optimal Transport},
+  journal = {Journal of Computational Biology},
+  volume = {29},
+  number = {1},
+  pages = {3--18},
+  year = {2022},
+  doi = {10.1089/cmb.2021.0446},
+  annote = {Introduction and structural comparison: SCOT compares within-domain relationships using shortest-path graph distances and a coupling. Indexed published Introduction, Figure 1, and Section 2.3 passages and complete publisher metadata checked; equation-level Section 2.2 was not independently inspected. This supports conceptual inspiration, not the present damping, iteration caps, or angle transfer.}
+}
+@inproceedings{peyre2016,
+  author = {Peyr{\'e}, Gabriel and Cuturi, Marco and Solomon, Justin},
+  title = {{Gromov--Wasserstein} Averaging of Kernel and Distance Matrices},
+  booktitle = {Proceedings of the 33rd International Conference on Machine Learning},
+  series = {Proceedings of Machine Learning Research},
+  volume = {48},
+  pages = {2664--2672},
+  year = {2016},
+  url = {https://proceedings.mlr.press/v48/peyre16.html},
+  annote = {Introduction and Methods: discrete squared GW distortion and entropic computation. Full published text, Sections 2.1--2.3 and Remark 3, checked. That remark restricts the convergence interpretation of the advocated fixed-point steps. The present damping, finite iteration cap, and marginal checks do not confer a global-optimality guarantee.}
+}
+@book{golub2013,
+  author = {Golub, Gene H. and Van Loan, Charles F.},
+  title = {Matrix Computations},
+  edition = {4},
+  publisher = {Johns Hopkins University Press},
+  address = {Baltimore},
+  year = {2013},
+  doi = {10.56021/9781421407944},
+  annote = {Introduction and local-model fitting: conventional QR and weighted least squares. Publisher metadata and contents, Sections 5.2--5.3 and 6.1, checked; substantive chapter pages were not independently verified in this review. No new QR factorization is claimed. The weighted error bound is derived explicitly in the manuscript.}
+}
+@article{chen2018,
+  author = {Chen, Ruobing and Menickelly, Matt and Scheinberg, Katya},
+  title = {Stochastic Optimization Using a Trust-Region Method and Random Models},
+  journal = {Mathematical Programming},
+  volume = {169},
+  pages = {447--487},
+  year = {2018},
+  eprint = {1504.04231},
+  note = {arXiv:1504.04231},
+  archivePrefix = {arXiv},
+  doi = {10.1007/s10107-017-1141-8},
+  annote = {Introduction and convergence limitations: stochastic trust-region theory with conditional model and estimate accuracy. Full author text arXiv:1504.04231v2, Definitions 3.4--3.5 and Theorem 4.18, and published metadata checked. The 2018 issue year is retained. Its asymptotic stationarity theorem is not applied to this finite-budget policy.}
+}
+@article{falla2024,
+  author = {Falla, Jose and Langfitt, Quinn and Alexeev, Yuri and Safro, Ilya},
+  title = {Graph representation learning for parameter transferability in quantum approximate optimization algorithm},
+  journal = {Quantum Machine Intelligence},
+  volume = {6},
+  pages = {46},
+  year = {2024},
+  doi = {10.1007/s42484-024-00178-9},
+  annote = {Introduction: nearest-donor selection in learned whole-graph embeddings followed by parameter transfer. Published Section 4 and Figure 2, author list, article number, and DOI checked. This supports an empirical donor-selection precedent, not a universal transfer certificate.}
+}
+@article{shashaani2018,
+  author = {Shashaani, Sara and Hashemi, Fatemeh S. and Pasupathy, Raghu},
+  title = {{ASTRO-DF}: A Class of Adaptive Sampling Trust-Region Algorithms for Derivative-Free Stochastic Optimization},
+  journal = {SIAM Journal on Optimization},
+  volume = {28},
+  number = {4},
+  pages = {3145--3176},
+  year = {2018},
+  doi = {10.1137/15M1042425},
+  annote = {Introduction and convergence limitations: adaptive sampling linked to trust-region model accuracy. Full author text arXiv:1610.06506, Section 5, Assumptions 1--6 and Theorem 5.6, and published metadata checked. Theorem numbering refers to that preprint. The present capped procedure does not inherit its convergence theorem.}
+}
+@misc{ha2024,
+  author = {Ha, Yunsoo and Shashaani, Sara and Menickelly, Matt},
+  title = {Two-Stage Estimation and Variance Modeling for Latency-Constrained Variational Quantum Algorithms},
+  year = {2024},
+  eprint = {2401.08912},
+  note = {arXiv:2401.08912},
+  url = {https://arxiv.org/abs/2401.08912},
+  archivePrefix = {arXiv},
+  primaryClass = {math.OC},
+  doi = {10.48550/arXiv.2401.08912},
+  annote = {Introduction and Discussion: two-stage estimation and spatial objective-variance modeling for latency-constrained QAOA. Full author text arXiv:2401.08912v1, Sections 3--5, and bibliographic record checked. The present fresh-endpoint acceptance comparator does not reproduce that variance model or algorithm.}
+}
+@article{hoeffding1963,
+  author = {Hoeffding, Wassily},
+  title = {Probability Inequalities for Sums of Bounded Random Variables},
+  journal = {Journal of the American Statistical Association},
+  volume = {58},
+  number = {301},
+  pages = {13--30},
+  year = {1963},
+  doi = {10.1080/01621459.1963.10500830},
+  annote = {Local-model and acceptance bounds: independent bounded-observation concentration. Original page 15, Theorem 1, Equation (2.3), visually inspected and metadata checked. The manuscript derives two-sided and simultaneous bounds using reflection, conditioning on prior history, fresh samples, and explicit union bounds.}
+}
+@article{spall1992,
+  author = {Spall, James C.},
+  title = {Multivariate Stochastic Approximation Using a Simultaneous Perturbation Gradient Approximation},
+  journal = {IEEE Transactions on Automatic Control},
+  volume = {37},
+  number = {3},
+  pages = {332--341},
+  year = {1992},
+  doi = {10.1109/9.119632},
+  annote = {Methods, SPSA comparator: two-point simultaneous-perturbation estimator with independent symmetric Bernoulli perturbations. Original page 333, Equation (2.2) and adjoining discussion, visually inspected and metadata checked. Exact gains, a third incumbent evaluation, and noisy incumbent selection are this implementation's choices.}
+}
+@article{scipy2020,
+  author = {Virtanen, Pauli and Gommers, Ralf and Oliphant, Travis E. and
+    Haberland, Matt and Reddy, Tyler and Cournapeau, David and
+    Burovski, Evgeni and Peterson, Pearu and Weckesser, Warren and
+    Bright, Jonathan and {van der Walt}, St{\'e}fan J. and
+    Brett, Matthew and Wilson, Joshua and Millman, K. Jarrod and
+    Mayorov, Nikolay and Nelson, Andrew R. J. and Jones, Eric and
+    Kern, Robert and Larson, Eric and Carey, C J and
+    Polat, {\.I}lhan and Feng, Yu and Moore, Eric W. and
+    {VanderPlas}, Jake and Laxalde, Denis and Perktold, Josef and
+    Cimrman, Robert and Henriksen, Ian and Quintero, E. A. and
+    Harris, Charles R. and Archibald, Anne M. and
+    Ribeiro, Ant{\^o}nio H. and Pedregosa, Fabian and
+    {van Mulbregt}, Paul and {SciPy 1.0 Contributors}},
+  title = {{SciPy} 1.0: Fundamental Algorithms for Scientific Computing in {Python}},
+  journal = {Nature Methods},
+  volume = {17},
+  pages = {261--272},
+  year = {2020},
+  doi = {10.1038/s41592-019-0686-2},
+  annote = {Methods and software attribution: numerical optimization and linear algebra infrastructure. Full author text arXiv:1907.10121, Package organization, Numerical optimization, and Table 1, checked; complete authors follow tagged SciPy v1.17.1 CITATION.bib. Tagged minimize and COBYLA sources verify finite-difference BFGS and the PRIMA backend. The 2020 paper alone does not specify that later implementation.}
+}
+
+@misc{nguyen2026,
+  author = {Nguyen, Kien X. and Safro, Ilya},
+  title = {Graph-Conditioned Meta-Optimizer for {QAOA} Parameter Generation on Multiple Problem Classes},
+  year = {2026},
+  eprint = {2604.25275},
+  note = {arXiv:2604.25275},
+  url = {https://arxiv.org/abs/2604.25275},
+  archivePrefix = {arXiv},
+  primaryClass = {quant-ph},
+  doi = {10.48550/arXiv.2604.25275},
+  annote = {Introduction: graph-conditioned parameter trajectories from an end-to-end trained recurrent optimizer. Full author text arXiv:2604.25275v1 and metadata checked. Related work only; its model and reported results are not reproduced or included in the experimental comparison.}
+}
+@misc{patel2026,
+  author = {Patel, Shubham and Mishra, Utkarsh},
+  title = {Improving the efficiency of {QAOA} using efficient parameter transfer initialization and targeted-single-layer regularized optimization with minimal performance degradation},
+  year = {2026},
+  eprint = {2601.15760},
+  note = {arXiv:2601.15760},
+  url = {https://arxiv.org/abs/2601.15760},
+  archivePrefix = {arXiv},
+  primaryClass = {quant-ph},
+  doi = {10.48550/arXiv.2601.15760},
+  annote = {Introduction: donor initialization and targeted single-layer regularized optimization. Full author text arXiv:2601.15760v1, Sections II.1--II.3, and metadata checked. This is a related parameter-setting strategy, not a measured baseline in the present finite-shot study.}
+}
+
+@inproceedings{maurer2009,
+  booktitle = {Proceedings of the 22nd Annual Conference on Learning Theory},
+  author = {Maurer, Andreas and Pontil, Massimiliano},
+  title = {Empirical {Bernstein} Bounds and Sample Variance Penalization},
+  year = {2009},
+  eprint = {0907.3740},
+  note = {arXiv:0907.3740},
+  url = {https://www.cs.mcgill.ca/~colt2009/papers/012.pdf},
+  archivePrefix = {arXiv},
+  primaryClass = {stat.ML},
+  doi = {10.48550/arXiv.0907.3740},
+  annote = {Methods, follow-up acceptance: Theorem 4 supplies the one-sided empirical Bernstein inequality with unbiased sample variance. Official COLT full paper and publication record checked. Applying the result to each shifted endpoint and its reflection with failure probability alpha/(4TL) gives the displayed radius after a finite union bound. The bound is attributed rather than presented as a new inequality.}
+}
+
+@article{gilbert1959,
+  author = {Gilbert, E. N.},
+  title = {Random Graphs},
+  journal = {The Annals of Mathematical Statistics},
+  volume = {30},
+  number = {4},
+  pages = {1141--1144},
+  year = {1959},
+  doi = {10.1214/aoms/1177706098},
+  annote = {Supports the independent-edge G(n,p) base model.
+    The original paper's introduction describes independent decisions
+    for all vertex pairs with common edge probability p.
+    The present implementation uses p=0.4 and additionally filters
+    connectivity and isomorphism duplicates. Primary paper introduction
+    and publisher-deposited bibliographic metadata checked.}
+}
+
+@article{steger1999,
+  author = {Steger, A. and Wormald, N. C.},
+  title = {Generating Random Regular Graphs Quickly},
+  journal = {Combinatorics, Probability and Computing},
+  volume = {8},
+  number = {4},
+  pages = {377--396},
+  year = {1999},
+  doi = {10.1017/S0963548399003867},
+  annote = {Attributes the random-regular generator referenced by
+    NetworkX random_regular_graph. Publisher abstract and metadata,
+    and NetworkX generator documentation checked. The source describes
+    approximate asymptotic uniformity; it does not justify exact
+    finite-sample uniformity after the study's additional filters.}
+}
+
+@article{barabasi1999,
+  author = {Barab{\'a}si, Albert-L{\'a}szl{\'o} and Albert, R{\'e}ka},
+  title = {Emergence of Scaling in Random Networks},
+  journal = {Science},
+  volume = {286},
+  number = {5439},
+  pages = {509--512},
+  year = {1999},
+  doi = {10.1126/science.286.5439.509},
+  annote = {Supports growth by preferential attachment.
+    Author-posted abstract and journal identifier checked on
+    arXiv cond-mat/9910332; NetworkX generator documentation checked.
+    The implementation adds two edges per new vertex and uses
+    NetworkX's default initial star on three vertices.}
+}
+
+@article{watts1998,
+  author = {Watts, Duncan J. and Strogatz, Steven H.},
+  title = {Collective Dynamics of 'Small-World' Networks},
+  journal = {Nature},
+  volume = {393},
+  pages = {440--442},
+  year = {1998},
+  doi = {10.1038/30918},
+  annote = {Supports the ring-lattice rewiring graph model.
+    Publisher abstract, Figure 1 caption, and metadata checked;
+    NetworkX documentation confirms k nearest neighbors and
+    per-edge rewiring probability p. The implementation uses
+    k=4 and p=0.35, followed by connectivity filtering.}
+}
+
+@incollection{powell1994,
+  author = {Powell, M. J. D.},
+  title = {A Direct Search Optimization Method That Models the
+    Objective and Constraint Functions by Linear Interpolation},
+  booktitle = {Advances in Optimization and Numerical Analysis},
+  editor = {Gomez, Susana and Hennart, Jean-Pierre},
+  series = {Mathematics and Its Applications},
+  volume = {275},
+  pages = {51--67},
+  publisher = {Springer},
+  address = {Dordrecht},
+  year = {1994},
+  doi = {10.1007/978-94-015-8330-5_4},
+  annote = {Attributes the COBYLA algorithm.
+    Publisher abstract and chapter metadata checked. The abstract
+    describes simplex interpolation, linear objective and constraint
+    models, and a trust-region restriction. The present numerical
+    results use the later PRIMA implementation in SciPy, not
+    Powell's original Fortran implementation.}
+}
+
+@misc{zhang2023prima,
+  author = {Zhang, Zaikun},
+  title = {{PRIMA}: Reference Implementation for {Powell}'s Methods
+    with Modernization and Amelioration},
+  year = {2023},
+  doi = {10.5281/zenodo.8052654},
+  url = {https://www.libprima.net},
+  annote = {Attributes the COBYLA implementation actually used.
+    PRIMA's official citation instructions and SciPy v1.17.1
+    scipy/optimize/_cobyla_py.py checked. The latter imports
+    scipy._lib.pyprima and identifies the pure-Python PRIMA
+    replacement introduced in SciPy 1.16.0.}
+}
+
+@book{nocedal2006,
+  author = {Nocedal, Jorge and Wright, Stephen J.},
+  title = {Numerical Optimization},
+  edition = {2},
+  publisher = {Springer},
+  address = {New York},
+  series = {Springer Series in Operations Research and Financial Engineering},
+  year = {2006},
+  doi = {10.1007/978-0-387-40065-5},
+  annote = {Supports the BFGS quasi-Newton method used for
+    best-found exact-expectation references. Publisher edition,
+    authors, metadata, and quasi-Newton chapter listing checked.
+    SciPy v1.17.1 minimize documentation explicitly points to
+    this book p.136 for BFGS. No global-optimality guarantee is claimed.}
+}
+
+@book{efron1993,
+  author = {Efron, Bradley and Tibshirani, Robert J.},
+  title = {An Introduction to the Bootstrap},
+  publisher = {Chapman \& Hall},
+  address = {New York},
+  series = {Monographs on Statistics and Applied Probability},
+  volume = {57},
+  year = {1993},
+  isbn = {0-412-04231-2},
+  annote = {Supports percentile bootstrap confidence intervals.
+    The book's introduction p.7 states that the percentile method
+    uses percentiles of the bootstrap distribution as confidence
+    limits; the contents locate Section 13.3 at p.170.
+    Primary introduction, contents, original-year listing,
+    catalog entry, and June 1993 preface checked; the complete
+    Chapter 13 was not accessed. The present custom NumPy routine
+    resamples graph means, with fixed-bank stratification for
+    the follow-up analysis.}
+}
+
+@article{harris2020,
+  author = {Harris, Charles R. and Millman, K. Jarrod and
+    van der Walt, St{\'e}fan J. and Gommers, Ralf and
+    Virtanen, Pauli and Cournapeau, David and
+    Wieser, Eric and Taylor, Julian and Berg, Sebastian and
+    Smith, Nathaniel J. and Kern, Robert and Picus, Matti and
+    Hoyer, Stephan and van Kerkwijk, Marten H. and
+    Brett, Matthew and Haldane, Allan and
+    Fern{\'a}ndez del R{\'i}o, Jaime and Wiebe, Mark and
+    Peterson, Pearu and G{\'e}rard-Marchant, Pierre and
+    Sheppard, Kevin and Reddy, Tyler and Weckesser, Warren and
+    Abbasi, Hameer and Gohlke, Christoph and Oliphant, Travis E.},
+  title = {Array Programming with {NumPy}},
+  journal = {Nature},
+  volume = {585},
+  pages = {357--362},
+  year = {2020},
+  doi = {10.1038/s41586-020-2649-2},
+  annote = {Attributes NumPy array computation and sampling.
+    Complete author order and bibliographic fields checked against
+    NumPy v2.4.3 CITATION.bib. This software citation does not
+    attribute the study-specific bootstrap or QAOA algorithms to NumPy.}
+}
+
+@article{hunter2007,
+  author = {Hunter, J. D.},
+  title = {Matplotlib: A {2D} Graphics Environment},
+  journal = {Computing in Science \& Engineering},
+  volume = {9},
+  number = {3},
+  pages = {90--95},
+  year = {2007},
+  doi = {10.1109/MCSE.2007.55},
+  annote = {Attributes Matplotlib figure rendering.
+    Bibliographic fields checked against the official Matplotlib
+    citing page. The implementation uses Matplotlib 3.10.8.}
+}
+
+@inproceedings{hagberg2008,
+  author = {Hagberg, Aric A. and Schult, Daniel A. and Swart, Pieter J.},
+  title = {Exploring Network Structure, Dynamics, and Function
+    Using {NetworkX}},
+  booktitle = {Proceedings of the 7th Python in Science Conference},
+  pages = {11--15},
+  address = {Pasadena, CA},
+  year = {2008},
+  url = {https://aric.hagberg.org/papers/hagberg-2008-exploring.pdf},
+  annote = {Attributes NetworkX graph construction and comparison.
+    Author order, title, proceedings, year, and page range checked
+    against the official NetworkX citation page and the first
+    author's bibliography. Original graph-model sources are
+    cited separately.}
+}

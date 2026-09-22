@@ -1,0 +1,15 @@
+.paper-*/
+.arxiv-*/
+.pdf-preview/
+build/
+arxiv/
+*.aux
+*.blg
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*-blx.bib
+*.run.xml
