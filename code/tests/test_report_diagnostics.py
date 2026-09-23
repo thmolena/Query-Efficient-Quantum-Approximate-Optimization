@@ -9,7 +9,8 @@ from gcqaoa.report import (acceptance_margin_diagnostics, available_objective,
                            refinement_curves, paired_revision_interval, paired_curve_bands,
                            graph_diagnostic_interval, replay_mean_interval, fixed_power_cohorts,
                            paired_cost_saving_interval, conditional_mc_reference,
-                           fresh_prediction_residuals, historical_physical_sensitivity)
+                           fresh_prediction_residuals, historical_physical_sensitivity,
+                           fixed_prediction_curve)
 
 
 class MarginDiagnosticTests(unittest.TestCase):
@@ -89,6 +90,16 @@ class RefinementTrajectoryTests(unittest.TestCase):
 
 
 class MechanismReportTests(unittest.TestCase):
+    def test_old_graph_prediction_curve_is_a_fixed_lookup_not_a_zero_width_ci(self):
+        rows=[{'graph':graph,'predictor':'radius_depth','shape_kind':'shape','depth':2,
+               'radius':radius,'predicted_probability':probability}
+              for graph in ['a','b'] for radius,probability in [(.05,.75),(.1,.25)]]
+        data={'calibration_records':rows}
+        np.testing.assert_array_equal(fixed_prediction_curve(data,'radius_depth',2,[.05,.1]),[.75,.25])
+        rows[-1]['predicted_probability']=.4
+        with self.assertRaisesRegex(ValueError,'constant across fresh targets'):
+            fixed_prediction_curve(data,'radius_depth',2,[.05,.1])
+
     def test_physical_map_recovers_period_crossing_only_with_unique_bound(self):
         from gcqaoa.search import wrap
         center=np.array([3.12,.78])

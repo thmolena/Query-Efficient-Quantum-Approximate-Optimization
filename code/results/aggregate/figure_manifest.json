@@ -9,7 +9,7 @@
   "analysis_source_sha256": {
     "src/gcqaoa/artifacts.py": "3604b250c0359c2e60852173d8bccfd83776322e645df6cda0654e9b924538c3",
     "src/gcqaoa/provenance.py": "23121b8539d1a72391ade14eef58e3c27302c4486ad83e130b99c4bba1507204",
-    "src/gcqaoa/report.py": "019adab299e156624695f353a4ef8205cc48bfb342e93706930a81954eec3538"
+    "src/gcqaoa/report.py": "fb8e653ee5198035efd1b21c5d2e88ac47d8f05ad541082425fd4e1d45d46e9d"
   },
   "bootstrap": {
     "interval": "95 percent percentile; unadjusted descriptive comparisons",
@@ -35,7 +35,7 @@
       ],
       "path": "submission/figures/transfer.pdf",
       "quantity": "initial signed reference deficit by prior",
-      "sha256": "e592c3d003ff9bfaf46dbc496ffcc14d5e62322e8251cccd9a48f48f2ed1d914"
+      "sha256": "9457abf643ba29218a2d7bd8fe75754dc25641b5b1e6c40fa56d611a81a0e7bd"
     },
     {
       "budgets": [
@@ -49,7 +49,7 @@
       ],
       "path": "submission/figures/accounting.pdf",
       "quantity": "stacked model, endpoint, baseline objective and final evaluation shots, including sampling-by-stopping controls",
-      "sha256": "f34f5cd699455ff3113cc46e4bb17efde7362f1384723fdc28f6ff8715e12a89"
+      "sha256": "9a21b32e8f60141dcb0656045939bd12a057530d2adae45a35bb7e3a902cf544"
     },
     {
       "depths": [
@@ -63,18 +63,18 @@
     {
       "path": "submission/figures/transport.pdf",
       "quantity": "solver feasibility, donor changes, and quality against descriptor/original references on matched valid target sets",
-      "sha256": "e96e0419533ef537a1f1273f9cf419f89fadf6d7950b6a44b0aa6d1ba18630d9"
+      "sha256": "129cb3b906392f8512e8cff808b2db02f44887bedf1f4a56393e03d9cb822a4f"
     },
     {
       "path": "submission/figures/refinement.pdf",
       "quantity": "initial and final deficit, paired own-anchor gain, actual shots and changed output counts",
-      "sha256": "f94e3bcd353a88046d133a74928c715f70d909abf55bcb1f1392f858dfc4008f",
+      "sha256": "bf2239ea4b16f180d48d6459e22ac8deb541576f3375c0b31ba0bc28adde6ad4",
       "study": "post-hoc matched refinement revision"
     },
     {
       "path": "submission/figures/efficiency.pdf",
       "quantity": "actual incumbent gain, first-ever target attainment and paired shaped-policy curves with graph-block bands",
-      "sha256": "f68beedaf2df69b160283ffd4120b6285e58078d11641e6e99dcb41f697dbb8c",
+      "sha256": "019c7a145e8d324e2686adbc7430bff3476de6e0960a6faac6bf4ad27fc11089",
       "study": "post-hoc matched refinement revision"
     },
     {
@@ -103,8 +103,8 @@
     },
     {
       "path": "submission/figures/decision.pdf",
-      "quantity": "fresh scheduled positive-margin probability, accepted true gain including failures, and model-plus-endpoint cost; oracle-informed forecasts versus independent observations",
-      "sha256": "622d292a22baf8d804cbbb2c2624a650ec7d305afb1ad968671798ab8d452fe9",
+      "quantity": "fresh scheduled positive-margin probability with frozen old-graph predictor controls, accepted true gain including failures, and model-plus-endpoint cost; oracle-informed forecasts versus independent observations",
+      "sha256": "dc3f01aedc09552f50e33d2a8e1b0350b34f46606080abbb23aa52db4f99310f",
       "study": "post-hoc matched fresh-schedule decision experiment"
     }
   ],
@@ -207,12 +207,12 @@
       ],
       "path": "submission/tables/results.tex",
       "quantity": "generated study result paragraphs and complete depth-two ablation table",
-      "sha256": "9694d37ebbfa23f70894fdb2125ac6f2298f6c839aa20216522e801dac119a91"
+      "sha256": "a662659d64ae6f788271c80eb4269eccbdf33bf0ff302038cac9bb3edf0f36e7"
     },
     {
       "path": "submission/tables/refinement.tex",
       "quantity": "generated post-hoc refinement findings and complete factorial table",
-      "sha256": "25922c1b807b25c89ec409720466d1d3cacd7a775dce897e6d7dc4f34032895a"
+      "sha256": "9bfa0dcf13872d324ac87f7f6aff356655b7287c94df765b16becef305fb1e48"
     }
   ],
   "website": {

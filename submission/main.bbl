@@ -1,4 +1,4 @@
-\begin{thebibliography}{40}
+\begin{thebibliography}{33}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -40,23 +40,6 @@ Andrew~R. Conn, Katya Scheinberg, and Lu{\'i}s~N. Vicente.
 \newblock Geometry of interpolation sets in derivative free optimization.
 \newblock \emph{Mathematical Programming}, 111:\penalty0 141--172, 2008.
 \newblock \doi{10.1007/s10107-006-0073-5}.
-
-\bibitem[Cuturi(2013)]{cuturi2013}
-Marco Cuturi.
-\newblock Sinkhorn distances: Lightspeed computation of optimal transport.
-\newblock In \emph{Advances in Neural Information Processing Systems},
-  volume~26, 2013.
-\newblock URL
-  \url{https://papers.neurips.cc/paper_files/paper/2013/hash/af21d0c97db2e27e13572cbf59eb343d-Abstract.html}.
-
-\bibitem[Demetci et~al.(2022)Demetci, Santorella, Sandstede, Noble, and
-  Singh]{demetci2022}
-Pinar Demetci, Rebecca Santorella, Bj{\"o}rn Sandstede, William~Stafford Noble,
-  and Ritambhara Singh.
-\newblock {SCOT}: Single-cell multi-omics alignment with optimal transport.
-\newblock \emph{Journal of Computational Biology}, 29\penalty0 (1):\penalty0
-  3--18, 2022.
-\newblock \doi{10.1089/cmb.2021.0446}.
 
 \bibitem[Dzahini et~al.(2025)Dzahini, Larson, Menickelly, and
   Wild]{dzahini2025}
@@ -128,22 +111,6 @@ Aric~A. Hagberg, Daniel~A. Schult, and Pieter~J. Swart.
   11--15, Pasadena, CA, 2008.
 \newblock URL \url{https://aric.hagberg.org/papers/hagberg-2008-exploring.pdf}.
 
-\bibitem[Harris et~al.(2020)Harris, Millman, van~der Walt, Gommers, Virtanen,
-  Cournapeau, Wieser, Taylor, Berg, Smith, Kern, Picus, Hoyer, van Kerkwijk,
-  Brett, Haldane, Fern{\'a}ndez~del R{\'i}o, Wiebe, Peterson,
-  G{\'e}rard-Marchant, Sheppard, Reddy, Weckesser, Abbasi, Gohlke, and
-  Oliphant]{harris2020}
-Charles~R. Harris, K.~Jarrod Millman, St{\'e}fan~J. van~der Walt, Ralf Gommers,
-  Pauli Virtanen, David Cournapeau, Eric Wieser, Julian Taylor, Sebastian Berg,
-  Nathaniel~J. Smith, Robert Kern, Matti Picus, Stephan Hoyer, Marten~H. van
-  Kerkwijk, Matthew Brett, Allan Haldane, Jaime Fern{\'a}ndez~del R{\'i}o, Mark
-  Wiebe, Pearu Peterson, Pierre G{\'e}rard-Marchant, Kevin Sheppard, Tyler
-  Reddy, Warren Weckesser, Hameer Abbasi, Christoph Gohlke, and Travis~E.
-  Oliphant.
-\newblock Array programming with {NumPy}.
-\newblock \emph{Nature}, 585:\penalty0 357--362, 2020.
-\newblock \doi{10.1038/s41586-020-2649-2}.
-
 \bibitem[Hoeffding(1963)]{hoeffding1963}
 Wassily Hoeffding.
 \newblock Probability inequalities for sums of bounded random variables.
@@ -159,13 +126,6 @@ Steven~R. Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon.
 \newblock \doi{10.1214/20-AOS1991}.
 \newblock URL \url{https://arxiv.org/abs/1810.08240}.
 
-\bibitem[Hunter(2007)]{hunter2007}
-J.~D. Hunter.
-\newblock Matplotlib: A {2D} graphics environment.
-\newblock \emph{Computing in Science \& Engineering}, 9\penalty0 (3):\penalty0
-  90--95, 2007.
-\newblock \doi{10.1109/MCSE.2007.55}.
-
 \bibitem[K{\"u}bler et~al.(2020)K{\"u}bler, Arrasmith, Cincio, and
   Coles]{kubler2020}
 Jonas~M. K{\"u}bler, Andrew Arrasmith, Lukasz Cincio, and Patrick~J. Coles.
@@ -173,12 +133,6 @@ Jonas~M. K{\"u}bler, Andrew Arrasmith, Lukasz Cincio, and Patrick~J. Coles.
 \newblock \emph{Quantum}, 4:\penalty0 263, 2020.
 \newblock \doi{10.22331/q-2020-05-11-263}.
 \newblock URL \url{https://doi.org/10.22331/q-2020-05-11-263}.
-
-\bibitem[Lacoste-Julien(2016)]{lacostejulien2016}
-Simon Lacoste-Julien.
-\newblock Convergence rate of {Frank--Wolfe} for non-convex objectives, 2016.
-\newblock URL \url{https://arxiv.org/abs/1607.00345}.
-\newblock arXiv:1607.00345.
 
 \bibitem[Maurer and Pontil(2009)]{maurer2009}
 Andreas Maurer and Massimiliano Pontil.
@@ -188,14 +142,6 @@ Andreas Maurer and Massimiliano Pontil.
 \newblock \doi{10.48550/arXiv.0907.3740}.
 \newblock URL \url{https://www.cs.mcgill.ca/~colt2009/papers/012.pdf}.
 \newblock arXiv:0907.3740.
-
-\bibitem[M{\'e}moli(2011)]{memoli2011}
-Facundo M{\'e}moli.
-\newblock {Gromov--Wasserstein} distances and the metric approach to object
-  matching.
-\newblock \emph{Foundations of Computational Mathematics}, 11\penalty0
-  (4):\penalty0 417--487, 2011.
-\newblock \doi{10.1007/s10208-011-9093-5}.
 
 \bibitem[Nguyen and Safro(2026)]{nguyen2026}
 Kien~X. Nguyen and Ilya Safro.
@@ -218,14 +164,6 @@ Shubham Patel and Utkarsh Mishra.
   minimal performance degradation, 2026.
 \newblock URL \url{https://arxiv.org/abs/2601.15760}.
 \newblock arXiv:2601.15760.
-
-\bibitem[Peyr{\'e} et~al.(2016)Peyr{\'e}, Cuturi, and Solomon]{peyre2016}
-Gabriel Peyr{\'e}, Marco Cuturi, and Justin Solomon.
-\newblock {Gromov--Wasserstein} averaging of kernel and distance matrices.
-\newblock In \emph{Proceedings of the 33rd International Conference on Machine
-  Learning}, volume~48 of \emph{Proceedings of Machine Learning Research},
-  pages 2664--2672, 2016.
-\newblock URL \url{https://proceedings.mlr.press/v48/peyre16.html}.
 
 \bibitem[Powell(1994)]{powell1994}
 M.~J.~D. Powell.

@@ -232,33 +232,35 @@ def followup_results(data, canonical):
     overlap=followup_overlap(data,canonical)
     bank_overlap=followup_overlap(data,canonical,'bank')
     lines=[r'\paragraph{Separately seeded panels test tighter targets and deeper circuits.}',
-           f'The separate follow-up contains {len(test_runs)} test runs on {len(tests)} graphs from two separately seeded bank--validation--test panels, at depths 2 and 3. '
+           f'The follow-up study comprises {len(test_runs)} test runs on {len(tests)} graphs at depths 2 and 3, drawn from two separately seeded bank--validation--test panels. '
            f'Its {len(validation_runs)} tuning runs consume {data["tuning"]["optimization_shots"]:,} optimization shots and {data["tuning"]["validation_shots"]:,} independent validation shots. '
            'The selected model-shot count and initial radius are frozen before any test run and shared by the isotropic and shaped variance-sensitive policies at each depth. '
            'All methods use a 65,536-shot online cap; each output receives 8,192 additional validation shots. '
-           'Table~\\ref{tab:followup} keeps initialization-only outcomes and actual online costs visible.']
+           'Table~\\ref{tab:followup} reports initialization-only outcomes alongside actual online costs.']
     lines.append(f'Exact isomorphism checks identify {len(overlap)} follow-up test graph also present in the canonical test set, leaving {len(tests)-len(overlap)} structurally distinct test graphs. '
                  f'There is also {len(bank_overlap)} bank-to-bank overlap across the two studies. '
-                 'The follow-up bank, validation and test splits remain pairwise nonisomorphic within the new study. ')
+                 'Within the follow-up study, the bank, validation and test splits are pairwise nonisomorphic. ')
     for depth in data['config']['depths']:
         setting=data['tuning']['selected_settings'][str(depth)]
         lines.append(f'At depth {depth}, validation selects {setting["model_shots"]} model shots per point and initial radius {setting["radius"]:.2f}. ')
         if len(set(data['tuning']['scores'][str(depth)]))==1:
-            lines.append('All four validation scores are tied exactly; the first candidate in the declared order wins the tie. '
-                         'This outcome is not evidence of tuning superiority. ')
+            lines.append('All four validation scores are identical, so the declared tie-breaking rule selects the first candidate. '
+                         'The validation scores therefore provide no evidence that the selected settings are superior. ')
         for method in ['hoeffding_iso','bernstein_iso','bernstein_shape']:
             group=followup_group(data,method,depth)
             accepts=sum(decision['decision']=='accepted' for r in group for decision in r['decisions'])
             changed=sum(not np.allclose(r['theta'],r['initial'],atol=1e-12,rtol=0) for r in group)
             total_shots=sum(r['shots'] for r in group)
             step_word='step' if accepts==1 else 'steps'
-            lines.append(f'{FOLLOWUP_LABELS[method]} accepts {accepts} {step_word} and changes {changed}/{len(group)} outputs, using {total_shots:,} online shots in total. ')
+            prose_label={'hoeffding_iso':'isotropic Hoeffding','bernstein_iso':'isotropic Bernstein',
+                         'bernstein_shape':'shaped Bernstein'}[method]
+            lines.append(f'The {prose_label} policy accepts {accepts} {step_word} and changes {changed}/{len(group)} outputs, using {total_shots:,} online shots in total. ')
         iso=graph_means(followup_group(data,'bernstein_iso',depth),'objective')
         shaped=graph_means(followup_group(data,'bernstein_shape',depth),'objective')
         panels={r['graph']:r['panel'] for r in followup_group(data,'bernstein_iso',depth)}
         lines.append(f'The paired expected-cut change from the isotropic to shaped variance-sensitive rule is {fmt_ci(bank_conditional_ci({g:100*(iso[g]-shaped[g]) for g in iso},panels))} percentage points at depth {depth}; positive values favor shaping. ')
     lines += [r'\begin{table}[t]',
-              r'\caption{Separate follow-up test comparison. Each deficit is a mean signed reference gap in percentage points with a 95\% graph-bootstrap interval, stratified within the two fixed reference banks (10,000 resamples; seed 5713). Each depth averages 16 graph means, with two shot repetitions per graph. Costs are mean online shots; add 8,192 final-validation shots per output and the separately reported tuning and bank costs.}\label{tab:followup}',
+              r'\caption{Follow-up comparison on held-out test graphs. Each deficit is a mean signed reference gap in percentage points with a 95\% graph-bootstrap interval, stratified within the two fixed reference banks (10,000 resamples; seed 5713). Each depth averages 16 graph means, with two shot repetitions per graph. Costs are mean online shots; each output also incurs 8,192 final-validation shots, in addition to the separately reported tuning and bank costs.}\label{tab:followup}',
               r'\centering\small\setlength{\tabcolsep}{4pt}',r'\begin{tabular}{lrrrr}',r'\toprule',
               r'Method & \shortstack{$p=2$ deficit\\{[95\% interval]}} & \shortstack{$p=3$ deficit\\{[95\% interval]}} & \shortstack{$p=2$\\shots} & \shortstack{$p=3$\\shots} \\',r'\midrule']
     for method in data['config']['methods']:
@@ -271,20 +273,20 @@ def followup_results(data, canonical):
         lines.append(' & '.join(fields)+r' \\')
     lines += [r'\bottomrule',r'\end{tabular}',r'\end{table}']
     lines.append('These graph-level intervals do not estimate uncertainty over a population of reference banks. '
-                 'Separate panel means follow; each panel draws its bank, validation split, test split and random streams together, so a difference between panels is not attributable to the reference bank alone: ')
+                 'Each panel has its own bank, validation split, test split and random streams, so differences between panel means cannot be attributed to the reference bank alone. The panel means are as follows: ')
     for panel in sorted({r['panel'] for r in test_runs}):
         for depth in data['config']['depths']:
             groups={method:[r for r in followup_group(data,method,depth) if r['panel']==panel]
                     for method in ['initialization_only','bernstein_iso','bernstein_shape','spsa']}
             means=[np.mean([100*r['signed_reference_gap'] for r in group]) for group in groups.values()]
-            lines.append(f'panel {panel+1}, depth {depth}, gives descriptor-anchor, isotropic Bernstein, shaped Bernstein and SPSA deficits of '+
+            lines.append(f'Panel {panel+1} at depth {depth} has descriptor-anchor, isotropic Bernstein, shaped Bernstein and SPSA deficits of '+
                          ', '.join(f'{mean:.2f}' for mean in means)+' percentage points, respectively. ')
     for depth in data['config']['depths']:
         group=followup_group(data,'initialization_only',depth)
         counts=[sum(r['hitting_shots'][str(gap)] is not None for r in group) for gap in data['config']['target_gaps']]
         lines.append(f'At depth {depth}, the initialization-only anchor meets gaps 0.002, 0.005, 0.01 and 0.02 on '+
                      ', '.join(f'{count}/{len(group)}' for count in counts)+
-                     ' test runs, respectively. Repeated initialization-only records correspond to the same anchor within a graph. ')
+                     ' test runs, respectively. Within each graph, the repeated initialization-only records use the same anchor. ')
     if overlap:
         lines.append('An exclusion sensitivity analysis removes the overlapping graph without refitting or rerunning any method. ')
         for depth in data['config']['depths']:
@@ -307,22 +309,22 @@ def followup_results(data, canonical):
     test_validation=sum(r['validation']['shots'] for r in test_runs)
     lines.append(f'The held-out test runs consume {test_shots:,} optimization shots and {test_validation:,} additional validation shots. '
                  f'All follow-up best-found references together use {calls:,} exact objective calls, including {bank_calls:,} bank-reference calls; '
-                 'these are classical simulation costs, not uncharged hardware shots. '
-                 'The added panels enlarge the tested regime but remain ideal-circuit, small-graph experiments with a fixed, disclosed tuning grid.')
+                 'these calls are classical simulation costs with no assigned hardware-shot equivalent. '
+                 'The panels extend the tested regime, but the experiments remain limited to small graphs, ideal circuits and the stated fixed tuning grid.')
     return lines
 
 
 def transport_results(data, study):
     rows=data['summary']
     lines=[r'\paragraph{Solver sensitivity limits structural-selection conclusions.}',
-           'The separate transport audit repeats every canonical target--reference comparison with longer iterations, three regularizations, multiple starts, and independent conditional-gradient optimization. '
+           'The transport sensitivity analysis repeats every canonical target--reference comparison with a larger iteration allowance, three regularizations, multiple starts, and independent conditional-gradient optimization. '
            'All saved couplings are checked by a direct four-index distortion calculation. '
-           'Conditional-gradient stopping is checked by a transportation linear-program gap; this is a first-order stationarity diagnostic at the stated numerical tolerance, not a certificate of exact stationarity or global optimality. '
+           'A transportation linear-program gap checks the conditional-gradient stopping criterion. It diagnoses first-order stationarity at the stated numerical tolerance, without certifying exact stationarity or global optimality. '
            'Table~\\ref{tab:transport} reports solver failures alongside changed donors and resulting anchor quality. '
            'A target with any infeasible candidate is excluded from that selector\'s quality summary and explicitly counted; no finite score is substituted for an invalid solve.',
-           'Quality means over different valid-target subsets are not paired policy comparisons and must not be used to rank those selectors directly.',
+           'Because the valid-target subsets differ, their quality means do not provide a paired comparison or a direct ranking of selectors.',
            r'\begin{table}[t]',
-           r"\caption{Transport sensitivity on 384 canonical graph pairs. ``Unconv.'' and ``Infeas.'' count selected pairwise solver candidates; changed donors and valid targets count graphs out of 24. Depth-specific deficits are mean anchor-only signed reference gaps in percentage points over valid targets. The first two rows are reference points rather than audit solvers: the study's own capped entropic solver and the transport-free descriptor selector, both over all 24 targets. Feasibility, convergence, and useful donor selection are distinct properties.}\label{tab:transport}",
+           r"\caption{Transport sensitivity on 384 canonical graph pairs. ``Unconv.'' and ``Infeas.'' count selected pairwise solver candidates; changed donors and valid targets count graphs out of 24. Depth-specific deficits are mean anchor-only signed reference gaps in percentage points over valid targets. The first two rows give the original comparison: the study's own capped entropic solver and the transport-free descriptor selector, both over all 24 targets. Feasibility, convergence, and useful donor selection are distinct properties.}\label{tab:transport}",
            r'\centering\scriptsize\setlength{\tabcolsep}{3pt}',r'\begin{tabular}{lrrrrrr}',r'\toprule',
            r'Solver & Unconv. & Infeas. & \shortstack{Changed\\donors} & \shortstack{Valid\\targets} & \shortstack{$p=1$\\deficit} & \shortstack{$p=2$\\deficit} \\',r'\midrule']
     budget=max(study['config']['budgets'])
@@ -352,10 +354,10 @@ def transport_results(data, study):
 REVISION_LABELS={
     'initialization_only':'Initialization only',
     'hoeffding_iso':'Original Hoeffding',
-    'revised_hoeffding_iso':'Revised Hoeffding, iso.',
-    'revised_hoeffding_shape':'Revised Hoeffding, shaped',
-    'revised_bernstein_iso':'Revised Bernstein, iso.',
-    'revised_bernstein_shape':'Revised Bernstein, shaped',
+    'revised_hoeffding_iso':'RA Hoeffding, iso.',
+    'revised_hoeffding_shape':'RA Hoeffding, shaped',
+    'revised_bernstein_iso':'RA Bernstein, iso.',
+    'revised_bernstein_shape':'RA Bernstein, shaped',
     'bernstein_iso':'Original Bernstein, iso.', 'bernstein_shape':'Original Bernstein, shaped',
     'spsa':'SPSA', 'cobyla':'COBYLA'}
 REVISION_COLORS={
@@ -612,7 +614,7 @@ def render_transport(data,target,plt,canonical):
                 comparisons.append([100*(canonical['priors'][f'{g}:p{depth}'][kind]['initial_objective']-
                                          canonical['references'][f'{g}:p{depth}']['objective']) for g in graphs])
             for offset,values,color,label in zip([-.25,0,.25],comparisons,
-                                                ['#0072B2','#009E73','#D55E00'],['Audit solver','Descriptor','Original GW']):
+                                                ['#0072B2','#009E73','#D55E00'],['Alternative solver','Descriptor','Original GW']):
                 mean,lo,hi=ci(values)
                 uncertainty={'yerr':[[mean-lo],[hi-mean]],'capsize':1.3} if len(values)>1 else {}
                 ax.bar(index+offset,mean,width=.24,color=color,**uncertainty,
@@ -719,7 +721,7 @@ def render_revision(data,target,plt):
         axes[2,j].step(budgets/1000,mean,where='post',color='#009E73')
         axes[2,j].fill_between(budgets/1000,lo,hi,step='post',color='#009E73',alpha=.18)
         axes[2,j].axhline(0,color='.4',lw=.7)
-        axes[2,j].set_title(f'({chr(101+j)}) p = {depth}: revised minus original shaped')
+        axes[2,j].set_title(f'({chr(101+j)}) p = {depth}: RA minus original shaped')
         axes[2,j].set_xlabel('Available optimization budget (thousands of shots)')
         axes[2,j].grid(alpha=.15)
     axes[2,0].set_ylabel('Paired gain difference (pp)')
@@ -811,6 +813,24 @@ def _decision_for_report():
     return load_decision()
 
 
+def fixed_prediction_curve(data,predictor,depth,radii):
+    """Read a frozen old-graph lookup, without treating identical predictions as a CI."""
+    values=[]
+    graph_set=None
+    for radius in radii:
+        rows=[r for r in data['calibration_records'] if r['predictor']==predictor and
+              r['shape_kind']=='shape' and r['depth']==depth and r['radius']==radius]
+        graphs={r['graph'] for r in rows}
+        if not rows or len(graphs)!=len(rows) or (graph_set is not None and graphs!=graph_set):
+            raise ValueError('Frozen prediction curves need the same unique target graphs at every radius')
+        probabilities=np.array([r['predicted_probability'] for r in rows])
+        if not np.allclose(probabilities,probabilities[0],atol=1e-14,rtol=0):
+            raise ValueError('Old-graph lookup must be constant across fresh targets within a condition')
+        values.append(float(probabilities[0]))
+        graph_set=graphs
+    return np.asarray(values)
+
+
 def render_decision(data,mechanism,target,plt):
     """Joint proposal/endpoint utility on the same fresh scheduled conditions."""
     radii=sorted({r['radius'] for r in data['joint_records']})
@@ -828,10 +848,14 @@ def render_decision(data,mechanism,target,plt):
             intervals=[graph_diagnostic_interval([r for r in records if r['radius']==radius],
                                                  lambda r:r[field]) for radius in radii]
             _line_interval(ax,radii,intervals,color,label,style)
+        for predictor,color,style,label,marker in [
+                ('radius_depth','#444444',':','Old-graph radius + depth','s'),
+                ('radius_only','#888888','-.','Old-graph radius only','^')]:
+            values=fixed_prediction_curve(data,predictor,depth,radii)
+            ax.plot(radii,values,color=color,ls=style,marker=marker,ms=3,lw=1.1,label=label)
         ax.set_ylim(0,1)
         ax.set_ylabel('Positive-margin probability')
         ax.set_title(f'({"a" if depth==2 else "b"}) Proposal margin, p = {depth}')
-        ax.legend(frameon=False,fontsize=6.5,loc='lower left')
         for rule,color in [('hoeffding','#0072B2'),('bernstein','#D55E00')]:
             for population,style,label in [('gaussian','--','forecast'),('sampled','-','observed')]:
                 records=[r for r in data['joint_records'] if r['depth']==depth and
@@ -842,11 +866,11 @@ def render_decision(data,mechanism,target,plt):
                     _line_interval(axes[row,column],radii,intervals,color,
                                    f'{rule.capitalize()}, {label}',style,scale=scale)
         axes[1,column].axhline(0,color='.4',lw=.7)
-        axes[1,column].set_ylabel('Accepted true gain per attempt (pp)')
+        axes[1,column].set_ylabel('Accepted true gain\nper attempt (pp)')
         axes[1,column].set_title(f'({"c" if depth==2 else "d"}) Accepted utility, p = {depth}')
         axes[2,column].set_ylim(bottom=0)
-        axes[2,column].set_ylabel('Model + endpoint shots (thousands)')
-        axes[2,column].set_title(f'({"e" if depth==2 else "f"}) Total measured cost, p = {depth}')
+        axes[2,column].set_ylabel('Model + endpoint shots\n(thousands)')
+        axes[2,column].set_title(f'({"e" if depth==2 else "f"}) Total attempt cost, p = {depth}')
     for ax in axes.flat:
         ax.set_xscale('log',base=2)
         ax.set_xticks(radii,[str(v) for v in radii],fontsize=7)
@@ -854,8 +878,11 @@ def render_decision(data,mechanism,target,plt):
         ax.grid(alpha=.15)
     handles,labels=axes[1,0].get_legend_handles_labels()
     fig.legend(handles,labels,loc='lower center',ncol=2,frameon=False,fontsize=7)
+    handles,labels=axes[0,0].get_legend_handles_labels()
+    fig.legend(handles,labels,loc='upper center',bbox_to_anchor=(.5,.96),ncol=2,
+               frameon=False,fontsize=6.5)
     fig.suptitle(f'Fresh shaped conditions; four looks, endpoint-pair cap {pair_cap:,} shots',fontsize=9)
-    fig.tight_layout(rect=(0,.065,1,.96))
+    fig.tight_layout(rect=(0,.065,1,.92))
     _save_figure(fig,target,'decision.pdf',plt)
 
 
@@ -1029,6 +1056,30 @@ def render_attribution(data,target,plt):
     _save_figure(fig,target,'attribution.pdf',plt)
 
 
+def render_transfer(data,target,plt):
+    """Render deterministic donor comparisons without regenerating other figures."""
+    fig,axes=plt.subplots(1,2,figsize=(7.1,3.3),sharey=True)
+    kinds=['uniform','descriptor','gw','local','corrected_local','shuffled']
+    colors=['#526777','#0072B2','#D55E00','#CC79A7','#009E73','#999999']
+    for ax,p in zip(axes,[1,2]):
+        for j,(kind,color) in enumerate(zip(kinds,colors)):
+            values=(corrected_local_deficits(data,p) if kind=='corrected_local' else
+                    [100*(priors[kind]['initial_objective']-data['references'][key]['objective'])
+                     for key,priors in data['priors'].items() if key.endswith(f':p{p}')])
+            mean,lo,hi=ci(values)
+            ax.barh(j,mean,xerr=[[mean-lo],[hi-mean]],height=.65,color=color,
+                    capsize=2,error_kw={'elinewidth':.8})
+        ax.set_yticks(range(6),['Fixed donor','Descriptor','GW','Historical Local TV','Corrected Local TV','Shuffled GW'],fontsize=7)
+        ax.set_title(f'Depth p = {p}; 24 deterministic anchors')
+        ax.axvline(2,color='.5',ls=':',lw=.8)
+        ax.set_xlabel('Initial reference deficit (pp)')
+        ax.grid(axis='x',alpha=.15)
+    axes[0].invert_yaxis()
+    fig.tight_layout()
+    _save_figure(fig,target,'transfer.pdf',plt)
+
+
+
 def render(data, target):
     # Keep rendering caches in the workspace only. These are removed on success.
     import os
@@ -1076,25 +1127,7 @@ def render(data, target):
     fig.tight_layout()
     _save_figure(fig,target,'quality.pdf',plt)
 
-    fig,axes=plt.subplots(1,2,figsize=(7.1,3.3),sharey=True)
-    kinds=['uniform','descriptor','gw','local','corrected_local','shuffled']
-    colors=['#526777','#0072B2','#D55E00','#CC79A7','#009E73','#999999']
-    for ax,p in zip(axes,[1,2]):
-        for j,(kind,color) in enumerate(zip(kinds,colors)):
-            values=(corrected_local_deficits(data,p) if kind=='corrected_local' else
-                    [100*(priors[kind]['initial_objective']-data['references'][key]['objective'])
-                     for key,priors in data['priors'].items() if key.endswith(f':p{p}')])
-            mean,lo,hi=ci(values)
-            ax.barh(j,mean,xerr=[[mean-lo],[hi-mean]],height=.65,color=color,
-                    capsize=2,error_kw={'elinewidth':.8})
-        ax.set_yticks(range(6),['Fixed donor','Descriptor','GW','Historical Local TV','Corrected Local TV','Shuffled'],fontsize=7)
-        ax.set_title(f'Depth p = {p}; 24 deterministic anchors')
-        ax.axvline(2,color='.5',ls=':',lw=.8)
-        ax.set_xlabel('Initial reference deficit (pp)')
-        ax.grid(axis='x',alpha=.15)
-    axes[0].invert_yaxis()
-    fig.tight_layout()
-    _save_figure(fig,target,'transfer.pdf',plt)
+    render_transfer(data,target,plt)
 
     # Separate canonical and follow-up validation schedules explicitly.
     fig,axes=plt.subplots(2,2,figsize=(7.1,7.8),gridspec_kw={'height_ratios':[1,1.5]})
@@ -1125,7 +1158,7 @@ def render(data, target):
             ax.set_yticks(range(len(selection)),[v[0] for v in selection],fontsize=7)
             ax.invert_yaxis()
             ax.set_xlabel('Mean measured shots (thousands)')
-            ax.set_title(f'Canonical p = {p}: evaluation 16,384' if row==0 else f'Matched p = {depth}: evaluation 8,192')
+            ax.set_title(f'Canonical p = {p}' if row==0 else f'Matched p = {depth}')
             ax.grid(axis='x',alpha=.15)
     handles,labels=axes[0,0].get_legend_handles_labels()
     fig.legend(handles,labels,loc='lower center',ncol=2,frameon=False)
@@ -1214,54 +1247,54 @@ def write_results(data):
     deficits={method:float(np.mean([100*r['signed_reference_gap'] for r in selected(data,method,2,budget)]))
               for method in ['spsa','descriptor_iso','gw_shape']}
     text=[r'\paragraph{The comparison separates initialization from refinement.}',
-          f'The study comprises {len(rows):,} optimization runs on 24 held-out graphs, using two depths, two shot caps, three shot seeds, and 14 methods. '
-          'All graphs, settings, call records, donor fits, and final validation measurements are saved. '
-          'The reference bank contains 16 nonisomorphic graphs; held-out graphs are also nonisomorphic to every bank graph. '
-          'The same graph instances and resource caps are used across all policies in this ideal-circuit simulation study.',
+          f'The original study comprises {len(rows):,} optimization runs on 24 held-out graphs, spanning two depths, two shot caps, three shot seeds, and 14 methods. '
+          'The saved records include every graph, setting, objective call, donor fit, and final validation measurement. '
+          'The reference bank contains 16 mutually nonisomorphic graphs, and each held-out graph is nonisomorphic to every bank graph. '
+          'All policies use the same graph instances and resource caps under ideal-circuit simulation.',
           r'\paragraph{Initialization and region shape have distinct effects.}',
           f'At depth 2 and the larger shot cap, descriptor transfer with an isotropic region changes the mean normalized expected cut relative to the fixed-donor control by {fmt_ci(fixed)} percentage points, and relative to a random start by {fmt_ci(benefit)} percentage points. '
-          f'Keeping the descriptor initialization fixed, the shaped region changes it by {fmt_ci(shape)} percentage points. '
-          f'GW with a shaped region changes it relative to descriptor transfer with an isotropic region by {fmt_ci(gw)} percentage points. '
-          'Positive values indicate higher expected cut for the method being compared against its stated baseline. '
+          f'With descriptor initialization held fixed, shaping the region changes the mean by {fmt_ci(shape)} percentage points. '
+          f'The corresponding change for GW transfer with a shaped region, relative to descriptor transfer with an isotropic region, is {fmt_ci(gw)} percentage points. '
+          'Positive values indicate higher expected cut relative to the stated baseline. '
           'Intervals resample the 24 graph-level means after averaging the three shot seeds; they are descriptive, unadjusted percentile bootstrap intervals, not simultaneous confidence statements. '
-          'The full ablation table prevents an initialization benefit from being attributed to anisotropy (Table~\\ref{tab:results}).',
+          'Table~\\ref{tab:results} reports the complete ablation, separating the effects of initialization and anisotropy.',
           f'The nine undisplaced donor-based local-model policies accept {donor_accepts} refinement steps in {len(donor_runs):,} runs across both depths and budgets, despite consuming {donor_shots:,} online shots. '
-          'For these policies, the final parameter vector equals the transferred anchor: their quality comes entirely from initialization. '
-          f"An explicit initialization-only comparison therefore gives the same depth-2 deficits, {deficits['descriptor_iso']:.2f} percentage points for the descriptor anchor and {deficits['gw_shape']:.2f} for the GW anchor, at zero online refinement shots. "
-          'This comparison retains the offline donor-construction cost and does not waive any independent output-validation measurements. '
+          'Every final parameter vector for these policies equals its transferred anchor, so all attained quality comes from initialization. '
+          f"Returning the anchor without refinement therefore gives the same depth-2 deficits: {deficits['descriptor_iso']:.2f} percentage points for the descriptor anchor and {deficits['gw_shape']:.2f} for the GW anchor, at zero online refinement shots. "
+          'The offline cost of constructing donors and the independent output-validation measurements still apply. '
           f'The {accepted:,} accepted moves occur only in the random-start, displaced-prior, and shuffled-reference controls. '
           f"At the larger depth-2 budget, SPSA has a mean reference deficit of {deficits['spsa']:.2f} percentage points, compared with {deficits['descriptor_iso']:.2f} for descriptor-based local-model search and {deficits['gw_shape']:.2f} for GW-based local-model search. "
-          'The prescribed conservative refinement therefore has no demonstrated efficiency advantage over directly using the descriptor-selected anchor.',
+          'For these runs, the prescribed conservative refinement provides no demonstrated efficiency advantage over returning the descriptor-selected anchor.',
           f'The descriptor initialization already meets the prespecified target on {initial_graphs[1]}/{total_graphs} graphs at depth 1 and {initial_graphs[2]}/{total_graphs} graphs at depth 2, before target-graph measurements. '
           f'The corresponding run counts are {initial_counts[1]}/{total_per} and {initial_counts[2]}/{total_per}, because each graph contributes three identical initializations; repeated shot seeds add no independent graphs. '
-          'Zero target-graph shots therefore do not mean zero total cost: donor optimization is performed offline. '
-          'The target is an expected normalized cut within 0.02 of an independently computed best-found depth-matched reference; it is not a certified QAOA optimum. '
+          'The absence of target-graph measurements does not eliminate the offline cost of donor optimization. '
+          'The target is an expected normalized cut within 0.02 of an independently computed, depth-matched best-found reference, which is not a certified QAOA optimum. '
           'A negative deficit means that a run exceeds that reference.',
-          r'\paragraph{Conservative decisions consume the available information.}',
+          r'\paragraph{Conservative decisions often remain unresolved.}',
           f'Across all trust-region variants, {accepted:,} of {decisions:,} attempted decisions are accepted and {unresolved:,} remain unresolved at their sampling cap or available budget. '
-          'Unresolved decisions keep the current point. '
+          'An unresolved decision retains the current point. '
           'Figure~\\ref{fig:accounting} separates fitting from acceptance measurements. '
           'Fixed-shot decisions start at the largest planned sample count; adaptive decisions may stop at an earlier certified look. '
           f"That single look spends {2*c['optimizer']['acceptance_looks'][-1]:,} shots on the two endpoints, more than the smaller {min(c['budgets']):,}-shot cap, so the fixed-shot policy can take no acceptance measurement at that cap; {sum(d['decision']=='unresolved' and d['acceptance_shots_per_point']==0 for r in rows for d in r['decisions']):,} unresolved decisions are recorded with zero acceptance shots. "
-          'Their confidence penalties differ because the fixed-shot variant has one planned look. '
-          'These are finite-budget comparisons of complete policies, not a demonstration of asymptotic convergence.',
+          'The fixed-shot and adaptive confidence penalties also differ because the fixed-shot variant has one planned look. '
+          'These complete-policy comparisons concern finite budgets and do not establish asymptotic convergence.',
           f'\nAn offline evaluation of the recorded endpoints finds {adaptive_margins["positive_true_decrease"]:,} truly improving proposals among {adaptive_margins["trials"]:,} trials of the eight adaptive undisplaced donor policies. '
           f'Of those trials, {adaptive_margins["margin_at_most_threshold"]:,} ({100*adaptive_margins["margin_at_most_threshold"]/adaptive_margins["trials"]:.1f}\\%) have true acceptance margin $h=f(x)-f(x^+)-\\eta q\\leq0.005$; positive decreases are counted above a $10^{{-12}}$ numerical tolerance. '
           f'For this margin range, Proposition~\\ref{{prop:acceptancepower}} bounds the conditional probability of acceptance in any one trial by ${power_mantissa}\\times10^{{{int(power_exponent)}}}$, even if all four prescribed looks are affordable. '
           'The fixed-shot control is excluded from this calculation because it uses a different confidence penalty. '
-          'These exact proposal values are retrospective diagnostics, never online inputs. '
-          'The counts include dependent trials and are not independent observations or an empirical estimate of the acceptance probability; they connect the transferred-anchor experiment to the regime in which the proposition predicts low acceptance probability.',
+          'The exact proposal values are used only for retrospective diagnosis. '
+          'The counts include dependent trials, so they neither represent independent observations nor estimate acceptance probability. They place the transferred-anchor experiment in the regime where the proposition predicts low acceptance probability.',
           f'\nBuilding the reference bank used {refcalls:,} exact objective evaluations and {refseconds:.1f} seconds in the recorded environment. '
-          'Those exact simulator calls have no assigned hardware-shot equivalent and must not be omitted from deployment considerations. '
+          'These exact simulator calls have no assigned hardware-shot equivalent, but their cost remains relevant to deployment. '
           'Every final point receives 16,384 additional independent validation shots, one evaluation, and one simulated job. '
-          'Tables show optimization cost separately so that the common validation cost can be added explicitly. '
-          'Hardware-job counts describe the specified batching schedule; no device latency or hardware run is inferred.',
+          'The tables separate optimization cost from this common validation cost. '
+          'Hardware-job counts describe the specified batching schedule; they do not measure device latency or imply that a hardware experiment was performed.',
           f'The structural transport comparisons require {gwseconds:.2f} seconds per target graph on average, shared between the two depth-specific banks. '
           f'Descriptor selection and shape construction require {1000*descriptorseconds:.2f} milliseconds at depth one. '
-          'This substantial classical overhead provides an additional reason to prefer the simpler selector for this study; it is not converted into a hardware speedup.',
+          'The lower classical overhead favors descriptor selection in this study, without implying a hardware speedup.',
           f'Of the {len(solvers)} distinct target--reference transport solves, {unfinished} end above the prescribed $10^{{-9}}$ coupling-change tolerance after the iteration cap. '
           'Their couplings satisfy the marginal constraints, but feasibility does not establish convergence or global optimality. '
-          'These finite-iteration scores must be interpreted together with solver and donor-sensitivity diagnostics rather than as exact graph distances.',
+          'Solver and donor-sensitivity diagnostics are therefore needed to interpret these finite-iteration scores, which are not exact graph distances.',
           r'\begin{table}[t]',r'\caption{Complete depth-2 comparison at an optimization cap of 131,072 shots. Deficit is 100 times the signed difference from the best-found normalized reference objective. Each row averages 24 graphs and three shot seeds. Target success counts all 72 runs, including zero-shot initial successes. Capped target cost assigns the full budget to failures and uses the first successful recorded incumbent for successes. The first two rows are initialization-only policies that return the selected anchor and make no optimization call, so refinement gains are never credited to transfer. Shots exclude 16,384 independent final-validation shots per run, which every policy including initialization alone still incurs. The Local TV and Fixed donor rows differ only through a floating-point tie-break among depth-2 scores that are all equal to one; see the text.}\label{tab:results}',
           r'\centering\small',r'\setlength{\tabcolsep}{4pt}',r'\begin{tabular}{lrrrrrr}',r'\toprule',
           r'Method & Deficit & Success & Shots & Calls & Jobs & \shortstack{Capped\\target cost} \\',r'\midrule']
@@ -1281,19 +1314,20 @@ def write_results(data):
              r'\paragraph{Model geometry and the graph bound have limited roles.}']
     for method in ['descriptor_shape','no_repair']:
         conditions=[d['condition'] for r in selected(data,method,2,budget) for d in r['decisions']]
-        text.append(f"For {LABELS[method].lower()}, the median local-design condition number is {np.median(conditions):.2f}, with 95th percentile {np.quantile(conditions,.95):.2f}. ")
+        prose_label={'descriptor_shape':'the shaped descriptor policy','no_repair':'the policy without point repair'}[method]
+        text.append(f"For {prose_label}, the median local-design condition number is {np.median(conditions):.2f}, with 95th percentile {np.quantile(conditions,.95):.2f}. ")
         sensitivities=[v for run in selected(data,method,2,budget) for v in historical_physical_sensitivity(
             run,data['priors'][f'{run["graph"]}:p2']['descriptor']['shape'])]
         text.append(f'On the same {len(sensitivities)} recorded trial designs, the physical fitting-map '
                     f'operator norm has median {np.median(sensitivities):.2f} and 95th percentile '
                     f'{np.quantile(sensitivities,.95):.2f} in inverse radians. ')
     text.append('These two empirical distributions weight trials equally at depth two and the 131,072-shot cap; '
-                'runs with more trials contribute more points. Physical maps are recovered from the recorded '
-                'model locations and centers only after verifying that every $\\Delta\\|B_{j,:}\\|_2$ '
+                'runs with more trials contribute more points. Recovering the physical maps from recorded '
+                'model locations and centers requires checking that every $\\Delta\\|B_{j,:}\\|_2$ '
                 'is less than half its parameter period. This bound makes the periodic displacement unique; '
-                'reconstructed normalized designs also reproduce the saved weighted condition numbers. '
+                'the reconstructed normalized designs also reproduce the saved weighted condition numbers. '
                 'The physical map is $L=(\\Delta B)^{-\\mathsf T}(A^{-1})_{2:d+1,:}$. '
-                'Improved conditioning or sensitivity does not by itself demonstrate useful proposals or saved shots.')
+                'Neither better conditioning nor lower sensitivity alone establishes useful proposals or measurement savings.')
     for p in [1,2]:
         values=[x for key,prior in data['priors'].items() if key.endswith(f':p{p}') for x in prior['local']['scores']]
         text.append(f'At depth {p}, {sum(np.isclose(v,1) for v in values)}/{len(values)} target--reference pairs have local-neighborhood total variation equal to one. ')
@@ -1303,7 +1337,7 @@ def write_results(data):
     tied=sum(prior['local']['anchor']!=prior['uniform']['anchor'] for prior in depth2)
     text.append(f'At depth 2 those recorded scores are constant across the bank to within $10^{{{exponent}}}$, which is double-precision rounding in the edge-frequency sums and not structural information. '
                 f'The softmax floor $\\tau=10^{{-3}}$ in the selection rule nevertheless resolves that rounding, so the local-total-variation anchor differs from the fixed-donor anchor on {tied} of {len(depth2)} depth-2 targets, that is {tied*c["repetitions"]} of {total_per} runs per budget. '
-                'The separation between the Local TV and Fixed donor rows of Table~\\ref{tab:results} is an artifact of that tie-break and must not be read as evidence of structural selection. ')
+                'The difference between the Local TV and Fixed donor rows of Table~\\ref{tab:results} is therefore a numerical tie-breaking artifact, without evidence of structural selection. ')
     text.append('A bound of one cannot narrow the unit range of the normalized objective. '
                 'Improved numerical conditioning alone is not evidence of saved shots, and a valid transfer bound can be uninformative on the evaluated graphs (Fig.~\\ref{fig:conditioning}). '
                 'The results do not establish a consistent improvement from the complete transport-shaped policy over the simpler descriptor and conventional-optimizer controls. '
@@ -1326,65 +1360,66 @@ def write_results(data):
 
 
 def write_refinement_results(data):
-    """Generate revision claims from saved records, keeping historical failures."""
+    """Summarize matched refinement and mechanism studies from saved records."""
     rows=data['runs']+data['baseline_runs']
     depths=sorted({r['depth'] for r in data['runs']})
     graph_ids={r['graph'] for r in data['runs']}
     shots=sum(r['shots'] for r in data['runs'])
     validation=sum(r['validation']['shots'] for r in data['runs'])
     lines=[r'\paragraph{The matched shape-by-rule experiment separates transfer from refinement.}',
-           f'The exploratory matched optimizer experiment evaluates {len(data["runs"])} runs on {len(graph_ids)} '
-           'previously studied target graphs, with byte-identical graph-specific descriptor anchors and the '
-           'previously selected initial radius and model-shot count. '
-           'The full isotropic/shaped by Hoeffding/empirical-Bernstein factorial changes the '
-           'radius-dependent sampling and stopping logic without retuning on those targets. '
-           f'Its measured cost is {shots:,} optimization shots plus {validation:,} independent '
-           'output-validation shots. The historical SPSA, COBYLA and original Bernstein runs '
-           'provide matched-anchor comparators at the same cap. The original Bernstein rule '
-           'is our own implementation; it is not an implementation of a published variance-aware optimizer. '
-           'This post-hoc comparison is exploratory because these graphs were already used to diagnose the original method.',
+           f'The matched optimizer experiment comprises {len(data["runs"])} runs on {len(graph_ids)} '
+           'previously studied target graphs. It retains byte-identical descriptor anchors for each graph, '
+           'together with the previously selected initial radius and model-shot count. '
+           'The resolution-aware policy combines radius-dependent sampling with unresolved stopping, '
+           'crossing isotropic and shaped regions with Hoeffding and empirical-Bernstein rules without retuning on these targets. '
+           f'The experiment consumes {shots:,} optimization shots and {validation:,} independent '
+           'output-validation shots. Previously recorded SPSA, COBYLA and original Bernstein runs '
+           'provide comparators with the same anchors and cap. The original Bernstein rule '
+           'is our own implementation, not a reproduction of a published variance-aware optimizer. '
+           'The comparison is exploratory and post hoc because these targets had already been used to diagnose the original method.',
            r'\paragraph{Returned quality and incremental gain answer different questions.}']
     for depth in depths:
         group=[r for r in data['runs'] if r['depth']==depth and r['method']=='revised_bernstein_shape']
         mean=revision_interval(group,lambda r:100*(r['initial_objective']-r['objective']))
         changed=sum(not np.allclose(r['theta'],r['initial'],atol=1e-12,rtol=0) for r in group)
-        lines.append(f'At depth {depth}, revised shaped Bernstein has paired refinement gain '
-                     f'{fmt_ci(mean)} percentage points and changes {changed}/{len(group)} outputs. ')
+        lines.append(f'At depth {depth}, the resolution-aware shaped Bernstein policy has a paired refinement gain of '
+                     f'{mean[0]:.3f} (95\\% interval {mean[1]:.3f} to {mean[2]:.3f}) '
+                     f'percentage points and changes {changed}/{len(group)} outputs. ')
         original=[r for r in rows if r['depth']==depth and r['method']=='bernstein_shape']
         original_gain=revision_interval(original,lambda r:100*(r['initial_objective']-r['objective']))
         effect=paired_revision_interval([r for r in rows if r['depth']==depth],'revised_bernstein_shape','bernstein_shape')
         cost=paired_revision_interval([r for r in rows if r['depth']==depth],'revised_bernstein_shape','bernstein_shape',lambda r:r['shots'])
         graph_changes=len({r['graph'] for r in group if not np.allclose(r['theta'],r['initial'],atol=1e-12,rtol=0)})
         old_graph_changes=len({r['graph'] for r in original if not np.allclose(r['theta'],r['initial'],atol=1e-12,rtol=0)})
-        lines.append(f'The original shaped Bernstein gain is {original_gain[0]:.6f} percentage points. '
-                     f'Using unrounded paired graph records, the revision minus original gain difference is '
+        lines.append(f'The original shaped Bernstein policy has a gain of {original_gain[0]:.6f} percentage points. '
+                     f'From unrounded paired graph records, the resolution-aware minus original gain difference is '
                      f'{effect[0]:.6f} (95\\% interval {effect[1]:.6f} to {effect[2]:.6f}) percentage points, '
-                     f'and its mean shot difference is {cost[0]:.2f} (95\\% interval {cost[1]:.2f} to {cost[2]:.2f}). '
-                     f'The number of unique targets changed is {graph_changes} for the revision and {old_graph_changes} for the original. '
-                     'These depth-specific paired comparisons separate gain from avoided expenditure. ')
+                     f'and the mean shot difference is {cost[0]:.2f} (95\\% interval {cost[1]:.2f} to {cost[2]:.2f}). '
+                     f'The number of distinct targets with a changed output is {graph_changes} for the resolution-aware policy and {old_graph_changes} for the original policy. '
+                     'These depth-specific paired comparisons distinguish changes in quality from avoided expenditure. ')
         for comparator in ['spsa','cobyla']:
             effect=paired_revision_interval([r for r in rows if r['depth']==depth],
                                             'revised_bernstein_shape',comparator)
-            lines.append(f'Its paired gain difference from {REVISION_LABELS[comparator]} is '
-                         f'{fmt_ci(effect)} percentage points; positive values favor shaped Bernstein. ')
-    lines.append('Figure~\\ref{fig:refinement} reports quality, own-anchor gain, actual shots and '
-                 'changed-output counts together. Figure~\\ref{fig:efficiency} uses completed incumbent '
-                 'events rather than connecting separate budget-cap means: initialization is available '
-                 'at zero shots, and an unfinished atomic batch leaves the preceding output available. '
+            lines.append(f'The resolution-aware policy\'s paired gain difference from {REVISION_LABELS[comparator]} is '
+                         f'{fmt_ci(effect)} percentage points; positive values favor the resolution-aware shaped Bernstein policy. ')
+    lines.append('Figure~\\ref{fig:refinement} reports returned quality, gain over each initial anchor, actual shots and '
+                 'the number of changed outputs. Figure~\\ref{fig:efficiency} follows the output available after '
+                 'each completed measurement batch, without interpolating between separate budget-cap means. Initialization is available '
+                 'at zero shots, and an unfinished batch leaves the preceding output available. '
                  'Target curves record first-ever attainment, retain failed runs in their denominator and count initial successes at zero cost. '
-                 'The paired shaped-policy difference uses pointwise graph-block bootstrap bands. Flat tails after termination mean that the output remains available without further expenditure. '
+                 'The paired difference between shaped policies uses pointwise graph-block bootstrap bands. Flat tails after termination show that the output remains available without further expenditure. '
                  'Changing a parameter vector does not guarantee objective improvement for an unconstrained baseline. '
-                 'The reference objective is best found, not a certified depth-matched optimum; signed deficits remain signed.')
+                 'The reference is the best-found depth-matched objective, not a certified optimum; negative deficits are retained.')
     lines.extend([r'\begin{table}[t]',
-                  r'\caption{Matched revision and historical comparators. Values are graph-mean refinement gains and signed reference deficits in percentage points, followed by actual mean optimization shots in thousands. All use the same descriptor anchor per graph. Add 8,192 independent validation shots per output. H and EB denote Hoeffding and empirical Bernstein; original EB is our own comparator. Graph-paired, fixed-bank-stratified 95\% bootstrap intervals appear in the figures and text.}\label{tab:refinement}',
+                  r'\caption{Resolution-aware refinement and matched original comparators. Values are graph-mean refinement gains and signed reference deficits in percentage points, followed by actual mean optimization shots in thousands. All policies use the same descriptor anchor for each graph. Each output also incurs 8,192 independent validation shots. RA denotes resolution-aware refinement; H and EB denote Hoeffding and empirical Bernstein. Original EB is our own comparator. The figures and text give paired 95\% bootstrap intervals obtained by resampling graphs within each fixed bank.}\label{tab:refinement}',
                   r'\centering\small\setlength{\tabcolsep}{4pt}',
                   r'\begin{tabular}{lrrrrrr}\toprule',
                   r' & \multicolumn{2}{c}{Gain} & \multicolumn{2}{c}{Deficit} & \multicolumn{2}{c}{Shots ($10^3$)} \\',
                   r'Policy & $p=2$ & $p=3$ & $p=2$ & $p=3$ & $p=2$ & $p=3$ \\ \midrule'])
     names=[('initialization_only','Initialization only'),('hoeffding_iso','Original H, isotropic'),
-           ('bernstein_iso','Original EB, isotropic'),('bernstein_shape','Original EB, shaped'),('revised_hoeffding_iso','Revised H, isotropic'),
-           ('revised_hoeffding_shape','Revised H, shaped'),('revised_bernstein_iso','Revised EB, isotropic'),
-           ('revised_bernstein_shape','Revised EB, shaped'),('spsa','SPSA'),('cobyla','COBYLA')]
+           ('bernstein_iso','Original EB, isotropic'),('bernstein_shape','Original EB, shaped'),('revised_hoeffding_iso','RA H, isotropic'),
+           ('revised_hoeffding_shape','RA H, shaped'),('revised_bernstein_iso','RA EB, isotropic'),
+           ('revised_bernstein_shape','RA EB, shaped'),('spsa','SPSA'),('cobyla','COBYLA')]
     for method,label in names:
         values=[]
         for metric in [lambda r:100*(r['initial_objective']-r['objective']),
@@ -1398,12 +1433,12 @@ def write_refinement_results(data):
     from collections import Counter
     statuses=Counter(r['stop'] for r in data['runs'])
     reasons=Counter(r['stop_reason'] for r in data['runs'])
-    lines.append('Across the new factorial, terminal statuses are '+
+    lines.append('The factorial records the following terminal statuses: '+
                  ', '.join(f'\\texttt{{{status.replace("_", r"\_")}}}: {count}' for status,count in sorted(statuses.items()))+
-                 '. An unresolved comparison does not certify a bad direction. A resolution-limited stop '
-                 'reports that the declared model or decision policy cannot resolve another update within its remaining budget or precision limits; '
-                 'it does not establish stationarity or optimality.')
-    lines.append('The recorded reasons are '+', '.join(f'\\texttt{{{reason.replace("_", r"\_")}}}: {count}' for reason,count in sorted(reasons.items()))+'.')
+                 '. An unresolved comparison provides insufficient evidence to classify the direction. A resolution-limited stop '
+                 'records the end of the prescribed model or decision schedule without a resolved update. '
+                 'It does not establish stationarity, optimality, or the impossibility of a useful update under another allocation.')
+    lines.append('The stopping reasons are '+', '.join(f'\\texttt{{{reason.replace("_", r"\_")}}}: {count}' for reason,count in sorted(reasons.items()))+'.')
     decisions=[decision for row in data['runs'] for decision in row['decisions']]
     lines.append(f'Of the {len(decisions)} actual online proposals, '
                  f'{sum(d["true_decrease"]<=0 for d in decisions)} worsen or leave unchanged the exact objective, '
@@ -1423,17 +1458,17 @@ def write_refinement_results(data):
                   'have a positive sufficient-decrease margin. '
                   f'At 1,024 shots per point, {sum(r["true_decrease"]>0 for r in sampled)}/{len(sampled)} sampled '
                   f'proposals improve and {sum(r["acceptance_margin"]>0 for r in sampled)}/{len(sampled)} have a positive sufficient-decrease margin. '
-                  'These dependent proposal counts describe the chosen diagnostic grid, not independent graph observations. '
+                  'These counts describe dependent proposals on the chosen diagnostic grid; they are not counts of independent graphs. '
                   'Figure~\\ref{fig:components} separates sampling error around the exact affine fit from total '
-                  'error against the central-finite-difference reference gradient (step $10^{-5}$). '
+                  'error relative to the central-finite-difference reference gradient (step $10^{-5}$). '
                   'The reference derivative is evaluated only offline. Neither lower fitting error nor better '
                   'conditioning alone establishes useful refinement.'])
     diagnostic_shots=sum(batch['shots'] for row in diagnostics for batch in row['model_batches'])
     power_generated_shots=sum(batch['shots'] for row in data['power_samples'] for look in row['observations'] for batch in look['batches'])
-    lines.append(f'Generating the model diagnostics uses {diagnostic_shots:,} simulated observations. '
+    lines.append(f'The model diagnostics require {diagnostic_shots:,} simulated observations. '
                  f'The frozen-endpoint replay generates {power_generated_shots:,} simulated observations, '
-                 'sharing each stored stream across confidence rules and caps. These ideal-sampling offline '
-                 'diagnostic costs are separate from online optimizer cost and do not constitute measurement savings.')
+                 'with each stored stream shared across confidence rules and caps. These offline '
+                 'diagnostics use ideal sampling; their cost is reported separately from online optimization and is not counted as measurement savings.')
     for radius in [min(r['radius'] for r in exact),max(r['radius'] for r in exact)]:
         group=[r for r in exact if r['radius']==radius]
         lines.append(f'At radius {radius:g}, {sum(r["exact_acceptance_margin"]>0 for r in group)}/{len(group)} '
@@ -1442,31 +1477,31 @@ def write_refinement_results(data):
     cap=max(r['cap_per_endpoint'] for r in power)
     records=[r for r in power if r['cap_per_endpoint']==cap and r['rule']=='hoeffding']
     lines.extend([r'\paragraph{Frozen endpoint replays measure the cost of decision resolution.}',
-                  f'Before replay, {len(records)} actual sampled-model proposals are fixed by target, depth, '
+                  f'The replay fixes {len(records)} sampled-model proposals by target, depth, '
                   'geometry and radius at 1,024 model shots per point, using the first diagnostic replicate. '
                   f'Each condition is replayed {records[0]["repeats"]} times with independent endpoint streams '
                   'and common error allocation across confidence rules. '
-                  f'The preceding extended replay uses a {2*cap:,}-shot endpoint-pair cap and five prescribed looks. '
-                  'Figure~\\ref{fig:acceptance-power} now compares all budget prefixes under both four-look and five-look allocations. '
-                  'Acceptance-stage cost includes unresolved runs at their caps. The analytical Hoeffding proposition remains '
+                  f'The extended replay uses a {2*cap:,}-shot endpoint-pair cap and five prescribed looks. '
+                  'Figure~\\ref{fig:acceptance-power} compares all budget prefixes under both four-look and five-look allocations. '
+                  'Acceptance-stage cost includes unresolved runs at their caps. The analytical Hoeffding proposition gives '
                   'an upper bound for its decision rule, not a universal QAOA shot lower bound.'])
     for rule in ['hoeffding','bernstein']:
         group=[r for r in power if r['cap_per_endpoint']==cap and r['rule']==rule]
         positive=[r for r in group if r['acceptance_margin']>0]
-        lines.append(f'For {rule.capitalize()}, the mean acceptance probability over all fixed proposals is '
+        lines.append(f'For {rule.capitalize()}, the estimated mean acceptance probability over all fixed proposals is '
                      f'{np.mean([r["acceptance_probability"] for r in group]):.3f}, and the mean unresolved '
                      f'fraction is {np.mean([r["unresolved_fraction"] for r in group]):.3f}. ')
         if positive:
-            lines.append(f'Among the {len(positive)} positive-margin proposals, the mean acceptance probability '
+            lines.append(f'Among the {len(positive)} positive-margin proposals, the estimated mean acceptance probability '
                          f'is {np.mean([r["acceptance_probability"] for r in positive]):.3f}, with mean '
                          f'endpoint cost {np.mean([r["mean_acceptance_shots"] for r in positive]):,.0f} shots. ')
     lines.extend([r'\paragraph{Paired regime comparisons delimit the evidence.}',
-                  'Figure~\\ref{fig:generality} keeps negative effects visible when comparing shaped Bernstein '
+                  'Figure~\\ref{fig:generality} retains negative effects in comparisons of shaped Bernstein '
                   'with both conventional optimizers by vertex count and with SPSA by depth within graph families. '
                   'The two reference banks belong to different target panels, so these comparisons do not '
                   'identify a bank effect. All intervals average shot repetitions within graph and resample '
                   'graphs within the two fixed banks (10,000 resamples, seed 5713); they are descriptive and '
-                  'unadjusted. The experiment supplies no fresh holdout validation of a revised policy, '
+                  'unadjusted. This optimizer experiment provides no fresh holdout validation of the resolution-aware policy, '
                   'large-graph scaling result, structural-shift test, or hardware-noise validation.'])
     stop_start=next(i for i,line in enumerate(lines) if line.startswith(r'\paragraph{Stopping status'))
     old_diagnostic_start=next(i for i,line in enumerate(lines) if line.startswith(r'\paragraph{Exact-data proposals'))
@@ -1493,25 +1528,25 @@ def mechanism_results(data,revision):
     high=sum(r['above_base_shot_models']>0 for r in ledger)
     models=sum(len(r['model_allocations']) for r in ledger)
     lines=[r'\paragraph{Unresolved stopping often precedes increased model allocation.}',
-           f'The matched shape-by-rule ledgers show that {changed}/{len(ledger)} runs fit a model away '
+           f'In the matched shape-by-rule experiment, {changed}/{len(ledger)} runs fit a model away '
            f'from the initial radius ({sum(r["noninitial_radius_models"] for r in ledger)}/{models} fits), '
            f'and {high}/{len(ledger)} runs allocate more than 256 shots per point '
            f'({sum(r["above_base_shot_models"] for r in ledger)}/{models} fits). '
-           'Every revised Hoeffding run fits one initial model and performs one full four-look endpoint '
-           'comparison before unresolved stopping. Its costs are therefore exactly $5(256)+2(16384)=34048$ '
+           'Every resolution-aware Hoeffding run fits one initial model and completes one full four-look endpoint '
+           'comparison before stopping with an unresolved decision. Its costs are therefore exactly $5(256)+2(16384)=34048$ '
            'at depth two and $7(256)+2(16384)=34560$ at depth three. '
-           'Those savings demonstrate avoided continuation, not an observed improvement from changing '
-           'the model-shot allocation on the Hoeffding trajectories.',
+           'The savings on these Hoeffding trajectories come from avoiding continuation; they do not '
+           'demonstrate an improvement from changing the model-shot allocation.',
            r'\paragraph{A separate factorial isolates sampling allocation from unresolved stopping.}',
            f'The sampling-by-stopping experiment contains {len(data["attribution_runs"])} shaped empirical-Bernstein runs '
-           'on the same 16 targets, crossing fixed/radius-dependent model shots with stop/continue '
-           'after unresolved evidence. All four cells share anchors, shape, model family, error '
-           'allocation, shot cap, initial settings and paired seeds. Continuation holds the radius '
-           'and refits from fresh data; it contracts only after certified rejection. This control '
-           'is not a replay of the historical rule that contracted after unresolved evidence. '
+           'on the same 16 targets. It crosses fixed and radius-dependent model-shot counts with '
+           'stopping and continuing after unresolved evidence. All four cells share anchors, shape, model family, error '
+           'allocation, shot cap, initial settings and paired seeds. Continuation retains the radius '
+           'and refits with fresh data; the radius contracts only after certified rejection. This differs '
+           'from the original policy, which also contracted after unresolved evidence. '
            'Figure~\\ref{fig:attribution} separates gain and expenditure for these controlled policies.',
            r'\begin{table}[t]',
-           r'\caption{Controlled sampling-by-stopping attribution. Gains are percentage points over the common anchor; costs are actual optimization shots in thousands. Every row uses shaped empirical-Bernstein refinement at a 65,536-shot cap, with 8,192 independent validation shots per output. Two shot repetitions are averaged within each of 16 target graphs.}\label{tab:attribution}',
+           r'\caption{Effects of model-shot allocation and stopping after unresolved evidence. Gains are percentage points over the common anchor; costs are actual optimization shots in thousands. Every row uses shaped empirical-Bernstein refinement at a 65,536-shot cap, with 8,192 independent validation shots per output. Two shot repetitions are averaged within each of 16 target graphs.}\label{tab:attribution}',
            r'\centering\small\begin{tabular}{lrrrr}\toprule',
            r' & \multicolumn{2}{c}{Gain (pp)} & \multicolumn{2}{c}{Shots ($10^3$)} \\',
            r'Allocation / unresolved policy & $p=2$ & $p=3$ & $p=2$ & $p=3$ \\ \midrule']
@@ -1527,36 +1562,38 @@ def mechanism_results(data,revision):
         lines.append(label+' & '+' & '.join(values)+r' \\')
     lines.append(r'\bottomrule\end{tabular}\end{table}')
     lines.append(f'All four cells return byte-identical parameter vectors in {identical}/{total} matched graph--depth--seed cases. '
-                 'In this controlled sample, neither continuation nor radius-dependent allocation changes returned quality; stopping changes expenditure.')
+                 'For this controlled sample, continuation and radius-dependent allocation leave returned quality unchanged, while stopping reduces expenditure.')
     for depth in [2,3]:
         group=[r for r in rows if r['depth']==depth]
         for allocation in ['fixed','radius']:
             cost=paired_revision_interval(group,allocation+'_stop',allocation+'_continue',lambda r:r['shots'])
             saving=paired_cost_saving_interval(group,allocation+'_stop',allocation+'_continue')
-            lines.append(f'At depth {depth} under {allocation} sampling, stopping minus continuation has paired shot difference '
+            allocation_name={'fixed':'fixed model-shot counts','radius':'radius-dependent model-shot counts'}[allocation]
+            lines.append(f'At depth {depth}, with {allocation_name}, the paired difference in mean shots for stopping minus continuation is '
                          f'{cost[0]:.2f} (95\\% interval {cost[1]:.2f} to {cost[2]:.2f}), '
                          f'a {saving[0]:.2f}\\% reduction in mean optimization shots '
                          f'(paired graph-bootstrap interval {saving[1]:.2f}\\% to {saving[2]:.2f}\\%). ')
         for policy in ['stop','continue']:
             effect=paired_revision_interval(group,'radius_'+policy,'fixed_'+policy)
             cost=paired_revision_interval(group,'radius_'+policy,'fixed_'+policy,lambda r:r['shots'])
-            lines.append(f'At depth {depth} with unresolved {policy}, radius-dependent minus fixed '
-                         f'allocation has gain difference {fmt_ci(effect)} percentage points '
-                         f'and mean shot difference {cost[0]:.2f}. ')
-    lines.append('Percentage savings divide the difference of graph-mean costs by the continuation mean; '
+            response={'stop':'stopping','continue':'continuation'}[policy]
+            lines.append(f'At depth {depth}, with {response} after unresolved evidence, radius-dependent minus fixed '
+                         f'allocation gives a difference in mean gain of {fmt_ci(effect)} percentage points '
+                         f'and a difference in mean shots of {cost[0]:.2f}. ')
+    lines.append('Percentage savings are the difference in graph-mean costs divided by the continuation mean; '
                  'both costs are resampled together within each fixed bank. These reductions concern '
-                 'the specified hold-radius continuation policy at the shared cap. After a first complete '
+                 'the specified continuation policy, which retains the radius, at the shared cap. After a first complete '
                  'test and two initial-radius models, only 30,208 shots at depth two or 29,184 at depth three '
-                 'remain for the next endpoint pair, below its 32,768-shot final look. '
-                 'The comparison does not establish an optimal use of that remaining budget.')
+                 'remain for the next endpoint pair, less than the 32,768 shots required by its final look. '
+                 'The comparison does not establish how best to use the remaining budget.')
     lines.extend([r'\paragraph{Online power uses its own four-look confidence allocation.}',
-                  'Figure~\\ref{fig:acceptance-power} holds fixed the 58 positive-margin proposals '
+                  'Figure~\\ref{fig:acceptance-power} uses fixed cohorts of 58 positive-margin proposals '
                   'and the 102 nonpositive-margin proposals, with equal proposal weights at every budget. '
                   'The online row uses four prescribed looks up to 16,384 shots per endpoint; the extended '
                   'row uses five looks up to 65,536. The online acceptance panel is magnified to 0--0.06; '
-                  'the extended acceptance panel spans 0--1. Budget positions are numerical coordinates '
+                  'the extended acceptance panel spans 0--1. Budgets are plotted '
                   'on a base-two logarithmic axis. Both schedules are recomputed from the same stored independent '
-                  'streams, so this comparison needs no additional sampled observations. Shading gives '
+                  'streams, without additional sampled observations. Shading gives '
                   'conservative pointwise 95\\% Hoeffding bounds for each fixed-cohort replay mean, allowing '
                   'different endpoint distributions across proposals. Those intervals quantify Monte Carlo '
                   'replay uncertainty conditional on the fixed proposals, not uncertainty over target graphs.'])
@@ -1565,14 +1602,14 @@ def mechanism_results(data,revision):
         for rule in ['hoeffding','bernstein']:
             group=[r for r in data[key] if r['rule']==rule and r['endpoint_pair_budget']==cap and r['acceptance_margin']>0]
             mean,lo,hi=replay_mean_interval(group,'acceptance_probability',cap)
-            lines.append(f'At the {cap:,}-shot pair cap, {label} {rule.capitalize()} has mean positive-margin '
+            lines.append(f'At the {cap:,}-shot pair cap, the {label} {rule.capitalize()} rule has a mean positive-margin '
                          f'acceptance frequency {mean:.4f} (pointwise interval {lo:.4f} to {hi:.4f}), '
-                         f'unresolved fraction {np.mean([r["unresolved_fraction"] for r in group]):.4f}, '
-                         f'and mean actual endpoint expenditure {np.mean([r["mean_acceptance_shots"] for r in group]):,.2f} shots. ')
+                         f'an unresolved fraction of {np.mean([r["unresolved_fraction"] for r in group]):.4f}, '
+                         f'and a mean actual endpoint expenditure of {np.mean([r["mean_acceptance_shots"] for r in group]):,.2f} shots. ')
     n=data['online_power'][0]['repeats']
     upper=1-.05**(1/n)
-    lines.append(f'For one pair, zero acceptances in {n} independent replays has exact one-sided '
-                 f'95\\% binomial upper limit {upper:.5f} ({100*upper:.3f}\\%). Zero observed frequency '
+    lines.append(f'For a single pair, observing zero acceptances in {n} independent replays gives an exact one-sided '
+                 f'95\\% binomial upper limit of {upper:.5f} ({100*upper:.3f}\\%). Zero observed frequency '
                  'therefore does not establish zero probability or empirically validate an analytical '
                  'probability of order $10^{-6}$.')
     diagnostics=data['model_diagnostics']
@@ -1582,21 +1619,21 @@ def mechanism_results(data,revision):
     mantissa,exponent=f'{max_error:.2e}'.split('e')
     lines.extend([r'\paragraph{The implemented schedule is tested against its variance prediction.}',
                   f'The mechanism study uses {len(old)} original diagnostic graphs from panel zero and '
-                  f'{len(fresh)} newly generated targets nonisomorphic to all previous bank, validation '
+                  f'{len(fresh)} newly generated targets that are nonisomorphic to all previous bank, validation '
                   'and test graphs. Figure~\\ref{fig:components} displays shaped models on the original '
-                  'eight, with depths two and three equally averaged within each graph before bootstrap '
-                  'resampling. Full graph identities and their split membership are recorded in the saved protocol.',
+                  'eight, averaging depths two and three equally within each graph before bootstrap '
+                  'resampling. The saved protocol records every graph identity and its split membership.',
                   f'Central-difference gradients at steps $10^{{-5}}$ and $5\\times10^{{-6}}$ differ by '
                   f'at most ${mantissa}\\times10^{{{int(exponent)}}}$ in Euclidean norm across all targets and depths. '
-                  'This check supports the numerical reference used in the bias comparison; it does not '
-                  'turn a numerical derivative into an analytic exact-gradient formula.',
-                  f'The {len(diagnostics)} target/depth/shape/radius/shot-count conditions each use '
+                  'This agreement supports the numerical reference used to assess bias; the derivative '
+                  'remains a numerical approximation, rather than an analytic exact gradient.',
+                  f'The {len(diagnostics)} combinations of target, depth, shape, radius and shot count each use '
                   f'{data["config"]["fit_repetitions"]} independent sampled fits. Root-mean-square error '
-                  'means the square root after averaging squared Euclidean errors, including graph '
-                  'averaging; it is not the arithmetic mean of error norms. Exact-data bias floors and '
-                  'the propagated covariance predict total mean-square error. '
-                  'The actual schedule samples 4096, 1024, 256, 64 and 16 shots per point at radii '
-                  '0.025, 0.05, 0.1, 0.2 and 0.4. Its cost is multiplied by $2p+1$ fitting points. '
+                  'is computed by averaging squared Euclidean errors, including across graphs, and then '
+                  'taking the square root; it is not the arithmetic mean of error norms. Exact-data bias floors and '
+                  'the propagated covariance predict total mean-square error (MSE). '
+                  'The implemented schedule uses 4096, 1024, 256, 64 and 16 shots per point at radii '
+                  '0.025, 0.05, 0.1, 0.2 and 0.4. The total model cost includes all $2p+1$ fitting points. '
                   'Graph-level bands are pointwise 95\\% intervals conditional on the fixed bank and '
                   'sampled designs; they do not provide simultaneous radius-wise coverage.'])
     fresh_rows=[r for r in diagnostics if r['split']=='fresh']
@@ -1608,9 +1645,9 @@ def mechanism_results(data,revision):
     lines.append(f'Across the fresh-graph model grid, the ratios of mean observed to mean predicted '
                  f'sampling and total MSE are {ratio:.6f} and {total_ratio:.6f}, respectively. '
                  f'On the implemented schedule alone, the corresponding ratios are {schedule_sampling:.6f} and {schedule_total:.6f}. '
-                 'Both summaries equally average the fresh targets, depths and shapes. Agreement checks '
+                 'Both summaries assign equal weight to fresh targets, depths and shapes. Agreement checks '
                  'the standard conditional second-moment identity using exact simulator means, variances '
-                 'and numerical reference derivatives; it is not a new variance formula or a measurement-only prediction. '
+                 'and numerical reference derivatives. This offline consistency check requires exact simulator inputs. '
                  'Gaussian positive-margin prediction additionally '
                  'approximates the distribution of fitted objective means and the nonlinear proposal map.')
     lookup={r['id']:r for r in data['predictions']}
@@ -1622,17 +1659,17 @@ def mechanism_results(data,revision):
     mean,lo,hi=graph_diagnostic_interval(matched,lambda r:100*abs(r['error']))
     lines.extend([r'\paragraph{Fresh-graph prediction is simulator-informed and conditional.}',
                   'All fitting maps, covariance predictions and Gaussian proposal predictions were '
-                  'frozen before independent multinomial observations. The fresh targets use the same '
-                  'fixed panel-zero donor bank and no fresh-target tuning. '
+                  'frozen before the independent multinomial observations were generated. The fresh targets use the same '
+                  'fixed panel-zero donor bank, with no tuning on these targets. '
                   f'The fresh-graph study compares {data["config"]["gaussian_repetitions"]} Gaussian '
                   f'proposal draws per condition with {data["config"]["proposal_repetitions"]} independent '
                   'sampled proposals along the implemented radius schedule. '
-                  f'The mean absolute difference in positive-margin probability across shaped fresh '
+                  f'The mean absolute difference in estimated positive-margin probability across fresh shaped '
                   f'conditions is {mean:.3f} percentage points (graph-bootstrap interval {lo:.3f} to {hi:.3f}). '
-                  'This discrepancy includes Gaussian approximation error and finite replay noise. '
+                  'This discrepancy includes both Gaussian approximation error and finite-sample simulation noise. '
                   'The predictor uses exact simulator objective means, variances and trial expectations. '
-                  'It is an oracle-informed mechanism test, not a measurement-implementable regime '
-                  'selector, fresh-graph optimizer benchmark, or hardware validation.'])
+                  'The experiment therefore tests the mechanism with exact target information; it does not '
+                  'provide a regime selector based only on measurements, an optimizer benchmark on fresh graphs, or hardware validation.'])
     residuals=fresh_prediction_residuals(data)
     references=[]
     for depth in [2,3]:
@@ -1642,24 +1679,24 @@ def mechanism_results(data,revision):
                                                   data['config']['gaussian_repetitions'])
             observed=float(np.mean([r['error'] for r in group]))
             references.append(lower-1e-12<=observed<=upper+1e-12)
-    lines.append('Figure~\\ref{fig:attribution} separates signed observed-minus-Gaussian residuals '
-                 'from the absolute-error summary. Error bars resample target graphs. Gray regions are '
-                 'a different, exact conditional Monte Carlo reference: under equal Gaussian and sampled '
+    lines.append('Figure~\\ref{fig:attribution} reports signed observed-minus-Gaussian residuals '
+                 'separately from the absolute-error summary. Error bars resample target graphs. Gray regions give '
+                 'an exact conditional Monte Carlo reference: under equal Gaussian and sampled '
                  'success probabilities within a graph, its 32-sample success count is hypergeometric '
                  'conditional on the combined successes in 32+256 draws. Convolving the eight graph '
-                 'distributions gives a central 95\\% reference for their equal-weight signed difference. '
-                 f'{sum(references)}/{len(references)} plotted depth/radius differences fall in this reference. '
+                 'distributions gives a central 95\\% reference for their equally weighted signed difference. '
+                 f'{sum(references)}/{len(references)} plotted depth/radius differences fall within this reference. '
                  'This pointwise null range is neither a confidence interval for systematic approximation '
                  'error nor uncertainty over a graph population. A zero-success condition gives a '
                  'degenerate conditional reference, not evidence of zero underlying probability.')
     costs=data['accounting']
-    lines.append(f'The additional attribution consumes {costs["attribution_optimization_shots"]:,} '
-                 f'optimization and {costs["attribution_validation_shots"]:,} independent validation shots. '
+    lines.append(f'The sampling-by-stopping experiment consumes {costs["attribution_optimization_shots"]:,} '
+                 f'optimization shots and {costs["attribution_validation_shots"]:,} independent validation shots. '
                  f'The mechanism observations require {costs["mechanism_observation_shots"]:,} simulated '
                  f'finite-shot outcomes; the Gaussian diagnostic uses {costs["gaussian_samples"]:,} draws '
-                 f'and prediction/reference construction uses {costs["prediction_exact_calls"]:,} exact '
-                 f'simulator queries, plus {costs["scheduled_proposal_diagnostic_exact_calls"]:,} exact sampled-proposal '
-                 'diagnostic objective evaluations. Those offline diagnostic costs are not credited as optimizer savings.')
+                 f'and constructing predictions and references uses {costs["prediction_exact_calls"]:,} exact '
+                 f'simulator queries, plus {costs["scheduled_proposal_diagnostic_exact_calls"]:,} exact objective '
+                 'evaluations to diagnose sampled proposals. These offline diagnostic costs are not credited as optimizer savings.')
     starts={name:next(i for i,line in enumerate(lines) if line.startswith(prefix)) for name,prefix in {
         'attribution':r'\paragraph{A separate factorial',
         'power':r'\paragraph{Online power',
@@ -1673,40 +1710,40 @@ def mechanism_results(data,revision):
 def decision_results(data):
     """Summarize matched-schedule utility and post-hoc predictive controls."""
     calibration=[r for r in data['calibration_records'] if r['shape_kind']=='shape']
-    lines=[r'\paragraph{Simple prediction controls delimit the oracle-informed comparison.}',
+    lines=[r'\paragraph{Simple prediction controls clarify the role of exact target information.}',
            'The post-hoc radius-only and radius-plus-depth controls estimate condition means from '
            'the eight original diagnostic graphs, then evaluate the same shaped conditions on the eight '
-           'fresh targets. Neither uses fresh outcomes to fit its condition means. They test whether '
-           'exact-target-informed Gaussian predictions describe variation beyond these simpler controls; '
-           'the comparison does not supply a measurement-only prediction rule. ']
-    for predictor,label in [('gaussian','Gaussian'),('radius_depth','radius plus depth'),('radius_only','radius only')]:
+           'fresh targets. Neither control uses fresh outcomes to fit its condition means. The comparison asks whether '
+           'Gaussian predictions that use exact target information describe variation beyond these simpler controls. '
+           'It does not supply a prediction rule based only on measurements. ']
+    for predictor,label in [('gaussian','Gaussian'),('radius_depth','radius-plus-depth'),('radius_only','radius-only')]:
         group=[r for r in calibration if r['predictor']==predictor]
         interval=graph_diagnostic_interval(group,lambda r:100*r['abs_error'])
         brier=graph_diagnostic_interval(group,lambda r:r['brier_score'])[0]
-        lines.append(f'The {label} predictor has mean absolute frequency difference {fmt_ci(interval)} '
-                     f'percentage points and mean Bernoulli Brier score {brier:.6f}. ')
+        lines.append(f'The {label} predictor has a mean absolute frequency difference of {fmt_ci(interval)} '
+                     f'percentage points and a mean Bernoulli Brier score of {brier:.6f}. ')
     null=next(r for r in data['calibration_null'] if r['shape_kind']=='shape')
     lines.append('Under the within-condition equal-probability null, the exact conditional expectation '
                  f'of the absolute frequency difference is {100*null["expected_null_mae"]:.4f} percentage points; '
                  f'{data["config"]["null_repetitions"]:,} independent conditional null draws give a central '
                  f'95\\% reference of {100*null["null_mae_quantiles"][0]:.4f}--'
                  f'{100*null["null_mae_quantiles"][-1]:.4f} percentage points for its mean. '
-                 f'The observed {100*null["observed_mae"]:.4f} lies inside this Monte Carlo reference. '
-                 'This is compatible with finite simulation noise at the available resolution; it does '
-                 'not prove equality or identify pure Gaussian approximation error.')
+                 f'The observed mean of {100*null["observed_mae"]:.4f} lies within this Monte Carlo reference. '
+                 'This result is consistent with finite simulation noise at the available resolution; it '
+                 'neither proves equality nor isolates Gaussian approximation error.')
     rows=data['joint_records']
     cap=max(r['endpoint_pair_budget'] for r in rows)
     lines.extend([r'\paragraph{Matched proposal and decision measurements reveal a conditional operating window.}',
                   'Figure~\\ref{fig:joint-utility} applies the four-look endpoint rules to the same fresh '
-                  'shaped radius/depth conditions used for proposal prediction, using the actual '
+                  'shaped conditions used for proposal prediction at each radius and depth, with the implemented '
                   '4096, 1024, 256, 64 and 16 model shots per point. Each condition retains all 256 '
                   'Gaussian proposals with one independent endpoint replay each, and all 32 sampled '
-                  'proposals with eight independent endpoint replays each. The eight replays do not '
-                  'create eight new model fits. All margin signs and unsuccessful decisions remain in '
-                  'the denominator. Accepted true gain is zero on a failed decision and retains its '
-                  'sign on acceptance; cost charges one model plus the actual endpoint measurements '
-                  'for each attempt. Graph-level intervals are pointwise and descriptive over the eight '
-                  'fixed-bank fresh targets, not independent-observation intervals over endpoint replays.'])
+                  'proposals with eight independent endpoint replays each. These eight replays share '
+                  'one model fit, rather than representing eight new fits. Proposals of every margin sign and all unsuccessful decisions remain in '
+                  'the denominator. Accepted true gain is set to zero when a decision fails and retains its '
+                  'sign when accepted. Each attempt is charged for one model and its actual endpoint measurements. '
+                  'Graph-level intervals are pointwise and descriptive over the eight '
+                  'fresh targets conditional on the fixed bank; they do not treat endpoint replays as independent graphs.'])
     for depth in [2,3]:
         for population,label in [('sampled','sampled observations'),('gaussian','Gaussian forecasts')]:
             group=[r for r in rows if r['depth']==depth and r['radius']==.1 and r['population']==population
@@ -1715,10 +1752,10 @@ def decision_results(data):
             cost=graph_diagnostic_interval(group,lambda r:r['mean_total_shots'])
             probability=graph_diagnostic_interval(group,lambda r:100*r['acceptance_probability'])
             positive=sum(r['mean_accepted_true_gain_pp']>0 for r in group)
-            lines.append(f'At depth {depth}, radius 0.1 and the {cap:,}-shot pair cap, {label} give '
-                         f'Bernstein accepted true gain {gain[0]:.6f} percentage points '
+            lines.append(f'At depth {depth}, radius 0.1 and the {cap:,}-shot pair cap, the {label} give '
+                         f'a mean accepted true gain under Bernstein of {gain[0]:.6f} percentage points '
                          f'(95\\% graph interval {gain[1]:.6f} to {gain[2]:.6f}), '
-                         f'acceptance {probability[0]:.4f}\\%, and mean total cost {cost[0]:,.2f} shots '
+                         f'an acceptance frequency of {probability[0]:.4f}\\%, and a mean total cost of {cost[0]:,.2f} shots '
                          f'(95\\% graph interval {cost[1]:,.2f} to {cost[2]:,.2f}). '
                          f'Positive accepted gain occurs on {positive}/{len(group)} target graphs. ')
     smallest=min(r['radius'] for r in rows)
@@ -1728,22 +1765,22 @@ def decision_results(data):
         group=[r for r in small if r['depth']==depth]
         gain=graph_diagnostic_interval(group,lambda r:r['mean_accepted_true_gain_pp'])[0]
         cost=graph_diagnostic_interval(group,lambda r:r['mean_total_shots'])[0]
-        lines.append(f'At radius {smallest:g}, sampled Bernstein has accepted gain {gain:.6f} '
-                     f'percentage points at depth {depth}, despite mean total cost {cost:,.0f} shots. ')
+        lines.append(f'At radius {smallest:g}, the sampled Bernstein proposals have a mean accepted gain of {gain:.6f} '
+                     f'percentage points at depth {depth}, with a mean total cost of {cost:,.0f} shots. ')
     hoeffding=[r for r in rows if r['rule']=='hoeffding']
     if all(r['acceptance_probability']==0 for r in hoeffding):
-        lines.append('Hoeffding accepts no proposal in either simulated population at any tested allowance. ')
+        lines.append('The Hoeffding rule accepts no proposal in either simulated population at any tested allowance. ')
     lines.append('High positive-margin frequency alone therefore does not identify the largest '
                  'certified gain: proposal magnitude, decision resolution and model expenditure jointly '
-                 'matter. This post-hoc one-attempt diagnostic remains conditioned on exact target '
-                 'information and a fixed bank. Its gain is not a held-out complete-optimizer performance '
-                 'result or a comparison with SPSA or COBYLA.')
+                 'determine the outcome. This post-hoc diagnostic evaluates a single attempt conditional on exact target '
+                 'information and a fixed bank. The resulting gain does not measure complete-optimizer performance '
+                 'on held-out graphs or compare that performance with SPSA or COBYLA.')
     costs=data['accounting']
     lines.append(f'The joint diagnostic generates {costs["new_endpoint_simulated_shots"]:,} new simulated '
                  f'endpoint outcomes across {costs["endpoint_replays"]:,} replays and '
                  f'{costs["exact_distribution_queries"]:,} exact distribution queries. '
                  'Its model proposals are reused from the saved mechanism experiment; no new model '
-                 'measurements are generated. Per-attempt cost nevertheless charges the saved model '
+                 'measurements are generated. The per-attempt cost nevertheless charges the saved model '
                  'allocation once. Rules and budget prefixes reuse each new endpoint stream, so their '
                  'reported costs must not be summed as independent offline sampling expense.')
     return lines
@@ -1767,7 +1804,7 @@ def figure_manifest(data, data_path, target):
                 'generality.pdf':'supporting paired refinement-gain effects versus both conventional comparators by graph size and depth',
                 'attribution.pdf':'controlled sampling-by-stopping gains/costs, paired cost effects, and signed fresh prediction residuals with graph and conditional Monte Carlo uncertainty'}.items()})
     if (target/'decision.pdf').is_file():
-        descriptions['decision.pdf']={'quantity':'fresh scheduled positive-margin probability, accepted true gain including failures, and model-plus-endpoint cost; oracle-informed forecasts versus independent observations',
+        descriptions['decision.pdf']={'quantity':'fresh scheduled positive-margin probability with frozen old-graph predictor controls, accepted true gain including failures, and model-plus-endpoint cost; oracle-informed forecasts versus independent observations',
                                       'study':'post-hoc matched fresh-schedule decision experiment'}
     files = [{'path': (target/name).relative_to(REPO_ROOT).as_posix(), 'sha256': digest(target/name), **description}
              for name,description in descriptions.items()]
