@@ -42,7 +42,10 @@ SPSA & 0.11 & 72/72 & 129024 & 126.0 & 84.0 & 0 \\
 \end{table}
 \paragraph{Model geometry and the graph bound have limited roles.}
 For descriptor, shaped, the median local-design condition number is 3.99, with 95th percentile 3.99.
+On the same 432 recorded trial designs, the physical fitting-map operator norm has median 23.77 and 95th percentile 64.44 in inverse radians.
 For no point repair, the median local-design condition number is 17.23, with 95th percentile 223.85.
+On the same 446 recorded trial designs, the physical fitting-map operator norm has median 109.44 and 95th percentile 1615.31 in inverse radians.
+These two empirical distributions weight trials equally at depth two and the 131,072-shot cap; runs with more trials contribute more points. Physical maps are recovered from the recorded model locations and centers only after verifying that every $\Delta\|B_{j,:}\|_2$ is less than half its parameter period. This bound makes the periodic displacement unique; reconstructed normalized designs also reproduce the saved weighted condition numbers. The physical map is $L=(\Delta B)^{-\mathsf T}(A^{-1})_{2:d+1,:}$. Improved conditioning or sensitivity does not by itself demonstrate useful proposals or saved shots.
 At depth 1, 301/384 target--reference pairs have local-neighborhood total variation equal to one.
 At depth 2, 384/384 target--reference pairs have local-neighborhood total variation equal to one.
 At depth 2 those recorded scores are constant across the bank to within $10^{-15}$, which is double-precision rounding in the edge-frequency sums and not structural information. The softmax floor $\tau=10^{-3}$ in the selection rule nevertheless resolves that rounding, so the local-total-variation anchor differs from the fixed-donor anchor on 3 of 24 depth-2 targets, that is 9 of 72 runs per budget. The separation between the Local TV and Fixed donor rows of Table~\ref{tab:results} is an artifact of that tie-break and must not be read as evidence of structural selection.

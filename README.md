@@ -62,14 +62,15 @@ python code/scripts/make_figures.py --config code/configs/paper.json
 python code/scripts/build_paper.py
 ```
 
-The figure generator also consumes the refinement and mechanism bundles. Check them separately:
+The figure generator also consumes the refinement, mechanism, and joint-decision bundles. Check them separately:
 
 ```sh
 python code/scripts/run_followup.py --revision --verify
 python -m gcqaoa.mechanism --verify
+python -m gcqaoa.decision --verify
 ```
 
-Add `--full` to either command to regenerate its stochastic observations and deterministic decisions. Mechanism full replay requires byte-identical recorded numerical sources and the recorded numerical environment; source drift is an explicit error. Its default check validates identities, chronology, grids, propagated variance, accounting, and the power analysis reconstructed from preserved streams. See [METHOD.md](code/docs/METHOD.md) and [PROVENANCE.md](code/docs/PROVENANCE.md) for the distinction between record checks and trajectory replay.
+Add `--full` to any of these commands to regenerate its stochastic observations and deterministic decisions. Mechanism and joint-decision full replay require byte-identical recorded numerical sources and the recorded numerical environment; source drift is an explicit error. Default checks validate the saved evidence and reconstruct the reported analyses. See [METHOD.md](code/docs/METHOD.md) and [PROVENANCE.md](code/docs/PROVENANCE.md) for the distinction between record checks and trajectory replay.
 
 The PDF builds from the authoritative source `submission/main.tex`. It needs **Tectonic** (which downloads its standard TeX bundle on first use), or **pdfLaTeX and BibTeX** with the packages loaded by the manuscript. **Poppler** (`pdftotext`) is needed for source-package verification. The builder regenerates `main.pdf` and `main.bbl`, checks for undefined references, missing citations, and overfull boxes, and removes TeX intermediates. Edit bibliography entries in `submission/refs.bib`; do not edit the PDF or generated numerical tables independently.
 
@@ -93,7 +94,7 @@ python -m pip install --no-deps -e code
 python code/scripts/check_release.py --full --replay-solvers
 ```
 
-`--full` includes tests, canonical reconstruction, follow-up/refinement/mechanism replay, and source-package compilation; `--replay-solvers` also compares all transport solver starts. Each execution's recorded environment remains authoritative: a backend that reproduces one study need not reproduce another. These flags retain strict numerical tolerances and report backend-sensitive changes as failures. See the [backend replay notes](code/docs/PROVENANCE.md#numerical-backend-and-solver-replay).
+`--full` includes tests, canonical reconstruction, follow-up/refinement/mechanism/joint-decision replay, and source-package compilation; `--replay-solvers` also compares all transport solver starts. Each execution's recorded environment remains authoritative: a backend that reproduces one study need not reproduce another. These flags retain strict numerical tolerances and report backend-sensitive changes as failures. See the [backend replay notes](code/docs/PROVENANCE.md#numerical-backend-and-solver-replay).
 
 The same regeneration workflow is available as `make -C code reproduce PYTHON=python`. Figures and numerical text follow one chain:
 
@@ -136,6 +137,8 @@ python -m gcqaoa.transport_audit --output code/results/executions/transport-repe
 python code/scripts/run_followup.py --revision --output code/results/executions/refinement-repeat.json.gz
 python -m gcqaoa.mechanism --output code/results/executions/mechanism-repeat.json.gz
 python -m gcqaoa.mechanism --verify --output code/results/executions/mechanism-repeat.json.gz
+python -m gcqaoa.decision --output code/results/executions/decision-repeat.json.gz
+python -m gcqaoa.decision --verify --full --output code/results/executions/decision-repeat.json.gz
 ```
 
 These commands generate separate executions rather than replacing the supplied bundles. The mechanism runner also refuses an output whose pending evidence already exists; choose another unused name after an interruption. It saves the protocol before prediction, and saves prediction hashes before new model observations. Regenerating the complete mechanism study includes 256 controlled optimizer runs, 1,920 diagnostic shot cells and offline proposal evaluations.
@@ -151,6 +154,7 @@ The recorded canonical experiment took approximately 313 seconds on arm64 macOS 
 | [Transport audit](code/results/transport.json.gz) | All 384 canonical target–donor pairs, with longer runs, regularization changes, multistarts, and a conditional-gradient comparison. |
 | [Refinement revision](code/results/refinement.json.gz) | 256 runs crossing geometry and acceptance rule on the same follow-up anchors; complete ledgers, affine diagnostics and frozen-proposal endpoint streams. |
 | [Mechanism and attribution](code/results/mechanism.json.gz) | 256 runs crossing sampling and unresolved stopping; 320 prediction cells on eight existing and eight fresh graphs, each tested at six shot counts with 128 fits; matched online/extended power replay. |
+| [Joint proposal and endpoint diagnostic](code/results/decision.json.gz) | All 80 fresh shaped schedule conditions, comparing 32 sampled proposals with 256 exact-input Gaussian proposals per condition; new endpoint streams, accepted true gain including failures, full model-plus-test cost, and post hoc simpler-predictor checks. |
 | [Graph inputs](code/data/graphs.jsonl) and [splits](code/data/splits.json) | Exact edges, graph identities, seeds, and canonical bank/test membership. |
 | [Reference bank](code/data/reference_bank.json) | Donor parameters and best-found objective records. |
 | [Summaries](code/results/aggregate/summary.csv) and [paired comparisons](code/results/aggregate/paired_comparisons.csv) | Full-precision aggregate data behind the presentation. |
@@ -164,6 +168,8 @@ Graph repetitions, donor banks, and shot repetitions are different sampling unit
 The mechanism grid crosses 16 graphs, two depths, two shapes and five radii. Each of its 320 prediction cells has six shot-count conditions, with 128 independent fits per condition. The implemented schedule is tested at every radius, including 64 and 16 shots at radii 0.2 and 0.4. The first 32 fits on each scheduled condition supply true proposal-margin diagnostics; fresh cells additionally have 256 Gaussian proposal draws frozen before those observations. RMS error takes the square root after averaging squared errors. The bias–variance identity is standard linear estimation mathematics, and its exact-target inputs limit the interpretation to simulator-informed prediction.
 
 Acceptance-power lines keep the same equally weighted proposal cohort at every budget. The online rule has four planned looks, ending at 16,384 shots per endpoint; the separately labelled extended rule has five, ending at 65,536. Their confidence penalties are recomputed accordingly. Power intervals describe independent replay uncertainty conditional on the frozen proposals, while model and gain summaries use graph-level uncertainty. Neither is evidence of a new hardware measurement strategy.
+
+The joint-decision study connects proposal quality and endpoint cost on the actual radius-dependent allocation schedule. Every saved fresh shaped proposal is retained, including nonimproving and nonpositive-margin proposals. Eight endpoint replays per sampled proposal and one per Gaussian proposal provide 256 endpoint trials per condition and population. Each attempted trial charges its model before the online four-look test under a 65,536-shot cap. This is a post hoc single-step diagnostic at fixed anchors; the exact-input forecast is not an online controller, and reused graphs are not a new holdout. Its protocol, source, complete endpoint streams, and resource ledger are saved separately from the earlier studies.
 
 The local graph-transfer certificate is valid under its stated hypotheses but saturates on all depth-2 target–donor pairs. Floating-point near-ties change the recorded Local TV donor on three graphs; the paper explains why that row differs from Fixed donor. Feasible transport couplings do not certify convergence or global optimality. The shapes are deterministic search geometry, not calibrated distributions over optimal parameters. The [method](code/docs/METHOD.md) and [evidence guide](code/docs/EVIDENCE.md) specify these distinctions and the limits of the acceptance guarantee.
 

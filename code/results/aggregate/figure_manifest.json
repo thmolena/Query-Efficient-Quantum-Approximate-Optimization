@@ -1,5 +1,6 @@
 {
   "additional_studies": {
+    "decision.json.gz": "b5c356c50c1f03c1b81ac7dfb6e4febd18f992099cce6c29f52c23fa608af15d",
     "followup.json.gz": "84e4469f284532ea67a9afc378d04f94bf862d54312aa56a3d0b06585809982a",
     "mechanism.json.gz": "ae37104f54a01e5705830b38e263e5e2c3df2860f905e6f27280c1d986d49835",
     "refinement.json.gz": "e88390b472e995dcf401a23c768eb86b377873500e4396fc31e967f07f10f3b5",
@@ -8,7 +9,7 @@
   "analysis_source_sha256": {
     "src/gcqaoa/artifacts.py": "3604b250c0359c2e60852173d8bccfd83776322e645df6cda0654e9b924538c3",
     "src/gcqaoa/provenance.py": "23121b8539d1a72391ade14eef58e3c27302c4486ad83e130b99c4bba1507204",
-    "src/gcqaoa/report.py": "10859c46a65ba9bf859990c58d13ad94655fd878cf4ed2a3362ed639450f5863"
+    "src/gcqaoa/report.py": "019adab299e156624695f353a4ef8205cc48bfb342e93706930a81954eec3538"
   },
   "bootstrap": {
     "interval": "95 percent percentile; unadjusted descriptive comparisons",
@@ -25,7 +26,7 @@
       ],
       "path": "submission/figures/quality.pdf",
       "quantity": "graph-mean signed reference deficit and graph bootstrap interval",
-      "sha256": "0b730c8ce9a961c215a4949d3886d974c0be08ea7e66c0a253f6a006eea045f0"
+      "sha256": "af096f84cda03967529e6897c91b28f00750b4b32d9d296b401b8ff96bfcf9e9"
     },
     {
       "depths": [
@@ -42,11 +43,13 @@
         131072
       ],
       "depths": [
-        2
+        1,
+        2,
+        3
       ],
       "path": "submission/figures/accounting.pdf",
-      "quantity": "stacked bars of model, acceptance and independent validation shots",
-      "sha256": "1dfb5bb0be42a9252b58c247c653f8644df4a1d038cdaf5b3e8e4414e6131f2c"
+      "quantity": "stacked model, endpoint, baseline objective and final evaluation shots, including sampling-by-stopping controls",
+      "sha256": "f34f5cd699455ff3113cc46e4bb17efde7362f1384723fdc28f6ff8715e12a89"
     },
     {
       "depths": [
@@ -54,13 +57,13 @@
         2
       ],
       "path": "submission/figures/conditioning.pdf",
-      "quantity": "design condition-number step empirical CDF and not-saturated versus saturated certificate bars",
-      "sha256": "ccdfec264651208285ab95c80d877d333551b3adb516e043ca2670e8f5403494"
+      "quantity": "historical trial-weighted design-condition and verified physical-fitting-map-norm ECDFs, plus certificate saturation bars",
+      "sha256": "78618aed718c1acbea42340aa22917f57195cb4143bc016cf60ea6864ff2f4fd"
     },
     {
       "path": "submission/figures/transport.pdf",
       "quantity": "solver feasibility, donor changes, and quality against descriptor/original references on matched valid target sets",
-      "sha256": "635300397ff5beef99d1babf368d2ca60ccad2ea744f94bf1ab256923583abc9"
+      "sha256": "e96e0419533ef537a1f1273f9cf419f89fadf6d7950b6a44b0aa6d1ba18630d9"
     },
     {
       "path": "submission/figures/refinement.pdf",
@@ -77,7 +80,7 @@
     {
       "path": "submission/figures/acceptance_power.pdf",
       "quantity": "fixed-cohort power, unresolved fraction and actual expenditure across endpoint budgets, online four-look and extended five-look allocations",
-      "sha256": "4739d1ce0afdced945a6cf541c0b5821af203032071b491fa15c516414ce6fad",
+      "sha256": "b15cc90c5c34a6ebd527f973021cc077a3386935f6c53653357e6b3b2b1c447a",
       "study": "post-hoc matched refinement revision"
     },
     {
@@ -94,9 +97,15 @@
     },
     {
       "path": "submission/figures/attribution.pdf",
-      "quantity": "controlled fixed/radius sampling by stop/continue unresolved policy gains/costs and fresh-graph Gaussian prediction versus sampled margin probability",
-      "sha256": "867b21fcce761091e182f7d23991d54ff5bec78aa7e7860bc07c2941c3c380af",
+      "quantity": "controlled sampling-by-stopping gains/costs, paired cost effects, and signed fresh prediction residuals with graph and conditional Monte Carlo uncertainty",
+      "sha256": "e2ea8e6f08b4ae8c42a9f2244a07a221e4999090f3a7b3d48983b4eefbecf209",
       "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/decision.pdf",
+      "quantity": "fresh scheduled positive-margin probability, accepted true gain including failures, and model-plus-endpoint cost; oracle-informed forecasts versus independent observations",
+      "sha256": "622d292a22baf8d804cbbb2c2624a650ec7d305afb1ad968671798ab8d452fe9",
+      "study": "post-hoc matched fresh-schedule decision experiment"
     }
   ],
   "followup_bootstrap": {
@@ -198,12 +207,12 @@
       ],
       "path": "submission/tables/results.tex",
       "quantity": "generated study result paragraphs and complete depth-two ablation table",
-      "sha256": "bc7ef2186afd46026287d1a1d57dba99ef9ad7f3ed252c4cba3a4e8fa6ea5404"
+      "sha256": "9694d37ebbfa23f70894fdb2125ac6f2298f6c839aa20216522e801dac119a91"
     },
     {
       "path": "submission/tables/refinement.tex",
       "quantity": "generated post-hoc refinement findings and complete factorial table",
-      "sha256": "a097aabdaa66bbe5e85300c5657d88f88c886ae2116b4537cd75f013e7f87abc"
+      "sha256": "25922c1b807b25c89ec409720466d1d3cacd7a775dce897e6d7dc4f34032895a"
     }
   ],
   "website": {

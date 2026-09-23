@@ -37,26 +37,27 @@ via Graph-Conditioned Trust Regions}
 \date{}
 \maketitle
 \begin{abstract}
-A good transferred QAOA solution can leave improvements that are difficult
-to propose and resolve with finite measurements. We study this regime for
-MaxCut by relating trust-region radius, affine-model bias, propagated shot
-variance, and acceptance power. Smaller regions improve exact-data proposals
-in the diagnostic sample, but amplify gradient noise and leave smaller
-decrease margins. A conditional bias--variance calculation predicts gradient
-mean-square error before independent observations: pooled error on eight
-fresh graphs is 1.5\% above its simulator-informed prediction. A separate
-256-run factorial isolates radius-dependent sampling from stopping after
-unresolved evidence. All four policies return identical vectors within each
-matched run; stopping reduces expenditure without a detected gain from
-adaptive sampling. Four-look endpoint replays find only 2.33\% mean Bernstein
-acceptance in the fixed positive-margin cohort at the largest online
-endpoint-pair allowance. The preserved 256-run revision accepts four of 288
-proposals, with shaped gains below the SPSA and COBYLA means. Restoring the
-original shaped comparator exposes a depth-dependent quality--cost tradeoff.
-These results quantify model accuracy and decision resolution after transfer.
-They establish neither an optimizer-complexity advantage nor a
-measurement-only controller: the predictive diagnostics use exact simulator
-quantities, and hardware validation remains open.
+Graph-conditioned initialization can leave QAOA improvements that are costly
+to identify and certify. We study this regime for MaxCut using graph-selected
+anchors, donor-derived trust-region shapes, sampled affine models, and
+finite-horizon acceptance tests. A 256-run sampling-by-stopping experiment
+returns identical parameters under all four policies in all 64 matched
+cases. Stopping after unresolved evidence saves approximately 38--42\% of
+the mean optimization shots, whereas radius-dependent model allocation
+produces no additional quality gain in this comparison. A separate 256-run
+shape-by-rule experiment accepts four of 288 proposals; its shaped policy
+has smaller mean gains than SPSA and COBYLA. Conditional diagnostics explain
+two obstacles: small regions amplify fitting noise at fixed shot count,
+and positive model improvements need not be statistically resolvable.
+On eight fresh graphs at depth three, the actual sampling schedule gives
+no accepted gain at radius 0.025, but a mean 0.180 percentage-point gain at
+radius 0.1, with acceptances on two of eight graphs, for 33336
+model-plus-test shots; an exact-input Gaussian diagnostic
+forecasts 0.178 percentage points. These are single-proposal ideal-simulator
+results with exact target information, not measurement-accessible control
+rules. The results identify a cost-saving stopping intervention and the
+limits of this graph-conditioned refinement policy, without establishing
+optimizer superiority or a general query-complexity advantage.
 \end{abstract}
 
 \section{Introduction}
@@ -72,13 +73,14 @@ resolve the improvements that remain?
 We examine this question for MaxCut through a finite-shot local-refinement
 policy with a graph-selected anchor. Graph comparison selects a donor vector; nearby, symmetry-aligned
 donors set a bounded search shape; an affine model proposes a move; and fresh
-endpoint measurements determine acceptance. This construction makes four
-possible sources of benefit separately testable. Descriptor selection is the
+endpoint measurements determine acceptance. These four components require
+separate controls before their benefits can be attributed. Descriptor selection is the
 default; global transport and local-neighborhood scores are controlled
 comparisons rather than presumed improvements. An objective-estimation
 call, or query, is one newly sampled circuit estimate at one angle vector.
-We report its shot cost and its grouping into logical batches, because fewer
-calls need not imply fewer circuit executions or lower total cost.
+Our primary measurement cost is the number of circuit shots. We also report
+estimation calls and logical batches, because fewer calls need not imply
+fewer circuit executions or lower total cost.
 
 Parameter transfer has several established foundations. Depth-dependent
 patterns motivate interpolation and Fourier initialization~\cite{zhou2020},
@@ -95,11 +97,14 @@ in training, preprocessing, and online measurement costs; their common
 motivation makes initialization-only controls essential when assessing
 additional refinement.
 
-Graph information supplies an anchor and a search shape. The default is an
-inexpensive descriptor; transport and rooted-neighborhood comparators are
-supporting controls. Their role is to test the initialization premise, rather
-than account for improvements that require new measurements. Detailed
-structural constructions and their limitations are given in Methods.
+The graph-derived shape supplies an additional, testable hypothesis: donor
+parameter variation might identify directions in which target refinement is
+productive. Isotropic regions at the same anchor control for using any shape
+at all. They do not determine whether a benefit comes from graph-aligned
+orientation or merely anisotropy. A same-spectrum, randomly rotated shape
+would isolate that distinction; the present experiments do not include this
+control. Transport and rooted-neighborhood selectors separately test donor
+selection, with their constructions and limitations specified in Methods.
 
 Local modeling and shot allocation also have substantial precedent.
 QR-based least squares and interpolation geometry control numerical
@@ -123,16 +128,18 @@ is not a reproduction of that published trust-region method. A matched
 comparison with the latter remains necessary for a claim of superiority
 over variance-aware QAOA optimization.
 
-The central scientific question is whether a measured relationship between
-radius, fitting bias, shot variance, and acceptance power predicts useful
-refinement conditions. We test this relationship in three stages: audit the
-saved decisions and restore the original shaped comparator; isolate sampling
-and stopping through a separate factorial experiment; then evaluate fixed
-predictions on fresh graph instances. The bias--variance identity and
-empirical-Bernstein inequality are standard tools. Their role here is to
-make a conditional QAOA prediction testable, with exact-data inputs and
-measurement-only decisions clearly distinguished. Matched quality--cost
-comparisons determine whether this construction improves query efficiency.
+We ask which part of graph-conditioned refinement changes solution quality
+or measurement cost, and whether conditional model accuracy translates into
+an affordable accepted improvement. A shape-by-rule experiment measures the
+complete policy, and a sampling-by-stopping experiment isolates two of its
+interventions. A fresh-graph calibration study tests exact-input error and
+proposal predictions. Finally, a joint proposal-and-endpoint diagnostic
+applies the online budget to proposals generated along the actual allocation
+schedule. The last study measures the interface between proposal quality and
+decision cost; it does not turn an exact-input forecast into an online
+controller. Standard variance propagation and concentration inequalities
+provide the analysis, while these controlled comparisons determine the
+empirical scope of the result.
 
 \section{Results}
 \subsection{Separating initialization from refinement}
@@ -153,16 +160,16 @@ from being credited to the refinement algorithm.
 
 \subsection{Matched refinement and measurement trajectories}
 \label{sec:empirical}
-The historical experiments motivate the revision; they are preserved in
-Appendix~\ref{sec:historical}. The new experiment reuses the follow-up's
-16 target graphs, two fixed banks, depths two and three, and validation-selected
-settings. It is a post hoc controlled intervention on those instances, not
-an independent replication. The earlier revised four-cell design holds the anchor,
-shot cap, model family, and settings fixed while crossing isotropic or shaped
-regions with Hoeffding or empirical-Bernstein acceptance. It does not isolate
-sampling from stopping. The new attribution experiment holds shaped geometry
-and Bernstein acceptance fixed and crosses fixed or radius-dependent shots
-with stopping or continuing after unresolved evidence.
+The shape-by-rule experiment reuses the historical follow-up's 16 targets,
+two fixed banks, depths two and three, and validation-selected settings.
+It holds the anchor, shot cap, affine-model family, allocation schedule, and
+unresolved-stopping policy fixed while crossing isotropic or shaped regions
+with Hoeffding or empirical-Bernstein acceptance. This is a post hoc
+intervention on previously examined instances. It does not isolate sampling
+from stopping; the separate sampling-by-stopping experiment holds shaped
+geometry and Bernstein acceptance fixed to make that attribution. Historical
+algorithms retain their original measurements and controls in
+Appendix~\ref{sec:historical}.
 
 \input{tables/refinement.tex}
 
@@ -202,8 +209,10 @@ imply that a later nonmonotone baseline output still meets the target.}
 \end{figure}
 
 \subsection{Proposal quality and decision resolution}
-Write $a=f(x)-f(x^+)$ for a proposal's true improvement and
-$h=a-\eta q$ for its sufficient-decrease margin. A nonimproving proposal has
+Write $a=f(x)-f(x^+)$ for a proposal's true improvement,
+$q>0$ for the fitted model's predicted decrease, and
+$h=a-\eta q$ for its sufficient-decrease margin, with $\eta=0.1$.
+A nonimproving proposal has
 $a\le0$; an improving proposal with $h<0$ still fails the declared
 sufficient-decrease requirement. At $h=0$ it meets the weak decrease
 threshold but has no positive detection margin. On the simultaneous
@@ -214,6 +223,8 @@ points left unresolved, and four valid accepted improvements. The margin
 magnitudes and matched-rule replay determine whether unresolved proposals
 were close to the rule's resolvable regime. These are proposal counts, not
 288 independent graph observations.
+These 288 online proposals differ from the 160 fixed-shot proposals used
+in the conditional power experiment below. Their counts must not be pooled.
 These categories require exact diagnostics only after proposal selection;
 the optimizer sees sampled means and variances. Figure~\ref{fig:acceptance-power}
 freezes proposals and redraws endpoint observations with independent random
@@ -240,7 +251,11 @@ Bands describe pointwise replay uncertainty conditional on these proposals,
 not generalization to other graphs. There are 128 replays per proposal;
 zero acceptances for one proposal give a one-sided 95\% binomial upper limit
 of $1-0.05^{1/128}\simeq2.31\%$, not proof of zero power or confirmation of
-a probability near $10^{-6}$.}
+a probability near $10^{-6}$. The budget coordinates are numerical on a
+base-two logarithmic axis. The online acceptance panel uses a 0--0.06
+vertical range to resolve low power; its extension has a separate scale.
+This fixed-$S=1024$ population does not implement the radius-dependent
+model allocation tested in Fig.~\ref{fig:joint-utility}.}
 \label{fig:acceptance-power}
 \end{figure}
 
@@ -272,50 +287,105 @@ radius-dependent model shots is one factor. Stopping versus refitting after
 unresolved evidence is the other; continuation leaves the radius unchanged
 until acceptance or certified rejection. Thus this experiment does not
 bundle continued sampling with the historical unresolved contraction rule.
+The common cap also limits continuation opportunities: two complete endpoint
+tests alone cost $2\times32768=65536$ shots, leaving no allowance for their
+models. Identical outputs therefore establish savings relative to this
+specific continuation policy, not optimal stopping among all feasible
+allocations of the remaining budget.
 
-Fresh-graph predictions are fixed before their new model observations. They
-use exact circuit expectations and variances to predict conditional model
-error; an approximate Gaussian coefficient model additionally predicts the
-frequency of positive sufficient-decrease margins. Independent finite-shot
-fits evaluate these predictions. This distinguishes a test of the proposed
-mechanism from optimization on those fresh graphs: it is not a new
-held-out ranking of complete optimizers. The descriptive size/depth effects
-are retained in Fig.~\ref{fig:generality} as supporting evidence.
+The fresh-graph calibration fixes the error formula and Gaussian sampling
+procedure before new model observations. Its target-specific inputs are exact
+design-point means and variances, numerical reference gradients, and exact
+trial objectives. Independent multinomial fits test the resulting conditional
+predictions. This distinguishes reproducible calibration from an affordable
+forecast on an unseen target. Both the Gaussian prediction and the observed
+positive-margin rate have Monte Carlo error; their difference cannot be
+interpreted as approximation error alone. The post hoc simpler-predictor
+comparison and joint-budget diagnostic below test additional implications
+without relabelling these same graphs as a second independent holdout.
 
 \MechanismResults
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/attribution.pdf}
-\caption{Which intervention changes refinement, and which prediction survives
-new targets? Grouped bars cross fixed or radius-dependent model shots with
-stop or continue after unresolved evidence, holding anchor, geometry,
-acceptance rule, and cap fixed. Separate panels report own-anchor gain and
-actual shots with paired graph-level uncertainty. Continuation refits at the
-same radius after an unresolved test. Lines on fresh graphs compare frozen
-simulator-informed predictions with independent observations across the
-prespecified radius range. These predictions test the mechanism; they do not
-assume a favorable outcome or demonstrate a measurement-only control rule.}
+\caption{Attribution of expenditure and calibration residuals. Grouped bars
+report own-anchor gain and optimization shots for the four
+sampling-by-stopping policies; all four return the same vector in every one
+of the 64 matched cases. Paired contrasts show stop minus continue and
+radius-dependent minus fixed allocation, with negative cost differences
+indicating savings. Continuation refits at the same radius after unresolved
+evidence. Bottom panels show fresh-graph observed minus Gaussian-predicted
+positive-margin frequency. Graph-bootstrap intervals and a separate
+conditional Monte Carlo reference distinguish graph variation from the
+noise of comparing 32 observed and 256 predicted proposals per condition.
+The reference assumes equal underlying probabilities within each condition;
+it is not a bound on Gaussian approximation error. All intervals are
+pointwise.}
 \label{fig:attribution}
+\end{figure}
+
+\subsection{From scheduled proposals to accepted improvement}
+\label{sec:joint-results}
+The fixed-$S$ power replay and model-error curves alone cannot determine
+whether the actual allocation schedule yields useful measured improvement.
+Figure~\ref{fig:joint-utility} connects those stages on the same fresh
+shaped proposal population. It compares Gaussian-generated forecasts with
+multinomial-model observations at each radius, including every unsuccessful
+proposal and charging the model before the online four-look endpoint test.
+The reported utility is accepted true gain per attempted proposal, with
+zero gain assigned to an unresolved or rejected test. This single-step
+diagnostic does not select a radius or evaluate a complete controller.
+
+\JointDecisionResults
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/decision.pdf}
+\caption{Proposal quality and decision cost on the same allocation schedule.
+Line panels at depths two and three show positive-margin probability,
+accepted true gain including zero outcomes, and total model-plus-endpoint
+shots versus radius. The per-point model counts are 4096, 1024, 256, 64,
+and 16 at radii 0.025, 0.05, 0.1, 0.2, and 0.4. Every fresh-graph shaped
+condition contributes 32 sampled-model proposals with eight independent
+endpoint replays each, and 256 Gaussian proposals with one replay each.
+Both confidence rules share endpoint streams and use the online $L=4$
+penalty under a 65536-shot cap. Forecast and observed lines use equal graph
+weights; pointwise bands resample whole graphs. All signs of the true
+decrease and margin remain in the denominator. Exact target moments and
+trial objectives inform the Gaussian population, so its forecast is an
+offline diagnostic, not a free online decision rule.}
+\label{fig:joint-utility}
 \end{figure}
 
 \FloatBarrier
 \section{Discussion}
-The central mechanism is a radius tradeoff. In the original diagnostic grid,
-all 32 graph/depth/shape combinations have a positive exact-data margin at
-radius 0.025, while none do at radius 0.4. Small regions can therefore repair
-the affine boundary proposal without making it easy to measure: the
-physical gradient fitting map amplifies sampling noise as the radius
-contracts, and a smaller move can leave a smaller improvement margin.
-Large-radius total error that persists with increasing shots instead points
-to model bias. Equation~\eqref{eq:biasvariance} separates these contributions
-and specifies a numerical prediction whose calibration can be tested on
-independent observations.
+The controlled result is an expenditure reduction from the specified
+unresolved-stopping policy. It is not an increase in refinement quality from
+radius-dependent allocation. The shape-by-rule experiment gives a separate
+quality--cost comparison, and the conditional diagnostics identify why a
+well-fitted proposal can still be unproductive or too costly to resolve.
+These claims concern different interventions and require their respective
+controls.
+
+The radius tradeoff depends on what is held fixed. In the original
+eight-graph diagnostic grid, all 32 graph/depth/shape combinations have a
+positive exact-data margin at radius 0.025, while none do at radius 0.4.
+Small regions produce positive margins in these controls; this does not
+establish a general repair guarantee. At fixed model shots, contracting the
+radius amplifies gradient noise through the physical fitting map. Along the
+inverse-square shot schedule, the leading radius dependence of that variance
+is instead compensated at additional model cost. Large-radius error that
+persists with increasing shots identifies affine-model bias. A smaller
+proposal can also leave a smaller detectable improvement.
+Equation~\eqref{eq:biasvariance} separates the fitting terms; the
+joint-budget experiment tests their downstream decision consequence on the
+actual schedule.
 
 Three claims must be kept distinct. Earlier termination can avoid
 expenditure; a positive own-anchor gain establishes useful refinement;
-and a prediction fixed before new observations can establish a conditional
-model of the operating regime. None implies the others. The original shaped
+and calibration on independent observations tests a specified conditional
+model. None implies the others. The historical shaped
 Bernstein policy belongs in the main comparison: its depth-three gain is
 about 0.109 percentage points, versus 0.032 for the first revision, whose
 mean expenditure is lower. At depth two the ordering of those gains
@@ -337,7 +407,8 @@ The separate sampling-by-stopping factorial makes this attribution direct:
 all four policies return identical vectors for each of the 64 matched
 graph/depth/repetition combinations. Their gains are 0.0365 and 0.0723
 percentage points at depths two and three, while stopping reduces mean
-expenditure from roughly 64000--65000 to 38000--40000 shots. Changing model
+expenditure from roughly 64000--65000 to 38000--40000 shots, a 38--42\% saving
+relative to each corresponding continuation policy. Changing model
 allocation alone yields no gain in this controlled sample. This conclusion
 concerns the specified hold-radius continuation policy, rather than every
 possible use of the remaining budget.
@@ -354,20 +425,19 @@ historical Hoeffding bound below $3.5\times10^{-6}$. That analytic bound
 remains a property of its specified rule, not a universal QAOA shot lower
 bound.
 
-The predictive checks also have a precise scope. The gradient-error identity
-is standard linear-estimation mathematics; its exact means, variances, and
-reference derivatives are supplied by the ideal simulator. Fresh-graph
-calibration finds pooled total mean-square error 1.5\% above the prediction
-on the eight new targets. This pooled agreement does not imply equal
-accuracy in every radius/shape/depth cell. The Gaussian coefficient model
-also tracks aggregate positive-margin frequencies across the tested radii,
-including the low-shot operating points, with finite Monte Carlo uncertainty.
-That separate nonlinear approximation remains an empirical hypothesis.
-Neither agreement supplies a measurement-only selector of useful radii or
-predicts whole-run efficiency.
-A deployable controller would need pilot-based estimates or justified bounds
-for its currently exact inputs, would need to pay for them, and would
-require a separately frozen optimizer comparison.
+The gradient-error identity is standard linear-estimation mathematics. Its
+calibration checks the fixed fitting map and ideal sampling model using
+exact means, variances, and numerical reference derivatives. Agreement with
+that identity is not an independent algorithmic contribution. The Gaussian
+proposal approximation is a different, nonlinear hypothesis, tested with
+finite prediction and observation samples. Comparisons against simpler
+radius/depth predictions use unequal target information; a better
+exact-input forecast would not establish an affordable online predictor.
+The joint-budget diagnostic includes unresolved and nonimproving proposals
+in accepted-gain and expenditure summaries, but it still starts from an
+exact-input forecast and a fixed anchor. A deployable controller would need
+paid pilot estimates or justified bounds, an explicit allocation decision,
+and a separately frozen comparison of complete optimization runs.
 
 Variance-aware QAOA optimization already includes spatial variance models
 and adaptive estimation~\cite{ha2024}. Our comparisons of Hoeffding and
@@ -408,8 +478,9 @@ scaling law. Both old panels and the new targets use fixed banks; comparing
 banks on the same targets remains necessary to isolate bank variability.
 These limits are part of the result: query-efficient refinement requires a
 useful model, an affordable decision, and a favorable measured tradeoff.
-The present experiments test those requirements separately rather than
-inferring them from initialization quality or numerical conditioning alone.
+The joint diagnostic connects the first two requirements for one proposal
+at a fixed anchor. Demonstrating the third for a practical adaptive
+algorithm remains open.
 
 \section{Methods}
 \subsection{QAOA objective, symmetries, and measurements}
@@ -430,9 +501,12 @@ $\theta=(\gamma_1,\ldots,\gamma_p,\beta_1,\ldots,\beta_p)$, we use
 The minimization objective is
 $f_G(\theta)=-\langle\psi_G(\theta)|C_G|\psi_G(\theta)\rangle/m$.
 A computational-basis measurement $z$ produces one observation
-$Y=-C_G(z)/m\in[-1,0]$. Its mean is $f_G(\theta)$. The simulator
-samples the exact cut-value distribution by a multinomial draw; it does
-not replace the shot distribution by additive Gaussian noise.
+$Y=-C_G(z)/m\in[-1,0]$. Its mean is $f_G(\theta)$. A batch of $S$
+ideal measurements is sampled from the exact cut-value distribution by a
+multinomial draw, and all $S$ represented measurements are charged.
+The Gaussian approximation introduced below describes fitted-coefficient
+uncertainty in a separate offline diagnostic; it does not replace this
+measurement model.
 
 Each $\gamma$ has period $2\pi$ because the unweighted cut spectrum is
 integer. Each $\beta$ has period $\pi/2$ in the objective because the
@@ -442,19 +516,26 @@ complex-conjugates the state and preserves the objective. Reference
 vectors are aligned to an anchor using these symmetries: for each of the
 two global sign choices, every coordinate is shifted by its period to the
 representative nearest the anchor, and the alignment with the smaller
-Euclidean distance to the anchor is retained. The procedure
-does not assume that every symmetry-equivalent optimum has been found.
+Euclidean distance to the anchor is retained, keeping the positive global
+sign on an exact distance tie. These universal symmetries need not generate
+every symmetry of a particular graph, and alignment does not assume that
+every symmetry-equivalent optimum has been found.
 
-All optimization decisions use shot estimates. Exact expectations are
-computed only for reference construction and recorded diagnostics,
-including post hoc objective trajectories. The reported expected
+Online objective-dependent proposals and acceptance decisions use shot
+estimates; graph selection and budget checks also use classical information.
+Exact expectations are reserved for reference construction, retrospective
+diagnostics, and the explicitly identified offline predictor. The reported
+expected
 approximation ratio is $F_G(\theta)/C_{\max}(G)$, with $C_{\max}$
 obtained by exhaustive bitstring enumeration at these graph sizes.
 It is distinct from the largest cut observed among a collection of
 samples. A single depth-$p$ circuit uses $pm$ cost-edge rotations and
 $pn$ mixer rotations; a two-CNOT implementation of each cost-edge
 rotation would use $2pm$ CNOTs per shot, before routing and compilation.
-We do not convert this logical count into a hardware runtime claim.
+Estimation calls, represented measurement shots, logical batches, and
+classical exact evaluations are distinct resources. The logical gate count
+does not include routing, preparation, readout, or communication latency and
+is not converted into a hardware runtime claim.
 
 \subsection{A structural certificate for objective transfer}
 For a graph $G=(V,E)$ with $m=|E|>0$, let $F_G(\theta)$ be the expected
@@ -463,7 +544,8 @@ $f_G(\theta)=-F_G(\theta)/m\in[-1,0]$. For an edge $e$, form the induced
 subgraph containing every vertex within distance $p$ of either endpoint,
 and mark the endpoints as an unordered root pair. Write $\mu_{G,p}$ for
 the distribution of rooted isomorphism types obtained by sampling an edge
-uniformly from $E$.
+uniformly from $E$. This representation contains the backward causal
+cone; it can distinguish neighborhoods with identical edge responses.
 
 The causal structure of QAOA yields the following uniform comparison.
 \begin{theorem}[Transfer through rooted edge neighborhoods]
@@ -479,24 +561,25 @@ have disjoint supports. Then
  \sup_{\theta\in\R^{2p}}|f_G(\theta)-f_H(\theta)|\le d_p(G,H).
  \label{eq:transfer}
 \end{equation}
-If $\theta_H$ is $\epsilon$-optimal for $f_H$ on a common nonempty domain
-$\Omega$, then
+If $\theta_H\in\Omega$ is $\epsilon$-optimal for $f_H$ on a common
+nonempty domain $\Omega\subseteq\R^{2p}$, with $\epsilon\ge0$, then
 \begin{equation}
- f_G(\theta_H)-\inf_{\theta\in\Omega}f_G(\theta)
- \le \epsilon+2d_p(G,H).
+ 0\le f_G(\theta_H)-\inf_{\theta\in\Omega}f_G(\theta)
+ \le \min\{1,\epsilon+2d_p(G,H)\}.
  \label{eq:transferregret}
 \end{equation}
 \end{theorem}
 The proof below uses the established locality of fixed-depth QAOA edge
 expectations~\cite{farhi2014,brandao2018}; related local-subgraph comparisons
-motivate parameter-transfer heuristics~\cite{galda2023}. The formulation here
-makes the finite-graph total-variation and donor-regret consequences explicit.
-It gives a
-sufficient transfer certificate without requiring equal graph sizes or a
-vertex correspondence. It is conservative: different neighborhoods can
+motivate parameter-transfer heuristics~\cite{galda2023}. The comparison is a
+consequence of this locality and the
+total-variation bound for expectations of functions in $[0,1]$.
+It supplies a sufficient transfer certificate without requiring equal
+graph sizes or a vertex correspondence. It is conservative: different
+neighborhoods can
 produce the same edge expectation, and disjoint type distributions give
 $d_p=1$, for which Eq.~\eqref{eq:transfer} gives no information beyond
-$f_G\in[-1,0]$. The factor-two regret bound can be clipped at one.
+$f_G\in[-1,0]$. The regret bound is correspondingly truncated at one.
 Equation~\eqref{eq:transferregret} is additionally conditional on the
 donor: it presumes a value of $\epsilon$ for which $\theta_H$ is
 $\epsilon$-optimal for $f_H$ on $\Omega$. The donor angles used here
@@ -506,27 +589,23 @@ numerical $\epsilon$ is available and Eq.~\eqref{eq:transferregret} is
 never evaluated for a graph pair in the empirical sections.
 Computing exact rooted isomorphism classes can also be expensive.
 
-The global shortest-path score used in the GW construction does not appear
-in Eq.~\eqref{eq:transfer}. The two objects are not measures on a common
-space: the GW coupling compares global shortest-path relations under uniform
-\emph{vertex} masses $a_i=1/|V_G|$, whereas $d_p$ compares rooted local
-neighborhood types under uniform \emph{edge} sampling, and no theorem here
-connects a small GW distortion to a small $d_p$. Small GW distortion is
-therefore a heuristic reason to try transfer, not a certificate of objective
-agreement. Even a
-structural comparator with an exact certificate can be uninformative on a
-particular finite sample. The empirical comparison evaluates both the
-quality of the selected reference and the informativeness of the scores.
+The shortest-path transport score below is a separate heuristic. It compares
+global distance relations under uniform vertex masses, whereas $d_p$
+compares local rooted types under uniform edge sampling. We prove no
+implication from small transport distortion to small $d_p$ or small
+objective discrepancy. The empirical comparison therefore assesses donor
+quality and the informativeness of the scores separately.
 
 \begin{proof}[Proof of Theorem~\ref{thm:transfer}]
 For a fixed edge $e=(u,v)$, let $C_e=(I-Z_uZ_v)/2$.
 Propagate $C_e$ backwards through Eq.~\eqref{eq:state}. A mixer layer
 acts separately on qubits and cannot enlarge its support. Within a cost
-layer all $ZZ$ gates commute. Gates with neither endpoint in the
-current support commute with the operator and cancel, while the
-remaining gates can add only immediate neighbors. Thus each cost layer
-increases the maximum graph distance from the original edge by at most
-one. After $p$ layers, only the induced radius-$p$ edge neighborhood
+layer all $ZZ$ gates commute. Every gate disjoint from the support
+before that layer can therefore be commuted adjacent to the observable and
+canceled. Each remaining two-qubit gate touches that pre-layer support and
+can add only an immediate neighbor. Thus each cost layer increases the
+maximum graph distance from the original edge by at most one. After $p$
+layers, only the induced radius-$p$ edge neighborhood
 can affect the expectation. Extra edges entirely on its outer boundary
 cause no problem: they are present in the induced graph, and gates that
 never meet the backwards support cancel.
@@ -543,8 +622,10 @@ expectations under two distributions is at most their total variation.
 This proves Eq.~\eqref{eq:transfer}, uniformly in $\theta$.
 Furthermore, $f_G(\theta_H)\le f_H(\theta_H)+d_p$ and
 $\inf_\Omega f_H\le\inf_\Omega f_G+d_p$. Combining these inequalities
-with the assumed $\epsilon$-optimality proves
-Eq.~\eqref{eq:transferregret}.
+with the assumed $\epsilon$-optimality gives the
+$\epsilon+2d_p$ bound. Membership $\theta_H\in\Omega$ gives the lower
+bound zero, and the normalized objective range gives the upper bound one,
+proving Eq.~\eqref{eq:transferregret}.
 \end{proof}
 The implementation counts exact rooted isomorphism classes. Degree and
 size invariants are used only to reject impossible matches, followed by
@@ -552,7 +633,68 @@ an exact graph-isomorphism test with endpoint marks. No hash equality
 is treated as an isomorphism certificate.
 
 \subsection{Structural comparison and reference selection}
-For connected graphs, define
+The default selector uses a six-component descriptor: mean and
+standard deviation of degree, its quartiles at $0.25$, $0.5$, and
+$0.75$, and mean clustering coefficient. Descriptor differences are
+scaled by their reference-bank standard deviations, floored at $0.1$,
+and compared in Euclidean norm. The local alternative uses $d_p$ from
+Theorem~\ref{thm:transfer}. Neither reference choice uses the target
+graph's optimized parameter label. Reference-bank parameter construction
+remains a separate offline cost.
+
+For scores $d_j$ to bank graphs, let
+\begin{equation}
+ \begin{aligned}
+ w_j&=\frac{\exp(-d_j/\tau)}{\sum_k\exp(-d_k/\tau)},\\
+ \tau&=\max\{\operatorname{sd}(d_j),10^{-3}\}.
+ \end{aligned}
+\end{equation}
+The code subtracts the minimum score before exponentiation for numerical
+stability; this leaves the normalized weights unchanged.
+In the preserved experiments, the initial anchor $x_0$ is the first largest
+computed weight in the saved bank order. In exact arithmetic the weights decrease strictly with the
+scores, so this selects a score minimizer; in floating point, selection
+uses the computed weights without a near-tie tolerance. Rounding-scale
+score differences can therefore change the selected donor. For the local
+alternative at depth two, all 384
+target--bank scores equal one to floating-point roundoff, so
+Eq.~\eqref{eq:transfer} is vacuous for every pair. The selected reference is
+nevertheless not the first bank vector on 3 of the 24 depth-two targets, and
+those 3 targets are the only source of the difference between the local-score
+and fixed-donor rows of Table~\ref{tab:results}; that difference is a
+rounding artifact and carries no structural information. The revised implementation selects directly from the scores, choosing the
+first bank index with $d_j\le\min_k d_k+10^{-12}$. This absolute tolerance
+is part of the policy and deliberately merges score differences below it;
+it removes the observed roundoff-dependent choice when Local TV saturates.
+It does not create information in a saturated score. The fixed-donor control
+also uses the first bank vector. Descriptor distances are the default, and
+the weights determine shape only after the score-based donor is selected.
+The archived source and records retain the historical selection rule.
+After symmetry alignment,
+only reference vectors $\theta_j$ satisfying $\norm{\theta_j-x_0}_2\le1$ are
+retained for the shape, and their weights are renormalized. Define
+\begin{equation}
+ V=0.02I+\sum_jw_j(\theta_j-x_0)(\theta_j-x_0)^\top.
+\end{equation}
+Subtract the mean log eigenvalue of $V$, clip each resulting value to
+$[-\log2,\log2]$, and subtract their mean once more. If the resulting
+values are $\ell_j$ and the eigenvectors form $U$, set
+$B=U\diag(e^{\ell_j/2})U^\top$. Then $\det B=1$ and
+$\operatorname{cond}(BB^\top)\le4$. Both follow from the two recentrings
+and the clip: the final subtraction of the mean gives $\sum_j\ell_j=0$, so
+$\det B=\exp(\tfrac12\sum_j\ell_j)=1$; the clip confines the pre-centred
+values to an interval of length $2\log2$, and subtracting a constant leaves
+that spread unchanged, so $\max_j\ell_j-\min_j\ell_j\le2\log2$. The
+eigenvalues of $BB^\top$ are $e^{\ell_j}$, whose ratio is therefore at most
+$e^{2\log2}=4$. This scatter matrix is an anchor-centred scatter of the
+retained reference vectors, not a covariance about their weighted mean, and
+is used only for geometry, with no probabilistic interpretation. The
+neighborhood cutoff, regularization, and spectral cap are fixed design
+choices; these constraints do not prove useful graph-dependent alignment
+or superior optimization.
+
+\paragraph{Global transport comparator.}
+For connected graphs with at least two vertices, define
 $D_G(i,k)=\operatorname{dist}_G(i,k)/\operatorname{diam}(G)$ and uniform
 vertex weights $a_i=1/|V_G|$, $b_j=1/|V_H|$. A feasible coupling
 satisfies $T\ge0$, $T\mathbf1=a$, and $T^\top\mathbf1=b$. Its squared
@@ -590,62 +732,6 @@ donors have such a capped comparison. Scores are reused across depths
 because they depend only on the two graphs. The empirical result therefore
 concerns this capped, regularized solver with uniform initialization;
 it does not establish the quality of globally optimized GW matching.
-
-The inexpensive alternative is a six-component descriptor: mean and
-standard deviation of degree, its quartiles at $0.25$, $0.5$, and
-$0.75$, and mean clustering coefficient. Descriptor differences are
-scaled by their reference-bank standard deviations, floored at $0.1$,
-and compared in Euclidean norm. The local alternative uses $d_p$ from
-Theorem~\ref{thm:transfer}. Neither reference choice uses the target
-graph's optimized parameter label.
-
-For scores $d_j$ to bank graphs, let
-\begin{equation}
- \begin{aligned}
- w_j&=\frac{\exp(-d_j/\tau)}{\sum_k\exp(-d_k/\tau)},\\
- \tau&=\max\{\operatorname{sd}(d_j),10^{-3}\}.
- \end{aligned}
-\end{equation}
-The code subtracts the minimum score before exponentiation for numerical
-stability; this leaves the normalized weights unchanged.
-In the preserved experiments, the initial anchor $x_0$ is the first largest
-computed weight in the saved bank order. In exact arithmetic the weights decrease strictly with the
-scores, so this selects a score minimizer; in floating point, selection
-uses the computed weights without a near-tie tolerance. Rounding-scale
-score differences can therefore change the selected donor. For the local
-alternative at depth two, all 384
-target--bank scores equal one to within $4\times10^{-16}$, so
-Eq.~\eqref{eq:transfer} is vacuous for every pair. The selected reference is
-nevertheless not the first bank vector on 3 of the 24 depth-two targets, and
-those 3 targets are the only source of the difference between the local-score
-and fixed-donor rows of Table~\ref{tab:results}; that difference is a
-rounding artifact and carries no structural information. The revised implementation selects directly from the scores, choosing the
-first bank index with $d_j\le\min_k d_k+10^{-12}$. This absolute tolerance
-is part of the policy and deliberately merges score differences below it;
-it removes the observed roundoff-dependent choice when Local TV saturates.
-It does not create information in a saturated score. The fixed-donor control
-also uses the first bank vector. Descriptor distances are the default, and
-the weights determine shape only after the score-based donor is selected.
-The archived source and records retain the historical selection rule.
-After symmetry alignment,
-only reference vectors $\theta_j$ satisfying $\norm{\theta_j-x_0}_2\le1$ are
-retained for the shape, and their weights are renormalized. Define
-\begin{equation}
- V=0.02I+\sum_jw_j(\theta_j-x_0)(\theta_j-x_0)^\top.
-\end{equation}
-Subtract the mean log eigenvalue of $V$, clip each resulting value to
-$[-\log2,\log2]$, and subtract their mean once more. If the resulting
-values are $\ell_j$ and the eigenvectors form $U$, set
-$B=U\diag(e^{\ell_j/2})U^\top$. Then $\det B=1$ and
-$\operatorname{cond}(BB^\top)\le4$. Both follow from the two recentrings
-and the clip: the final subtraction of the mean gives $\sum_j\ell_j=0$, so
-$\det B=\exp(\tfrac12\sum_j\ell_j)=1$; the clip confines the pre-centred
-values to an interval of length $2\log2$, and subtracting a constant leaves
-that spread unchanged, so $\max_j\ell_j-\min_j\ell_j\le2\log2$. The
-eigenvalues of $BB^\top$ are $e^{\ell_j}$, whose ratio is therefore at most
-$e^{2\log2}=4$. This scatter matrix is an anchor-centred scatter of the
-retained reference vectors, not a covariance about their weighted mean, and
-is used only for geometry, with no probabilistic interpretation.
 
 \subsection{Sensitivity of the transport selector}
 The transport sensitivity study reuses all 384 canonical target--bank
@@ -690,7 +776,8 @@ Every start's coupling, distortion, residual or gap, iteration count,
 feasibility status, and marginal error is retained, including finite
 infeasible entropic results. The conditional-gradient routine instead raises
 on a returned coupling that violates the marginal tolerance, so its recorded
-couplings are feasible by construction rather than by observation. A target
+couplings pass the declared numerical feasibility threshold. This
+tolerance check does not establish exact mathematical feasibility. A target
 has a valid selector only when all 16 donor comparisons have feasible
 returned couplings; otherwise its result is recorded as unavailable.
 The rule does not silently discard difficult donors. Reported transfer
@@ -714,19 +801,22 @@ At a current angle vector $x$, write the trial region as
 \end{equation}
 The equivalent metric is $M=B^{-2}$. The shape $B$ is fixed during a run;
 the center and radius change in response to measurements. The determinant
-constraint preserves volume when comparing shapes at the same radius.
-Angles are evaluated modulo exact QAOA symmetries; local models are
+constraint preserves Euclidean volume in the unwrapped parameter chart
+when comparing shapes at the same radius; it does not establish equal
+physical distinguishability or useful search directions. Angles are evaluated
+modulo exact QAOA symmetries; local models are
 interpreted in the unwrapped coordinates of Eq.~\eqref{eq:region}.
 
 For local coordinates $u_i$, the affine design has rows
 $A_i=(1,u_i^\top)$. The model
 $m(u)=\widehat c_0+\widehat c_{1:d}^\top u$, $d=2p$, is fitted from
 shot estimates by weighted QR. The implementation always evaluates
-exactly $N=d+1$ points at a common shot count, so $A$ is square and
-invertible and the weighted fit reduces to interpolation of the sample
-means: any positive weights leave $\widehat c$ unchanged, and no
-accuracy benefit is claimed for weighting. The weights are retained
-only because Proposition~\ref{prop:model} is stated for $N\ge d+1$.
+exactly $N=d+1$ points at a common shot count and checks the selected
+square design for full rank. The fit is therefore interpolation of the
+sample means, $\widehat c=A^{-1}y$, evaluated by QR solves. Any positive
+weights leave this interpolant unchanged; weighting provides no accuracy
+benefit in these experiments. Proposition~\ref{prop:model} also states the
+general weighted result for $N\ge d+1$.
 If $W^{1/2}A=QR$ has full column rank,
 then
 \begin{equation}
@@ -736,8 +826,9 @@ then
 where $c^*$ is the local first-order Taylor model, $r$ is its bias at the
 sample points, and $e$ is measurement error. Proposition~\ref{prop:model}
 bounds each contribution under explicit smoothness and sampling conditions.
-The smallest singular value of $R$ determines how strongly the fitting
-geometry can amplify these errors.
+The factor $1/\sigma_{\min}(R)$ bounds amplification of the weighted
+residual. Physical-gradient sensitivity additionally depends on the complete
+fitting map, including the radius and shape.
 
 The implementation selects $d+1$ interpolation points by ordinary
 column-pivoted QR~\cite{businger1965} applied to the transpose of a candidate
@@ -761,25 +852,42 @@ No measured objective enters point selection. The implementation
 records the condition number of the weighted triangular factor, not the
 smallest singular value $\sigma_{\min}(R)$ that
 Eq.~\eqref{eq:modelerror} inverts; a condition number alone does not
-bound the inverse-design sensitivity. For the repaired design the
+bound the inverse-design sensitivity. For the repaired design in the
+canonical study, the
 pivoted selection returned the same point set in every recorded trial,
 so this quantity is in fact constant: at the canonical $256$ shots per
 point, $\sigma_{\min}(R)=12.25$ at $p=1$ and $9.52$ at $p=2$, while the
 recorded condition number is correspondingly fixed at
 $1+\sqrt2\approx2.414$ and $3.992$. With $\delta=0.05$ the stochastic
-term of $\mathcal E$ is then about $0.22$ and $0.38$, which is not small
-against the unit range of the normalized objective.
+term of the coefficient bound $\mathcal E$ is then about $0.22$ and
+$0.38$. These are coefficient-error bounds; conversion to a uniform
+objective-error bound also requires Eq.~\eqref{eq:uniformmodel}.
 Interpolation geometry and inverse-design bounds have an established role
 in local-model accuracy~\cite[Sections~3--5]{conn2008}. The following
 proposition combines a Taylor remainder, weighted least-squares perturbation,
 and bounded-observation concentration for the specified noisy affine model;
 full rank alone does not impose all conditions of a fully linear model.
 
+Figure~\ref{fig:conditioning} also reconstructs physical fitting sensitivity
+from the saved canonical model batches. At depth two and the 131072-shot
+cap, every repaired and unrepaired design satisfies
+$\Delta\|B_{j,:}\|_2<P_j/2$, where $P_j$ is the angle's universal period.
+The largest ratio to this half-period is 0.516 after upward rounding, so
+nearest-period unwrapping uniquely recovers each actual displacement.
+Writing $U_i=B^{-1}(\theta_i-x)/\Delta$ gives the design rows
+$(1,U_i^\top)$ and the physical map
+$L=\Delta^{-1}B^{-\top}(0,I_d)A^{-1}$, where $(0,I_d)$ excludes
+the intercept. Every reconstructed point lies in the unit ball and every
+reconstructed weighted-design condition number agrees with its saved value
+to relative tolerance $10^{-8}$. The resulting $\|L\|_2$ values describe
+all 432 repaired and 446 unrepaired model batches; the ECDF weights trials,
+not graphs, and preserves their different executed radius histories.
+
 \begin{proposition}[Local model error with bounded observations]
 \label{prop:model}
 Suppose $\nabla f$ is $L_f$-Lipschitz on a convex set containing
 $\mathcal T(x,\Delta,B)$. Choose $N\ge d+1$ points with
-$\norm{u_i}_2\le1$ and positive shot counts $S_i$ before drawing the
+$\norm{u_i}_2\le1$ and integer shot counts $S_i\ge1$ before drawing the
 stage's independent observations in $[-1,0]$, each with conditional mean
 $f(x+\Delta Bu_i)$ at point $i$. Let
 $W=\diag(S_i)$ and let $W^{1/2}A=QR$ have full column rank. Define
@@ -849,24 +957,26 @@ The revised policy instead chooses, before any model observations,
  S(\Delta)=\max\{2,\lceil S_0(\Delta_0/\Delta)^2\rceil\}.
  \label{eq:radiusshots}
 \end{equation}
-For fixed design and shape this keeps the stochastic part of recovered
-gradient error at a fixed scale, up to integer rounding, as the region
-contracts. It does not make
-the error proportional to $\Delta$. With bounded design sensitivity, the
-stronger stochastic accuracy needed for a fully linear model generally
-is obtained from this bound with $S$ proportional to $\Delta^{-4}$,
-apart from confidence factors: coefficient noise
-must be $O(\Delta^2)$ so that physical gradient noise is $O(\Delta)$.
+For fixed design and shape this stabilizes the leading
+$\Delta^{-1}S^{-1/2}$ gradient-noise bound, up to integer rounding and the
+minimum count. It does not make the error proportional to $\Delta$.
+With bounded design sensitivity and observation variance, this bound gives
+$S$ proportional to $\Delta^{-4}$ as a sufficient scaling for
+$O(\Delta)$ physical gradient noise, apart from confidence factors:
+coefficient noise must then be $O(\Delta^2)$. This is a sufficient
+worst-case scaling, not a necessary or instance-optimal sample count.
 Neither schedule removes affine Taylor bias. Figure~\ref{fig:components}
 therefore measures both the sampling error about the exact-data interpolant
 and the total error relative to the true objective gradient.
 
 \paragraph{Predicting bias and propagated measurement variance.}
-Condition on the history before fitting, so that the design, shape, radius,
-weights, and shot counts are fixed. Write $\bar y_i=f(x+\Delta Bu_i)$,
+Let $\mathcal H$ contain the history and all choices preceding the
+current model measurements. Conditional on $\mathcal H$, the design,
+shape, radius, weights, and shot counts are fixed. Write $\bar y_i=f(x+\Delta Bu_i)$,
 $y_i=\bar y_i+e_i$, and $v_i=\operatorname{Var}(Y_i)$ for an individual
 measurement at design point $i$. Independent pointwise streams give
-$\E e=0$ and $\Sigma_y=\diag(v_i/S_i)$. With $P=(0,I_d)$ selecting
+$\E[e\mid\mathcal H]=0$ and
+$\Sigma_y=\E[ee^\top\mid\mathcal H]=\diag(v_i/S_i)$. With $P=(0,I_d)$ selecting
 the gradient coefficients, define the physical-gradient fitting map
 \begin{equation}
  L_A=\Delta^{-1}B^{-\top}P R^{-1}Q^\top W^{1/2},\qquad
@@ -877,6 +987,8 @@ For the square interpolation designs used here, the coefficient map is
 $A^{-1}$; the implementation obtains it by a stable linear solve, without
 forming normal equations. The exact gradient $g=\nabla f(x)$ need not equal
 $\bar g$. Their difference is the finite-radius affine-model bias.
+The identity below uses the exact derivative; empirical total-error curves
+substitute the separately checked numerical derivative.
 
 \begin{proposition}[Conditional gradient mean-square error]
 \label{prop:biasvariance}
@@ -899,46 +1011,91 @@ $\tr(L_A\E[ee^\top\mid\mathcal H]L_A^\top)$, which is the stated
 variance term. The sampling-error identity follows by replacing $g$ with
 $\bar g$.
 \end{proof}
-This is the standard bias--variance decomposition for a linear estimator,
-not a new concentration inequality or QAOA theorem. Its testable role is to
-predict the magnitude and radius dependence of errors before new model
-shots are drawn. We record $\norm{L_A}_2$ and $\norm{L_A}_F$ alongside the
-weighted-design condition number: the latter alone cannot quantify physical
-gradient sensitivity. RMS curves take the square root after averaging
-squared errors, rather than averaging norms.
+This is the standard bias--variance identity for a fixed linear estimator.
+When exact simulator moments and the fitting map are supplied, its
+conditional second moment is determined algebraically. Comparison with new
+sampled fits checks numerical consistency and finite-sample fluctuation
+under the ideal observation model; it does not by itself validate an
+accessible online predictor or a new QAOA principle.
+We record $\norm{L_A}_2$ and $\norm{L_A}_F$ alongside the weighted-design
+condition number, which alone omits physical scale. RMS curves take the
+square root after averaging squared errors, rather than averaging norms.
 
-With constant design and shape and equal shots, the variance term is
+For the square interpolant with constant design and shape and equal
+shot counts, the variance term is
 \[
  \Delta^{-2}S^{-1}\tr(B^{-\top}P A^{-1}\diag(v_i)A^{-\top}P^\top B^{-1}).
 \]
-Equation~\eqref{eq:radiusshots} holds its explicit inverse-radius factor
-fixed, but the pointwise variances can still change with radius. It does
+Equation~\eqref{eq:radiusshots} approximately stabilizes the explicit
+$1/(S\Delta^2)$ prefactor, subject to rounding and the minimum count.
+Pointwise variances and any changed design can still change the result. It does
 not control the bias term or the nonlinear step direction. For
 $(S_0,\Delta_0)=(256,0.1)$, the actual schedule at radii
 0.025, 0.05, 0.1, 0.2 and 0.4 is 4096, 1024, 256, 64 and 16 shots per point;
 all five operating points are measured in the new diagnostic.
 
-The prediction uses exact simulator means, variances, and a numerically
-validated reference gradient. These quantities are fixed before the
-independent observations used to test it, including on fresh targets, but
-are not assumed available to a deployed finite-shot optimizer. A Gaussian
-approximation to the affine coefficients is tested separately for positive
-proposal margins because Eq.~\eqref{eq:biasvariance} alone does not predict
-the nonlinear normalized boundary step or the power of its endpoint test.
+\paragraph{Gaussian proposal prediction.}
+The separate proposal forecast starts with the exact simulator means
+$\bar y$ and individual-shot variances $v_i$ at the fixed design points.
+For the square design and a specified shot allocation, it samples
+\begin{equation}
+ \widetilde c\sim\mathcal N\!\left(
+ A^{-1}\bar y,\,
+ A^{-1}\diag(v_i/S_i)A^{-\top}\right).
+ \label{eq:gaussiancoefficients}
+\end{equation}
+Equivalently, independent normal perturbations with variances $v_i/S_i$
+are added to $\bar y$ before solving the interpolation system. Each draw
+has its own noisy predicted decrease
+$\widetilde q=\norm{\widetilde c_{1:d}}_2$. If
+$\widetilde q\ge10^{-12}$, its proposed point and margin are
+\begin{equation}
+ \begin{aligned}
+ \widetilde x^+&=\operatorname{wrap}
+       (x-\Delta B\widetilde c_{1:d}/\widetilde q),\\
+ \widetilde h&=f_G(x)-f_G(\widetilde x^+)-\eta\widetilde q.
+ \end{aligned}
+ \label{eq:gaussianproposal}
+\end{equation}
+For a flatter draw, the proposed point remains $x$, the true decrease
+is zero, and $\widetilde h=-\eta\widetilde q\le0$; the draw is retained
+in the denominator. The trial objective in Eq.~\eqref{eq:gaussianproposal}
+is evaluated exactly. Thus this diagnostic approximates the coefficient
+distribution and nonlinear proposal map while using exact target
+information; it is not a measurement-only control rule.
+
+On each fresh target/depth/shape/radius condition, 256 Gaussian draws estimate
+$\pi_{\rm G}=\Prb(\widetilde h>0\mid\mathcal H)$. A separate set of 32
+multinomially sampled models at the scheduled shot count estimates
+$\pi_{\rm M}$, the corresponding positive-margin probability under the
+measurement model. Both empirical frequencies have finite Monte Carlo
+uncertainty. Conditional on the fixed condition, their independent
+difference has variance
+$\pi_{\rm G}(1-\pi_{\rm G})/256+\pi_{\rm M}(1-\pi_{\rm M})/32$.
+Consequently, a discrepancy between the two frequencies combines
+distributional-approximation error with noise in both estimates; its absolute
+value is not a pure approximation-error estimate.
+Neither this proposal forecast nor Eq.~\eqref{eq:biasvariance} determines
+acceptance without an endpoint model or experiment. The fixed-shot
+four-/five-look replay uses a separate collection fitted at 1024 model shots
+per point. Section~\ref{sec:joint-protocol} supplies the matching endpoint
+experiment for the scheduled fresh shaped proposals.
 
 Adaptive radii do not invalidate Proposition~\ref{prop:model}. Conditional
 on the preceding history, Eq.~\eqref{eq:radiusshots} and the design are fixed
 before the independent model samples. For a simultaneous model statement
 over at most $T$ stages, apply the proposition with $\delta_t=\delta/T$ at
 each possible stage and union bound after taking conditional expectations.
-Model and endpoint streams are separate. Intersecting this model event with
-the acceptance event gives probability at least $1-\delta-\alpha$ without
-requiring independence between the two events. The implementation does not
-estimate the smoothness constant or claim that this event certifies the
-accuracy of every realized model.
+The endpoint guarantee conditions additionally on the fitted model and
+selected proposal, before fresh endpoint samples are drawn. Intersecting the
+model and acceptance events gives probability at least $1-\delta-\alpha$
+without requiring independence between those events. The model event controls
+the stated, possibly loose inequalities; it does not establish that their
+right-hand sides meet a useful accuracy target. The implementation does not
+estimate the smoothness constant or enforce such a target.
 
 Equation~\eqref{eq:uniformmodel} also links model quality to the
-acceptance rule of the next subsection. Write
+Hoeffding acceptance rule of the next subsection. Write
 $\mathcal E_f=\tfrac12L_f\Delta^2\norm B_2^2+\sqrt2\,\mathcal E$ for the
 uniform model error, let $q=\norm{\widehat c_{1:d}}_2$ be the decrease
 predicted by the model's boundary step, and let $a$ be the true decrease
@@ -956,7 +1113,11 @@ condition on proposal quality and measurement resolution, on the intersection
 of the model and acceptance confidence events. Failure of the condition does not rule out a useful or accepted
 step: the error bounds may be conservative. Neither $\mathcal E_f$ nor
 $L_f$ is estimated in the runs, so Eq.~\eqref{eq:modelacceptance} provides
-an analytical connection rather than an implemented test.
+an analytical connection rather than an implemented test. For an endpoint
+interval with half-widths $r_x$ and $r_+$, the corresponding sufficient
+condition on the validity event is $a-\eta q\ge2(r_x+r_+)$ at an affordable
+look. Empirical-Bernstein widths are random, so this observation alone does
+not prescribe a deterministic detection budget for that comparator.
 
 \subsection{Accepted steps have a finite-horizon statistical guarantee}
 The affine model proposes the boundary step
@@ -982,13 +1143,17 @@ $1-\alpha$, every accepted step in that run satisfies
 $a\ge\eta q>0$, despite adaptive trial points and early stopping among
 the prescribed looks. Model accuracy is not needed for this acceptance
 statement, because acceptance uses fresh bounded observations.
+It does not guarantee a positive-margin proposal, progress with high
+probability, or convergence. The noisy quantity $q$ itself enters the
+sufficient-decrease threshold.
 
 This separation is useful but has a cost. A poor model can propose many
 unacceptable steps, and a small true improvement can remain unresolved
 within the allowed shots. A trial whose interval still intersects the
 threshold at the last affordable look is recorded as unresolved and the
 incumbent is retained. Such a decision is not evidence that the trial is
-worse. With $T=64$, $L=4$, $\alpha=0.05$, and the final look
+worse. The confidence scale is policy-specific. For the historical
+canonical rule, with $T=64$, $L=4$, $\alpha=0.05$, and the final look
 $s_L=32768$, the two-endpoint confidence allowance $2b_L$ is
 approximately $0.0246$ in normalized objective units. Reaching that look
 costs 65536 shots for the endpoint pair, so it is unaffordable at the
@@ -997,7 +1162,10 @@ costs 65536 shots for the endpoint pair, so it is unaffordable at the
 budget, while the deepest look reached at the smaller budget is 8192
 shots per endpoint, where the allowance $2b_\ell$ is approximately
 $0.0492$. This statistical scale must be considered when interpreting
-small expected improvements.
+small expected improvements. For the current rule, $T=16$ and the last
+look has $s_L=16384$, giving $2b_L\simeq0.0323$ at an endpoint-pair cost
+of 32768 shots. These widths describe the specified rules, not a universal
+limit on measurement resolution.
 
 \paragraph{Simultaneous validity and detectable improvements.}
 \begin{theorem}[Simultaneous validity over prescribed looks]
@@ -1019,7 +1187,8 @@ Early stopping or budget-based omission of a prescribed look does
 not change the guarantee.
 \end{theorem}
 \begin{proof}
-Condition on the history before one trial. For a fixed endpoint and
+Condition on the history after choosing a trial's model and proposal but
+before its acceptance measurements. For a fixed endpoint and
 look, Hoeffding's inequality gives error probability at most
 $2\exp(-2s_\ell b_\ell^2)=\alpha/(2TL)$. A union bound over two
 endpoints and $L$ looks bounds that trial's conditional failure
@@ -1035,7 +1204,8 @@ and therefore cannot increase this probability bound.
 \begin{corollary}[A sufficient measurement scale for detection]
 \label{cor:detection}
 Under the assumptions of Theorem~\ref{thm:acceptance}, fix a trial with true
-decrease $a$ and predicted decrease $q$. If its last prescribed look is
+decrease $a$ and predicted decrease $q$. Suppose unresolved trials proceed
+through the prescribed looks whenever affordable. If the last look is
 affordable and
 \begin{equation}
  a-\eta q\ge4b_L>0,
@@ -1063,14 +1233,14 @@ would still require $a-\eta q\ge2b_L\simeq0.0246$ at that look. This last
 statement describes the decision threshold in the absence of sampling
 error, not an impossibility bound for random observations. The corollary is
 a detection guarantee conditional on a sufficiently good proposal; it does
-not ensure that the local model produces one. Its inverse-square dependence
-on the improvement margin helps explain why a statistically valid rule can
-spend a large budget without certifying useful refinement near a good anchor:
-by Eq.~\eqref{eq:detectioncost}, the sufficient detection guarantee at
-$h=0.005$ uses about $3.18\times10^{6}$ shots per endpoint, roughly
-twenty-four times the largest
-per-run optimization budget in this study, and about forty-eight times it
-for the endpoint pair.
+not ensure that the local model produces one. Equation~\eqref{eq:detectioncost}
+is a conservative sufficient sample count, not a necessary count or a
+statistical lower bound. For the canonical rule at $h=0.005$, it gives
+about $3.18\times10^{6}$ shots per endpoint, roughly twenty-four times the
+largest per-run optimization budget, or forty-eight times it for the pair.
+This comparison shows that the stated sufficient guarantee is unavailable
+within that budget; it does not show that another rule, or a favorable
+realization of this rule, cannot detect the improvement.
 
 \begin{proposition}[Acceptance probability below the confidence allowance]
 \label{prop:acceptancepower}
@@ -1127,7 +1297,9 @@ down to $0.025$. A predicted decrease below $10^{-12}$ terminates the
 run. A fixed-radius ablation retains $0.4$ throughout. The
 fixed-shots ablation uses only the final 32768-shot look, with $L=1$
 in the confidence bound. This is a prespecified sampling policy,
-not a hindsight-matched optimal fixed allocation. Its single look costs
+not a hindsight-matched optimal fixed allocation. Changing $L$ also changes
+the confidence penalty, so this control does not isolate sampling allocation
+alone. Its single look costs
 65536 shots for the endpoint pair, so no run affords a second trial at
 either canonical budget: at 32768 shots all 144 fixed-shots runs fit one
 model and stop before any acceptance measurement, and at 131072 shots all
@@ -1139,14 +1311,18 @@ unresolved decisions are retained in the records.
 \paragraph{Algorithm: resolution-aware refinement after transfer.}
 The revised routine \texttt{refine} takes an anchor $x_0$, a fixed shape
 $B$, a shot cap $N_{\max}$, initial radius $\Delta_0$, initial model count
-$S_0$, and prescribed acceptance looks. In the revision experiment,
+$S_0$, and prescribed acceptance looks, with $d=2p$. In the revision experiment,
 $(S_0,\Delta_0)=(256,0.1)$, $T=16$, $\eta=0.1$, $\alpha=0.05$, and
 $s=(512,2048,8192,16384)$, with radius bounds $[0.025,0.8]$.
 The input shape is $I$ or the bounded descriptor shape. Its output is the
 last accepted incumbent, an explicit stopping reason, and the full ledger.
+The cap covers optimization measurements; the 8192-shot independent output
+evaluation is additional. This current policy differs from the historical
+radius update described above.
 \begin{enumerate}
 \item Initialize $x=x_0$, $\Delta=\Delta_0$, and spent shots to zero.
-Record the anchor as the zero-shot incumbent. Seed separate streams for
+Record the anchor as the incumbent at zero target-optimization shots;
+reference-bank construction remains an offline cost. Seed separate streams for
 classical point selection, model sampling, and endpoint sampling.
 \item Before trial $t$, compute $S(\Delta)$ by Eq.~\eqref{eq:radiusshots}.
 If the remaining shots cannot cover $(d+1)S(\Delta)+2s_1$, stop with
@@ -1157,24 +1333,29 @@ one test; it does not assure detection at that look.
 \item Select a full-rank QR design, sample its $d+1$ points at $S(\Delta)$,
 and fit the affine model. Record radius, design, coefficients, shot count,
 and condition number. If $q=\norm{\widehat c_{1:d}}_2<10^{-12}$, return
-the incumbent with a flat-model resolution reason. Otherwise propose
+the incumbent with a flat-model resolution reason, retaining the model
+shots already spent; this is not a stationarity test. Otherwise propose
 $x^+=\operatorname{wrap}(x-\Delta B\widehat c_{1:d}/q)$.
 \item At each prescribed look request fresh observations at both endpoints,
-adding only $s_\ell-s_{\ell-1}$ samples per endpoint. Reject an unaffordable
-batch atomically. Compute the decrease interval using either
-Eq.~\eqref{eq:bound} or Eq.~\eqref{eq:bernstein}. Accept if its lower
+adding only $s_\ell-s_{\ell-1}$ samples per endpoint, with $s_0=0$.
+If the next two-endpoint batch is unaffordable, consume none of it and mark
+the trial unresolved for budget reasons. For an affordable look, compute
+the decrease interval using either Eq.~\eqref{eq:bound} or the sum of the
+two endpoint radii in Eq.~\eqref{eq:bernstein}. Accept if its lower
 endpoint is at least $\eta q$, and reject if its upper endpoint is below
 $\eta q$. Otherwise continue to the next affordable look.
 \item After acceptance set $x=x^+$, record its cumulative shot count, and
-expand $\Delta$ by $1.5$ up to $0.8$. Only a certified rejection contracts
-$\Delta$ by $0.5$. Rejection at the radius floor terminates with
+expand $\Delta$ by $1.5$ up to $0.8$. Only a certified rejection contracts the radius
+to $\max\{0.5\Delta,0.025\}$. A rejection when already at the
+radius floor terminates with
 \texttt{radius\_limit}. An unresolved decision stops immediately with
 \texttt{resolution\_limited}, recording whether the prescribed looks or
 remaining budget were exhausted; it leaves both the incumbent and radius
 unchanged.
-\item Continue to the declared horizon unless a stopping condition applies.
-Return the incumbent at every ordinary stop. Rank or nonfinite-input
-failures raise explicit errors rather than silently substituting a model.
+\item Count each attempted trial toward the declared horizon and continue unless
+a stopping condition applies. At horizon exhaustion return the incumbent
+with status \texttt{horizon}. Return it at every other ordinary stop as well.
+Rank or nonfinite-input failures raise explicit errors rather than silently substituting a model.
 \end{enumerate}
 This policy distinguishes insufficient measurement evidence from evidence
 against sufficient decrease. A resolution stop is operational: it says that
@@ -1195,8 +1376,12 @@ stopping. The continued policy differs from the historical routine, which
 also contracted the radius after an unresolved test. All four attribution
 cells use separate but identically seeded design, model, and endpoint
 streams, giving identical first-trial observations before any policy-driven
-divergence. Fixed and adaptive schedules are compared at the returned
-incumbent, never by retrospectively selecting a better proposal.
+divergence. The allocation intervention acts only after a radius change,
+and later stream coupling can change when different sample counts are
+requested. Fixed and adaptive schedules are compared at the returned
+incumbent, never by retrospectively selecting a better proposal. These
+controls test the stated policies, not every possible use of a remaining
+measurement budget.
 
 The stop status and its reason are reported separately. A failed preflight
 means the remaining total budget cannot fund the prescribed model and
@@ -1396,8 +1581,8 @@ draws its bank, validation split, test split and random streams together,
 so a difference between panels is not attributable to the reference bank
 alone.
 
-\subsection{Revision experiment and frozen-proposal diagnostics}
-The revision fixes its protocol before drawing its new samples and records
+\subsection{Shape-by-rule experiment and fixed-shot proposal replay}
+The shape-by-rule experiment fixes its protocol before drawing new samples and records
 it in \path{code/results/refinement.json.gz}. It reuses the historical
 follow-up targets and their saved descriptor anchors, shapes, and best-found
 references. All four revised policies use two shot repetitions on all 16
@@ -1455,7 +1640,7 @@ and are not hardware executions. Exact
 references, derivative diagnostics, and replay computations are classical
 analysis expenses, not free oracle information available to the optimizer.
 
-\subsection{Attribution and predictive-validation protocol}
+\subsection{Sampling-by-stopping experiment and fresh-graph calibration}
 The mechanism study is saved separately in
 \path{code/results/mechanism.json.gz}. It links to the unchanged historical
 and first-revision bundles and embeds its own protocol and numerical source.
@@ -1497,8 +1682,8 @@ retrospective proposal objectives; their agreement would support this
 conditional mechanism, not identify a measurement-only optimizer.
 
 The four-look power analysis reuses the stored independent endpoint
-observations at cumulative sizes $(512,2048,8192,16384)$, recomputing every
-radius with $L=4$, $T=16$, and $\alpha=0.05$. Merely truncating a five-look
+observations at cumulative sizes $(512,2048,8192,16384)$, recomputing each
+endpoint confidence radius with $L=4$, $T=16$, and $\alpha=0.05$. Merely truncating a five-look
 calculation would leave the wrong confidence penalty. Its budget axis is
 the endpoint-pair allowance; the actual online run must additionally pay
 its model cost. The five-look extension uses its own $L=5$ penalty and is
@@ -1506,13 +1691,79 @@ reported separately. Positive-margin and nonpositive-margin cohorts are
 fixed before varying budget. The same proposals and weights enter every
 point of each curve; no budget-dependent selection creates apparent power.
 
+\subsection{Joint proposal-and-endpoint diagnostic}
+\label{sec:joint-protocol}
+The joint diagnostic uses every fresh-graph shaped condition from the
+saved mechanism grid: eight graphs, two depths, and five radii, for 80
+conditions. At radii $(0.025,0.05,0.1,0.2,0.4)$ the model counts are
+$(4096,1024,256,64,16)$ shots per interpolation point. Each condition retains
+all 32 multinomial model proposals and all 256 Gaussian proposals, with
+their own predicted decreases and exact retrospective objectives. No
+proposal is filtered by true improvement, margin, or acceptance outcome.
+This population differs from the $S=1024$ frozen-proposal replay in
+Fig.~\ref{fig:acceptance-power}.
+
+After inspecting the previous studies, the diagnostic fixes its new
+configuration and source before drawing endpoint observations and saves
+them in \path{code/results/decision.json.gz}. Each multinomial proposal
+receives eight independent endpoint replays and each Gaussian proposal one,
+giving 256 endpoint trials per condition and population. The endpoint
+streams are shared across Hoeffding and Bernstein tests, using $T=16$,
+$L=4$, $\alpha=0.05$, and the online cumulative looks
+$(512,2048,8192,16384)$ per endpoint. Each virtual trial charges the
+$(2p+1)S(\Delta)$ model shots before taking affordable endpoint looks under
+the 65536-shot cap. Gaussian model cost is the cost of the corresponding
+sampled design; it is not a claim that its exact-input forecast was obtained
+with those measurements. Forecast construction and diagnostic simulation
+expenses remain separate.
+
+The outcome is $100a\,\mathbf1\{\mathrm{accepted}\}$ in percentage points,
+including zero for every rejection or unresolved test. The denominator
+retains nonimproving and nonpositive-margin proposals, and a false
+acceptance would retain its signed true gain. Expenditure includes model
+and endpoint measurements regardless of success. We report the mean gain
+and mean expenditure separately, avoiding a ratio that could conceal rare
+successes or treat failed trials as free. These are one-proposal outcomes
+from fixed anchors, not complete optimizer trajectories. Eight endpoint
+replays do not turn one sampled model into eight independent proposals.
+Graph-level intervals retain the complete hierarchy of conditions and
+replays.
+
+A post hoc comparison predicts fresh positive-margin frequencies using
+either radius alone or radius and depth. Each lookup prediction is the
+mean observed frequency on the original eight diagnostic graphs in its
+training condition. Fresh outcomes do not fit these baselines. The Gaussian
+forecast, in contrast, uses exact moments and trial objectives for each
+fresh target. Their probability errors compare predictive information, not
+equal-access query efficiency. Signed residuals and Monte Carlo reference
+intervals accompany mean absolute errors; uncertainty in both frequency
+estimates remains part of each residual. The Bernoulli Brier score is the
+mean of $(\widehat\pi-\mathbf1\{h>0\})^2$ over the sampled proposals,
+where $\widehat\pi$ is the corresponding forecast; condition means are
+then averaged with equal graph, depth, and radius weights.
+This comparison was specified
+after the fresh mechanism results were known and is labelled exploratory.
+
+For the Monte Carlo reference in Fig.~\ref{fig:attribution}, suppose that
+Gaussian and multinomial proposals have the same positive-margin probability
+within each graph/depth/radius condition. Conditional on $K_g$ total
+successes in its 288 proposals, the number assigned to the 32 observed
+proposals is $X_g\sim\operatorname{Hypergeom}(288,K_g,32)$. Convolving these
+eight independent conditional distributions gives the graph-mean residual
+$(9\sum_g X_g-\sum_g K_g)/(256\cdot8)$ and its central 95\% reference
+interval. This calculation isolates frequency-estimation noise under the
+equal-probability hypothesis; it does not assume a common probability
+across graphs. The separate graph-bootstrap interval measures variation
+among the eight observed graph residuals. Neither interval is simultaneous
+across radii or a confidence interval for approximation error alone.
+
 \subsection{Resource accounting, validation, and reproducibility}
 An objective-estimation call is one newly sampled circuit estimate
 at one angle vector. A shot is one repeated circuit execution. A job
 is one logical batch submitted by the algorithm; a model batch
 contains all interpolation points, and an acceptance batch contains
 the two endpoints. Additional samples at an old point constitute a
-new estimation call. The oracle rejects a batch atomically if it
+new estimation call. The oracle refuses a batch atomically if it
 would exceed the remaining shot budget. It records every call,
 batch, shot count, angle, sample mean, estimated variance of the
 mean, and elapsed simulation time. Budget caps are limits, not an
@@ -1614,7 +1865,7 @@ as revised-policy outcomes.
  two. Deficit is 100 times the signed gap between the returned normalized
  objective and the best-found reference; smaller is better. The dotted line
  marks the target gap of 0.02, or two percentage points on the plotted scale.
- Separate panels retain all methods and show the competitive methods from a
+ Separate panels show selected historical methods and the competitive methods from a
  zero origin; initialization-only controls expose the transferred quality.
  Bars average the 24 graph means after averaging
  three shot seeds within each graph. Intervals use 10000 graph-bootstrap resamples (95\%
@@ -1641,10 +1892,13 @@ as revised-policy outcomes.
  \centering
  \includegraphics[width=0.95\textwidth]{figures/accounting.pdf}
  \caption{Measurement expenditure across the canonical and matched studies.
- Stacked bars separate model, acceptance, and independent final-evaluation
- shots. Canonical panels use a 131072-shot optimization cap at depths one
- and two; matched follow-up and revision panels use a 65536-shot cap at
- depths two and three. Rejected and unresolved trials remain charged.
+ Stacked bars separate model, acceptance, baseline objective-evaluation, and
+ independent final-evaluation shots. Baseline objective evaluations are the
+ optimization measurements made by SPSA and COBYLA outside the model/test
+ decomposition. Canonical panels use a 131072-shot optimization cap at depths
+ one and two; matched follow-up, shape-by-rule, and sampling-by-stopping
+ panels use a 65536-shot cap at depths two and three. All four attribution
+ policies are retained. Rejected and unresolved trials remain charged.
  Independent evaluation costs 16384 shots per canonical run and 8192 per
  matched run. These bars report expenditure rather than
  optimization trajectories.}
@@ -1653,9 +1907,16 @@ as revised-policy outcomes.
 \begin{figure}[!htbp]
  \centering
  \includegraphics[width=0.95\textwidth]{figures/conditioning.pdf}
- \caption{Interpolation geometry and certificate saturation. Step-line
- empirical cumulative distributions compare recorded weighted-design
- condition numbers. Grouped bars count not-saturated and saturated rooted
+ \caption{Interpolation geometry, physical sensitivity, and certificate
+ saturation. Step-line empirical cumulative distributions compare recorded
+ weighted-design condition numbers and reconstructed physical gradient
+ fitting-map norms $\|L\|_2$ for the same 432 repaired and 446 unrepaired
+ models in the depth-two canonical experiment at the 131072-shot cap.
+ Unique unwrapped displacements, unit-ball membership, and agreement with
+ recorded design condition numbers validate each reconstruction.
+ These are executed trial mixtures, whose radii and centers can differ;
+ they do not alone isolate a causal quality effect of point repair.
+ Grouped bars count not-saturated and saturated rooted
  neighborhood bounds: 83 versus 301 pairs at depth one and 0 versus 384 at
  depth two. Saturation means total variation one and a vacuous objective
  bound; a value below one need not be practically useful. The ECDF weights
@@ -1670,8 +1931,10 @@ as revised-policy outcomes.
 \includegraphics[width=\textwidth]{figures/transport.pdf}
 \caption{Transport-selector audit. Separate bar panels report solver
 feasibility and changed donors with explicit target denominators. Quality
-comparisons use common feasible target sets and include descriptor and
-original-solver references. The single aggregate audit time is reported in
+ comparisons use each solver's common feasible target set and include
+ descriptor and original-solver references. Different solver cohorts do not
+ support a pooled ranking. A one-target cohort is labelled $n=1$ and has no
+ across-graph uncertainty interval. The single aggregate audit time is reported in
 text because per-solver timings are unavailable. The descriptor comparator supplies
 the inexpensive default used by the revised refinement experiment.}
 \label{fig:transport}
