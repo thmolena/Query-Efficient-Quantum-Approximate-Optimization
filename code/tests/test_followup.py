@@ -171,5 +171,58 @@ class ProtocolTests(unittest.TestCase):
                     followup.run_study(path / "followup.json.gz")
 
 
+class RefinementDiagnosticTests(unittest.TestCase):
+    def config(self):
+        return {"power_horizon": 16, "power_looks": [512, 2048, 8192, 16384, 65536],
+                "power_alpha": 0.05, "optimizer": {"eta": 0.1}}
+
+    def observations(self, center, trial):
+        rows, previous = [], 0
+        for count in self.config()["power_looks"]:
+            rows.append({"shots_per_point": count,
+                         "batches": [{"shots": count - previous, "mean": mean,
+                                      "variance_of_mean": 0.0} for mean in (center, trial)]})
+            previous = count
+        return rows
+
+    def test_improvement_is_distinct_from_sufficient_decrease(self):
+        # a=.02 improves, but eta*q=.05 makes the acceptance margin negative.
+        observations = self.observations(-0.5, -0.52)
+        for rule in ("hoeffding", "bernstein"):
+            result = followup.power_decision(observations, 0.5, self.config(), 65536, rule)
+            self.assertEqual(result["decision"], "rejected")
+            self.assertLessEqual(result["shots"], 2 * 65536)
+
+    def test_tiny_positive_margin_remains_unresolved_and_pays_cap(self):
+        for rule in ("hoeffding", "bernstein"):
+            result = followup.power_decision(self.observations(-0.5, -0.510001),
+                                             0.1, self.config(), 16384, rule)
+            self.assertEqual(result, {"decision": "unresolved", "shots": 32768})
+
+    def test_large_positive_margin_is_accepted_by_both_bounds(self):
+        for rule in ("hoeffding", "bernstein"):
+            result = followup.power_decision(self.observations(-0.5, -0.8),
+                                             0.1, self.config(), 16384, rule)
+            self.assertEqual(result["decision"], "accepted")
+            self.assertGreater(result["shots"], 0)
+
+    def test_hoeffding_acceptance_upper_bound_is_union_of_look_bounds(self):
+        config, margin, cap = self.config(), 0.003, 16384
+        logarithm = np.log(4 * config["power_horizon"] * len(config["power_looks"]) /
+                           config["power_alpha"])
+        expected = sum(np.exp(-n * (2 * np.sqrt(logarithm / (2 * n)) - margin) ** 2)
+                       for n in config["power_looks"] if n <= cap)
+        self.assertAlmostEqual(followup.hoeffding_power_upper_bound(margin, config, cap), expected)
+        self.assertEqual(followup.hoeffding_power_upper_bound(1, config, cap), 1)
+
+    def test_cached_endpoint_sampling_matches_circuit_sampling(self):
+        circuit = MaxCutQAOA(nx.cycle_graph(4))
+        theta = [0.2, 0.15]
+        expected = circuit.sample(theta, 128, np.random.default_rng(12))
+        actual = followup.sample_distribution(circuit.distribution(theta), 128,
+                                             np.random.default_rng(12))
+        assert_allclose([actual["mean"], actual["variance_of_mean"]], expected)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -61,7 +61,7 @@ def compile_manuscript(directory):
             raise RuntimeError(completed.stdout[-14000:])
     log = (directory / "main.log").read_text(errors="replace")
     failures = [line for line in log.splitlines() if re.search(
-        r"Overfull \\[hv]box|There were undefined|(?:Citation|Reference).*undefined|^!", line)]
+        r"Overfull \\[hv]box|There were undefined|(?:Citation|Reference).*undefined|multiply defined|multiply-defined|^!", line)]
     if failures:
         raise RuntimeError("Unresolved manuscript diagnostics:\n" + "\n".join(failures))
     for name in ("main.pdf", "main.bbl"):

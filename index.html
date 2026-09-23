@@ -83,7 +83,7 @@
         <div class="eyebrow">Finite-shot QAOA · Reproducible research</div>
         <h1>Query-Efficient Quantum Approximate Optimization via Graph-Conditioned Trust Regions</h1>
         <p class="author">Molena Huynh · North Carolina State University</p>
-        <p class="intro">Can graph information make QAOA optimization more economical? This study separates the effects of transferred starting parameters, search-region geometry, and uncertainty-aware acceptance.</p>
+        <p class="intro">When can local refinement improve transferred QAOA parameters within a measurement budget? This study connects trust-region radius, model bias, shot noise, and decision power through controlled experiments and predictions on fresh graphs.</p>
         <div class="actions"><a class="button primary" href="submission/main.pdf">Read the manuscript</a><a class="button" href="#reproduce">Explore the code</a><a class="button" href="submission/main.tex">Manuscript source</a></div>
       </div>
       <div class="scope" aria-label="Canonical experiment scope">
@@ -94,7 +94,9 @@
       <section id="findings" class="section-grid">
         <div><div class="label">01 / Evidence</div><h2>What the study shows</h2></div>
         <div>
-          <p class="finding">Good starting parameters help. The tested graph-conditioned shapes do not establish additional shot savings.</p>
+          <p class="finding">A useful starting point can leave improvements that are difficult to propose and measure.</p>
+          <p>The revised analysis separates radius-dependent sampling from stopping after unresolved evidence. A conditional bias–variance prediction is tested against independent finite-shot observations on eight fresh graphs. These simulator-informed diagnostics explain model accuracy; the recorded quality–cost comparisons do not establish a competitive measurement advantage.</p>
+          <div class="links"><a href="submission/figures/components.pdf">Radius and model accuracy</a><a href="submission/figures/attribution.pdf">Controlled attribution and fresh predictions</a><a href="code/results/mechanism.json.gz" download>Prediction and experiment records</a></div>
           <p>In the canonical benchmark, simple descriptor transfer gives strong initial solutions. Under the tested finite-shot acceptance rule, undisplaced donor-initialized trust-region policies accept no refinement steps. The results therefore distinguish initialization benefits from optimization improvements.</p>
           <!-- BEGIN GENERATED CANONICAL RESULTS -->
 <figure class="result-figure">
@@ -177,7 +179,7 @@
             <li><strong>Fit and test a step.</strong> Use a QR-based local linear model and fresh paired samples for finite-horizon acceptance decisions.</li>
             <li><strong>Account for every query.</strong> Preserve model evaluations, rejected trials, unresolved decisions, validation shots, and preprocessing costs.</li>
           </ol>
-          <p>The manuscript supplies a graph-local transfer bound, a finite-sample model-error bound, and a finite-horizon acceptance guarantee. Each statement identifies the assumptions connecting it to the implementation.</p>
+          <p>The manuscript supplies a graph-local transfer bound, a conditional model-error decomposition, a finite-sample error bound, and a finite-horizon acceptance guarantee. Exact simulator inputs to the predictive diagnostics are distinguished from the measurements available to the optimizer.</p>
           <div class="links"><a href="code/src/gcqaoa/qaoa.py">Simulator source</a><a href="code/src/gcqaoa/search.py">Optimization source</a><a href="code/data/graphs.jsonl">Graph instances</a><a href="code/data/splits.json">Graph splits</a><a href="code/configs/paper.json">Canonical protocol</a><a href="code/docs/METHOD.md">Method definitions</a><a href="code/docs/EVIDENCE.md">Evidence guide</a><a href="code/docs/ATTRIBUTION.md">Scientific attribution</a></div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 # Method and implementation
 
-This document specifies the algorithms represented by the saved experiments. The implementation uses a small set of working modules; the links below identify their actual responsibilities. [EVIDENCE.md](EVIDENCE.md) describes the experimental units and the limits of the conclusions. Build and execution commands are in the [root README](../../README.md).
+This document specifies the revised refinement policy and distinguishes it from the algorithms represented by the preserved historical experiments. The implementation uses a small set of working modules; the links below identify their actual responsibilities. [EVIDENCE.md](EVIDENCE.md) describes the experimental units and the limits of the conclusions. Build and execution commands are in the [root README](../../README.md).
 
 | Component | Implementation | Independent checks or saved evidence |
 | --- | --- | --- |
@@ -9,10 +9,30 @@ This document specifies the algorithms represented by the saved experiments. The
 | Donor scores, symmetry alignment, region shape | [`search.py`](../src/gcqaoa/search.py): `descriptor`, `graph_prior`, `align` | Saved priors; geometry checks in [`test_search.py`](../tests/test_search.py) |
 | Local graph comparison | [`qaoa.py`](../src/gcqaoa/qaoa.py): `local_signature`, `local_tv` | Exact rooted-isomorphism and objective-bound checks in `test_qaoa.py` |
 | Structural transport comparison | [`search.py`](../src/gcqaoa/search.py): `structural_score`; [`transport_audit.py`](../src/gcqaoa/transport_audit.py) | Saved couplings, marginal errors, solver residuals and direct four-index distortion checks |
-| Local interpolation, finite-shot search and baselines | [`search.py`](../src/gcqaoa/search.py): `design_points`, `fit_model`, `ShotOracle`, `optimize` | Independent least-squares comparison, atomic budgets, reconstructed model and decision checks |
+| Local interpolation, finite-shot search and baselines | [`search.py`](../src/gcqaoa/search.py): `design_points`, `fit_model`, `ShotOracle`, `optimize`, `refine` | Independent least-squares comparison, atomic budgets, reconstructed model and decision checks |
 | Variance-sensitive follow-up | [`followup.py`](../src/gcqaoa/followup.py): `pool_moments`, `bernstein_optimize`, `select_settings` | Saved validation schedule and settings; replay and pooled-variance checks in [`test_followup.py`](../tests/test_followup.py) |
+| Controlled attribution and mechanism prediction | [`mechanism.py`](../src/gcqaoa/mechanism.py): `allocation_run`, `gradient_map`, `predict_mechanism`, `observe_mechanism`, `online_power` | Frozen predictions, independent fits, schedule proposals and four-cell optimizer records; exhaustive variance and replay checks in [`test_mechanism.py`](../tests/test_mechanism.py) |
 | Statistical summaries and manuscript artifacts | [`artifacts.py`](../src/gcqaoa/artifacts.py), [`report.py`](../src/gcqaoa/report.py) | Graph-level CSVs, figure input manifest and generated `submission/tables/results.tex` |
 | Scientific audit | [`verify.py`](../src/gcqaoa/verify.py) | Reconstructs graph splits, objectives, shot ledgers, fitted models and acceptance decisions |
+
+## Revised default policy
+
+Descriptor selection is the default. Current `graph_prior` selects directly from scores: it chooses the first bank index with score at most `min(scores) + 1e-12`. Weights still shape the region. This explicit absolute tolerance prevents roundoff from ranking mathematically saturated Local-TV scores. The preserved historical records retain their executed rule and three rounding-dependent donor choices.
+
+`search.refine` implements the revised local policy; `optimize` and `bernstein_optimize` remain the historical controls. Before each model, it chooses `S = max(2, ceil(S0*(Delta0/Delta)**2))` shots per point and checks that the complete model plus the first two-endpoint look is affordable. It spends no model shots when that reservation fails. This schedule maintains the leading stochastic gradient-error scale for fixed design and shape; it is not a fully linear model certificate. Accuracy proportional to radius would generally require fourth-power growth, under the stated smoothness and geometry assumptions.
+
+The revised routine seeds separate design, model, and endpoint streams. Fresh endpoint bounds decide acceptance. Only certified rejection contracts the radius; unresolved evidence stops with `resolution_limited`, preserving both incumbent and radius. The `stop_reason` distinguishes a model/first-look budget shortfall, flat model, exhausted decision schedule, and unaffordable later look. Rejection at the radius floor has status `radius_limit`. Each incumbent becomes available only after its complete acceptance batch. A resolution stop does not prove that no other allocation or direction could improve the objective.
+
+The refinement experiment crosses isotropic/shaped geometry with Hoeffding/empirical-Bernstein acceptance on the same saved anchors and budget. Its variance-aware comparator is an independent endpoint-bound implementation, not a reproduction of spatial variance modeling or ASTRO-DF. Its protocol and complete records are in `results/refinement.json.gz`; historical evidence remains in the original three bundles.
+
+The separate mechanism experiment isolates two different factors through optional `refine` arguments:
+
+| Argument | Default | Controlled alternative |
+| --- | --- | --- |
+| `model_sampling` | `"radius"`: inverse-square allocation above | `"fixed"`: retain `S0` at every radius |
+| `unresolved_policy` | `"stop"`: return after unresolved evidence | `"continue"`: retain center and radius, then fit a new model using fresh observations |
+
+Only certified rejection contracts the radius in any of these four cells. Pure continuation therefore differs from historical continuation-and-contraction. Every cell retains the same first-look reservation, confidence allocation, horizon, shape, anchor, and measurement cap. They share seeds through their first trial; later trajectories can diverge through the interventions. The default invocation preserves the earlier refinement results and output schema. The controlled experiment uses shaped Bernstein, 16 existing targets, depths 2/3 and two shot repetitions, for 256 runs. A sampling intervention has no effect while the radius stays unchanged; its activation is counted separately. Subsequent descriptions of unresolved contraction refer specifically to the historical policies.
 
 ## Circuit and observation conventions
 
@@ -30,7 +50,7 @@ Each depth-specific donor vector is the best objective among six exact-objective
 
 The graph descriptor contains mean degree, degree standard deviation, the 25th/50th/75th degree quantiles and mean clustering coefficient. Descriptor distances use componentwise bank standard deviations, floored at `0.1`. Alternative distances are all zeros for the fixed-donor control, local edge-neighborhood total variation, or the returned structural transport distortions. Shuffling permutes the transport score assignments while preserving donor order and parameters.
 
-For distances `d_i`, the implemented weight is proportional to `exp(-(d_i-min(d))/tau)`, with `tau = max(std(d), 0.001)`. The anchor is the first maximum of these computed floating-point weights, before the neighborhood filter described below. There is no numerical near-tie tolerance. The fixed-donor control therefore always selects bank entry zero. Mathematically equal but numerically unequal scores can select a different entry.
+For distances `d_i`, the implemented weight is proportional to `exp(-(d_i-min(d))/tau)`, with `tau = max(std(d), 0.001)`. In the historical source snapshots, the anchor is the first maximum of these computed floating-point weights, before the neighborhood filter described below. There is no numerical near-tie tolerance. The fixed-donor control therefore always selects bank entry zero. Mathematically equal but numerically unequal scores can select a different entry.
 
 **Recorded depth-two tie artifact.** All 384 canonical depth-two local-TV comparisons saturate at one. Their floating-point sums have a maximum within-target spread of `4.440892098500626e-16`. The softmax retains enough of this variation that three targets choose a different anchor from the fixed-donor control:
 
@@ -59,6 +79,28 @@ For dimension `d = 2p`, the candidate set contains the origin, positive and nega
 `fit_model` solves weighted least squares by QR with square-root shot-count weights and triangular solution. In these experiments there are exactly `d+1` observations for `d+1` coefficients. This is square interpolation: positive weights do not change the exact interpolant, although shot noise and the design condition number affect coefficient accuracy. The reported condition number belongs to the weighted triangular factor. It is a diagnostic, not a certificate of saved measurements.
 
 Writing the model in local coordinates as `c + g^T u`, the trial uses `u = -g/||g||` and predicted decrease `q = ||g||`. A model with `q < 1e-12` stops without an acceptance test.
+
+## Conditional variance prediction and its limits
+
+For a fixed square affine design `A`, shape `B` and radius `Delta`, let `P` select the gradient coefficients. The map from objective means to the physical gradient is `L = Delta**(-1) * B**(-T) * P * A**(-1)`, computed by linear solves. Let `mu` contain the exact objective means, `g_bar = L*mu` the exact-data fitted gradient, and `g` a reference derivative. If pointwise samples are independent and their individual variances are `v_i`, their mean covariance is `Sigma_y = diag(v_i/S_i)`. Then
+
+```text
+E ||g_hat - g||^2 = ||g_bar - g||^2 + trace(L Sigma_y L^T).
+```
+
+This standard bias–variance identity is conditional on the design and predictable shot counts. It predicts gradient mean-square error, not the nonlinear boundary proposal's quality or its acceptance probability. The implementation records the operator and Frobenius norms of `L`, since a design condition number alone does not quantify physical-gradient sensitivity. Observed RMS takes the square root of mean squared errors, rather than averaging their norms.
+
+The mechanism grid contains eight earlier panel-zero targets and eight fresh targets nonisomorphic to all earlier bank, validation and test instances. The same fixed panel-zero bank supplies their anchors; this does not test variation over banks. Crossing these 16 graphs with two depths, two shapes and five radii gives 320 prediction cells. Each is tested at `16, 64, 256, 1024, 4096, 16384` shots per point, with 128 independent fits: 1,920 shot cells in total. The exact-objective reference derivative is checked at central-difference steps `1e-5` and `5e-6`, requiring agreement within `1e-7` in Euclidean norm; this is a numerical consistency check, not a derivative error certificate.
+
+At radii `0.025, 0.05, 0.1, 0.2, 0.4`, the actual schedule assigns `4096, 1024, 256, 64, 16` shots per point. Its first 32 independent fitted models per cell supply exact retrospective proposal margins. For each fresh prediction cell, 256 Gaussian draws of objective-mean noise generate a separate predicted positive-margin fraction. This approximation uses the exact pointwise means and variances and evaluates its trial objectives exactly. It is not a consequence of the MSE identity and is tested against independently sampled multinomial fits.
+
+The complete predictor, its inputs, and its Gaussian draws are written and hashed before the observation stage begins. These exact-target inputs would not be free information for a finite-shot optimizer. The experiment tests an offline simulator-informed mechanism on fresh graphs; it neither runs a predictive controller there nor establishes an optimization advantage on that fresh set.
+
+## Online and extended acceptance-power replay
+
+`mechanism.online_power` reuses the preserved endpoint streams, keeping the same proposals and equal proposal weights at every endpoint budget. It recomputes the online rule with four planned looks, `512, 2048, 8192, 16384` per endpoint, and the corresponding four-look confidence penalty. A separate extended analysis retains five looks ending at 65,536 per endpoint. The latter's 131,072-shot pair cap exceeds an entire online run's 65,536-shot cap and is labelled offline. Prefixes of the extended rule are not substitutes for the online rule, because their error allocations differ.
+
+Only affordable atomic looks are used. Unresolved outcomes retain their incurred cost; early acceptance or rejection can use less than the displayed cap. Curves are stratified by fixed true-margin sign cohorts, and their pointwise Hoeffding intervals describe independent replay uncertainty conditional on those proposals. Sharing observations across rules and budgets does not make the plotted points independent or supply simultaneous coverage. Re-analysis of saved streams adds no new measurement shots.
 
 ## Acceptance, budgets and stopping
 

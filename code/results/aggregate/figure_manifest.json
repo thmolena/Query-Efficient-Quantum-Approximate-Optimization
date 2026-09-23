@@ -1,12 +1,14 @@
 {
   "additional_studies": {
     "followup.json.gz": "84e4469f284532ea67a9afc378d04f94bf862d54312aa56a3d0b06585809982a",
+    "mechanism.json.gz": "ae37104f54a01e5705830b38e263e5e2c3df2860f905e6f27280c1d986d49835",
+    "refinement.json.gz": "e88390b472e995dcf401a23c768eb86b377873500e4396fc31e967f07f10f3b5",
     "transport.json.gz": "c04014de58b58d74256a46c9a8a930ff6d489ef3c6e38e534a86062a03f22cf4"
   },
   "analysis_source_sha256": {
     "src/gcqaoa/artifacts.py": "3604b250c0359c2e60852173d8bccfd83776322e645df6cda0654e9b924538c3",
     "src/gcqaoa/provenance.py": "23121b8539d1a72391ade14eef58e3c27302c4486ad83e130b99c4bba1507204",
-    "src/gcqaoa/report.py": "5abdf625cd69326826de4ab11f1da2b123f1388f4bb142bb33a4817426cfe523"
+    "src/gcqaoa/report.py": "10859c46a65ba9bf859990c58d13ad94655fd878cf4ed2a3362ed639450f5863"
   },
   "bootstrap": {
     "interval": "95 percent percentile; unadjusted descriptive comparisons",
@@ -23,7 +25,7 @@
       ],
       "path": "submission/figures/quality.pdf",
       "quantity": "graph-mean signed reference deficit and graph bootstrap interval",
-      "sha256": "71507af6163f358a9a0e51bffa5950ef7d6fe5f74601e87913980105c14602e6"
+      "sha256": "0b730c8ce9a961c215a4949d3886d974c0be08ea7e66c0a253f6a006eea045f0"
     },
     {
       "depths": [
@@ -32,7 +34,7 @@
       ],
       "path": "submission/figures/transfer.pdf",
       "quantity": "initial signed reference deficit by prior",
-      "sha256": "5226baee3e4fce88ae55d7bc60448c59cd63416b285e34954c0c70d03e90994a"
+      "sha256": "e592c3d003ff9bfaf46dbc496ffcc14d5e62322e8251cccd9a48f48f2ed1d914"
     },
     {
       "budgets": [
@@ -43,8 +45,8 @@
         2
       ],
       "path": "submission/figures/accounting.pdf",
-      "quantity": "expected approximation ratio versus optimization shots and model/acceptance shot allocation",
-      "sha256": "9cb7b32692da634d59e84bdce80edccdf53029ef6a49a45e71c681463caeef94"
+      "quantity": "stacked bars of model, acceptance and independent validation shots",
+      "sha256": "1dfb5bb0be42a9252b58c247c653f8644df4a1d038cdaf5b3e8e4414e6131f2c"
     },
     {
       "depths": [
@@ -52,8 +54,49 @@
         2
       ],
       "path": "submission/figures/conditioning.pdf",
-      "quantity": "design condition-number empirical CDF and exact local-neighborhood total variation histogram",
-      "sha256": "21b262252d1bb42cfc05a326a7b3a33892146d470fb3656db03c23a5ac39e522"
+      "quantity": "design condition-number step empirical CDF and not-saturated versus saturated certificate bars",
+      "sha256": "ccdfec264651208285ab95c80d877d333551b3adb516e043ca2670e8f5403494"
+    },
+    {
+      "path": "submission/figures/transport.pdf",
+      "quantity": "solver feasibility, donor changes, and quality against descriptor/original references on matched valid target sets",
+      "sha256": "635300397ff5beef99d1babf368d2ca60ccad2ea744f94bf1ab256923583abc9"
+    },
+    {
+      "path": "submission/figures/refinement.pdf",
+      "quantity": "initial and final deficit, paired own-anchor gain, actual shots and changed output counts",
+      "sha256": "f94e3bcd353a88046d133a74928c715f70d909abf55bcb1f1392f858dfc4008f",
+      "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/efficiency.pdf",
+      "quantity": "actual incumbent gain, first-ever target attainment and paired shaped-policy curves with graph-block bands",
+      "sha256": "f68beedaf2df69b160283ffd4120b6285e58078d11641e6e99dcb41f697dbb8c",
+      "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/acceptance_power.pdf",
+      "quantity": "fixed-cohort power, unresolved fraction and actual expenditure across endpoint budgets, online four-look and extended five-look allocations",
+      "sha256": "4739d1ce0afdced945a6cf541c0b5821af203032071b491fa15c516414ce6fad",
+      "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/components.pdf",
+      "quantity": "graph-level RMS bias-variance, positive margin and magnitude, actual radius schedule cost and prediction",
+      "sha256": "a42fcb43079522d68e3881bd52078318b9671fce06ba5a52137b375bc461d15b",
+      "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/generality.pdf",
+      "quantity": "supporting paired refinement-gain effects versus both conventional comparators by graph size and depth",
+      "sha256": "38621b820049a3572b9db65fdfa8d1242ff1b2033ca828fd5cd2a3665b5a23a2",
+      "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/attribution.pdf",
+      "quantity": "controlled fixed/radius sampling by stop/continue unresolved policy gains/costs and fresh-graph Gaussian prediction versus sampled margin probability",
+      "sha256": "867b21fcce761091e182f7d23991d54ff5bec78aa7e7860bc07c2941c3c380af",
+      "study": "post-hoc matched refinement revision"
     }
   ],
   "followup_bootstrap": {
@@ -156,6 +199,11 @@
       "path": "submission/tables/results.tex",
       "quantity": "generated study result paragraphs and complete depth-two ablation table",
       "sha256": "bc7ef2186afd46026287d1a1d57dba99ef9ad7f3ed252c4cba3a4e8fa6ea5404"
+    },
+    {
+      "path": "submission/tables/refinement.tex",
+      "quantity": "generated post-hoc refinement findings and complete factorial table",
+      "sha256": "a097aabdaa66bbe5e85300c5657d88f88c886ae2116b4537cd75f013e7f87abc"
     }
   ],
   "website": {

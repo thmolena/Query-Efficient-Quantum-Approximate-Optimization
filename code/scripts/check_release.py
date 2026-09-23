@@ -472,7 +472,10 @@ def check(*, rules=(), history=False, allow_manifest_creation=False):
                 "code/results/aggregate/figure_manifest.json", "code/results/aggregate/environment.json",
                 "submission/main.pdf", "submission/main.bbl", "submission/LICENSE",
                 "code/docs/METHOD.md", "code/docs/EVIDENCE.md", "code/docs/PROVENANCE.md",
-                "code/configs/followup.json", "code/results/followup.json.gz", "code/results/transport.json.gz"]
+                "code/configs/followup.json", "code/results/followup.json.gz", "code/results/transport.json.gz",
+                "code/results/refinement.json.gz", "code/results/mechanism.json.gz",
+                "code/src/gcqaoa/mechanism.py", "code/tests/test_mechanism.py",
+                "submission/tables/refinement.tex"]
     for name in required:
         require((ROOT / name).is_file() and (ROOT / name).stat().st_size > 0, f"Missing or empty: {name}")
     snapshots = verify_source_snapshots()
@@ -487,6 +490,17 @@ def check(*, rules=(), history=False, allow_manifest_creation=False):
         with gzip.open(ROOT / "code/results/transport.json.gz", "rt") as stream:
             transport=json.load(stream)
         check_transport_diagnostics(transport)
+    if (ROOT / "code/results/refinement.json.gz").is_file():
+        from gcqaoa.followup import load_refinement, verify_refinement
+        revision = verify_refinement(load_refinement(verify=False))
+        require(revision["runs"] == 256, "Incomplete revision factorial")
+        print("Revision evidence: " + json.dumps(revision, sort_keys=True), flush=True)
+    if (ROOT / "code/results/mechanism.json.gz").is_file():
+        from gcqaoa.mechanism import load_mechanism, verify_mechanism
+        mechanism = verify_mechanism(load_mechanism(verify=False))
+        require(mechanism["attribution_runs"] == 256 and mechanism["predictions"] == 320
+                and mechanism["diagnostics"] == 1920, "Incomplete mechanism experiment")
+        print("Mechanism evidence: " + json.dumps(mechanism, sort_keys=True), flush=True)
     figure_manifest = ROOT / "code/results/aggregate/figure_manifest.json"
     if figure_manifest.is_file():
         figures = json.loads(figure_manifest.read_text())
@@ -514,7 +528,7 @@ def check(*, rules=(), history=False, allow_manifest_creation=False):
                 block=EXPERIMENTS_BEGIN+html.split(EXPERIMENTS_BEGIN,1)[1].split(EXPERIMENTS_END,1)[0]+EXPERIMENTS_END
                 require(block==website_additional(followup,transport,data), "Website follow-up or transport results are stale")
             require(figures.get("additional_studies")=={name:digest(ROOT / "code/results" / name)
-                    for name in ("followup.json.gz", "transport.json.gz")},
+                    for name in ("followup.json.gz", "transport.json.gz", "refinement.json.gz", "mechanism.json.gz")},
                     "Manuscript result provenance omits or differs from additional studies")
         require(figures["numerical_source_sha256"] == data["source_sha256"],
                 "Figures do not identify the recorded execution's numerical sources")
@@ -601,8 +615,10 @@ def main():
         for command in ([sys.executable, "-m", "pytest", "code/tests", "-p", "no:cacheprovider", "-q"],
                         [sys.executable, "-m", "gcqaoa.verify"],
                         [sys.executable, "code/scripts/run_followup.py", "--verify", "--full"],
+                        [sys.executable, "code/scripts/run_followup.py", "--revision", "--verify", "--full"],
+                        [sys.executable, "-m", "gcqaoa.mechanism", "--verify", "--full"],
                         [sys.executable, "code/scripts/package_arxiv.py", "--check"]):
-            if command[1] == "code/scripts/run_followup.py":
+            if command[1] == "code/scripts/run_followup.py" and "--revision" not in command:
                 completed = subprocess.run(command, cwd=ROOT, env=environment, check=True,
                                            text=True, stdout=subprocess.PIPE)
                 with gzip.open(ROOT / "code/results/followup.json.gz", "rt") as stream:

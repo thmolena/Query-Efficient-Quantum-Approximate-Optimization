@@ -75,14 +75,18 @@ def structural_score(D, E, epsilon=.05, max_iter=100, tol=1e-9):
                            'marginal_error': marginal, 'coupling': T.tolist()}
 
 
-def graph_prior(graph, bank, kind='descriptor', scores=None, shuffle=None):
+def graph_prior(graph, bank, kind='descriptor', scores=None, shuffle=None,
+                tie_tolerance=1e-12):
     """Return a reference anchor and volume-normalized bounded geometric shape.
 
-    The anchor is the highest-weight reference, avoiding a mean of incompatible
-    basins. Only aligned neighbors within Euclidean distance 1 are used to shape
-    the region; the remaining weight is removed and renormalized.
+    The anchor is selected directly from scores. Scores within an absolute
+    ``tie_tolerance`` of the minimum tie; the first donor in bank order wins.
+    This prevents roundoff in saturated Local-TV scores from ranking donors.
+    Only aligned neighbors within Euclidean distance 1 shape the region.
     """
     start = time.perf_counter()
+    if not bank or not np.isfinite(tie_tolerance) or tie_tolerance < 0:
+        raise ValueError('A nonempty bank and nonnegative tie tolerance are required')
     descriptors = np.array([row['descriptor'] for row in bank])
     if kind == 'uniform':
         dist = np.zeros(len(bank))
@@ -92,6 +96,8 @@ def graph_prior(graph, bank, kind='descriptor', scores=None, shuffle=None):
         dist = np.linalg.norm((descriptors-descriptor(graph))/scale, axis=1)
     elif kind in ('gw', 'local'):
         if scores is None:
+            if kind == 'local':
+                raise ValueError('Local-TV selection requires explicit Local-TV scores')
             D = normalized_shortest_path_matrix(graph)
             dist = np.array([structural_score(D, np.array(row['structure']))[0] for row in bank])
         else:
@@ -100,10 +106,13 @@ def graph_prior(graph, bank, kind='descriptor', scores=None, shuffle=None):
         raise ValueError(kind)
     if shuffle is not None:
         dist = dist[np.asarray(shuffle)]
+    if dist.shape != (len(bank),) or not np.isfinite(dist).all():
+        raise ValueError('One finite score is required per donor')
+    tied = np.flatnonzero(dist <= dist.min() + tie_tolerance)
+    anchor_index = int(tied[0])
     tau = max(float(np.std(dist)), 1e-3)
     weights = np.exp(-(dist-dist.min())/tau)
     weights /= weights.sum()
-    anchor_index = int(np.argmax(weights))
     anchor = np.array(bank[anchor_index]['theta'])
     aligned = np.array([align(row['theta'], anchor) for row in bank])
     local = np.linalg.norm(aligned-anchor, axis=1) <= 1.
@@ -120,6 +129,8 @@ def graph_prior(graph, bank, kind='descriptor', scores=None, shuffle=None):
     B = (vectors*np.exp(.5*logs))@vectors.T
     return anchor, B, {'scores': dist.tolist(), 'weights': weights.tolist(),
                        'anchor': anchor_index, 'shape': B.tolist(),
+                       'tie_rule': 'first_in_bank_within_absolute_tolerance',
+                       'tie_tolerance': float(tie_tolerance), 'tied_donors': tied.tolist(),
                        'seconds': time.perf_counter()-start}
 
 
@@ -164,7 +175,7 @@ class ShotOracle:
         self.records = []
         self.iteration = None
 
-    def batch(self, points, shots, stage):
+    def batch(self, points, shots, stage, *, rng=None):
         points = list(points)
         supplied = [shots]*len(points) if np.isscalar(shots) else list(shots)
         if not points or len(supplied) != len(points):
@@ -180,7 +191,7 @@ class ShotOracle:
         result = []
         for theta, count in zip(points, counts):
             t = time.perf_counter()
-            mean, variance = self.circuit.sample(theta, count, self.rng)
+            mean, variance = self.circuit.sample(theta, count, self.rng if rng is None else rng)
             self.calls += 1
             self.shots += count
             self.records.append({'call': self.calls, 'job': self.jobs, 'stage': stage,
@@ -196,7 +207,11 @@ class ShotOracle:
 
 
 def optimize(circuit, initial, B, settings, method, seed, budget, observer=None):
-    """Run one frozen optimizer. Exact expectations never enter its decisions."""
+    """Historical fixed-model-shot policy, retained for explicit comparisons.
+
+    New refinement experiments use :func:`refine`. Exact expectations never
+    enter either policy's decisions; released executions replay frozen sources.
+    """
     rng = np.random.default_rng(seed)
     oracle = ShotOracle(circuit, int(budget), rng, observer)
     x = np.array(initial, dtype=float)
@@ -317,3 +332,183 @@ def optimize(circuit, initial, B, settings, method, seed, budget, observer=None)
     return {'theta': wrap(x).tolist(), 'shots': oracle.shots, 'calls': oracle.calls,
             'jobs': oracle.jobs, 'seconds': elapsed, 'stop': stop, 'decisions': decisions,
             'incumbents': incumbents, 'evaluations': oracle.records}
+
+
+def _pooled_endpoint(batches):
+    """Unbiased pooled variance, including between-batch mean differences."""
+    count, mean, m2 = 0, 0., 0.
+    for batch in batches:
+        n, value = batch['shots'], batch['mean']
+        delta = value - mean
+        m2 += n*(n-1)*batch['variance_of_mean'] + delta**2*count*n/(count+n)
+        mean += delta*n/(count+n)
+        count += n
+    return count, float(mean), float(max(0., m2/(count-1)))
+
+
+def refine(circuit, initial, B, settings, seed, budget, observer=None,
+           bound='hoeffding', *, model_sampling='radius', unresolved_policy='stop'):
+    """Radius-aware finite-shot refinement with explicit resolution limits.
+
+    At radius Delta, model points receive ceil(S0*(Delta0/Delta)**2) shots
+    (at least two). This preserves the leading gradient *sampling* noise scale;
+    it is not a fully-linear-model accuracy guarantee. A complete model and the
+    first endpoint look must be affordable before any model shots are spent.
+
+    Fresh endpoint observations alone decide sufficient decrease. Hoeffding
+    or empirical Bernstein bounds split alpha across both tails, endpoints,
+    trials and the fixed cumulative-look schedule. The latter uses Theorem 4
+    of Maurer and Pontil (2009), with log(8*trials*looks/alpha). Adaptive model
+    sizes and proposals are measurable before their fresh endpoint samples.
+
+    Only a certified rejection contracts the radius. Unresolved evidence stops
+    with ``resolution_limited`` and leaves the incumbent unchanged. Design,
+    model sampling and endpoint sampling use separate seeded random streams.
+
+    Two optional controls isolate the interventions without changing the
+    default policy. ``model_sampling='fixed'`` retains S0 at every radius.
+    ``unresolved_policy='continue'`` refits a fresh model at the unchanged
+    center and radius after an unresolved trial, subject to the same budget
+    reservation and horizon. This is pure continuation, distinct from the
+    historical policy's contraction after unresolved evidence. The same seed
+    gives all four controls identical observations through their first trial.
+    """
+    def integer(value, minimum, name):
+        if (isinstance(value, (bool, np.bool_)) or not np.isfinite(value)
+                or int(value) != value or value < minimum):
+            raise ValueError(f'{name} must be an integer >= {minimum}')
+        return int(value)
+
+    if bound not in ('hoeffding', 'bernstein'):
+        raise ValueError('bound must be hoeffding or bernstein')
+    if model_sampling not in ('radius', 'fixed'):
+        raise ValueError('model_sampling must be radius or fixed')
+    if unresolved_policy not in ('stop', 'continue'):
+        raise ValueError('unresolved_policy must be stop or continue')
+    budget = integer(budget, 0, 'budget')
+    base_shots = integer(settings['model_shots'], 2, 'model_shots')
+    horizon = integer(settings['max_trials'], 1, 'max_trials')
+    looks = [integer(n, 2, 'acceptance look') for n in settings['acceptance_looks']]
+    if not looks or any(b-a < 2 for a, b in zip(looks, looks[1:])):
+        raise ValueError('Cumulative acceptance looks need increments of at least two')
+    radius, min_radius, max_radius = map(float, (
+        settings['radius'], settings['min_radius'], settings['max_radius']))
+    if (not np.isfinite([radius, min_radius, max_radius]).all()
+            or not 0 < min_radius <= radius <= max_radius):
+        raise ValueError('Require 0 < min_radius <= radius <= max_radius')
+    alpha, eta = float(settings['alpha']), float(settings['eta'])
+    if not 0 < alpha < 1 or not 0 < eta < 1:
+        raise ValueError('alpha and eta must lie strictly between zero and one')
+    x = np.asarray(initial, dtype=float).copy()
+    shape = np.asarray(B, dtype=float)
+    if (x.ndim != 1 or len(x) == 0 or len(x) % 2 or not np.isfinite(x).all()
+            or shape.shape != (len(x), len(x)) or not np.isfinite(shape).all()
+            or np.linalg.matrix_rank(shape) != len(x)):
+        raise ValueError('Require finite QAOA angles and a nonsingular matching shape')
+    x = wrap(x)
+    initial_radius = radius
+    dimension = len(x)
+    design_seed, model_seed, endpoint_seed = np.random.SeedSequence(seed).spawn(3)
+    design_rng = np.random.default_rng(design_seed)
+    model_rng = np.random.default_rng(model_seed)
+    endpoint_rng = np.random.default_rng(endpoint_seed)
+    oracle = ShotOracle(circuit, budget, model_rng, observer)
+    decisions, models = [], []
+    incumbents = [{'shots': 0, 'theta': x.tolist()}]
+    if observer is not None:
+        observer('incumbent', incumbents[-1])
+    start = time.perf_counter()
+    stop, stop_reason = 'horizon', 'trial_horizon'
+    allocation = None
+    for iteration in range(horizon):
+        oracle.iteration = iteration
+        model_shots = (max(2, int(np.ceil(base_shots*(initial_radius/radius)**2)))
+                       if model_sampling == 'radius' else base_shots)
+        model_cost = (dimension+1)*model_shots
+        allocation = {'iteration': iteration, 'radius': radius,
+                      'model_shots_per_point': model_shots,
+                      'model_shots': model_cost, 'first_look_shots': 2*looks[0],
+                      'remaining_shots': budget-oracle.shots}
+        if model_cost + 2*looks[0] > budget-oracle.shots:
+            stop, stop_reason = 'resolution_limited', 'model_and_first_look_unaffordable'
+            break
+        points, design = design_points(dimension, design_rng)
+        locations = [wrap(x+radius*(shape @ point)) for point in points]
+        means = oracle.batch(locations, model_shots, 'model', rng=model_rng)
+        coefficient, condition = fit_model(design, means, [model_shots]*(dimension+1))
+        gradient = coefficient[1:]
+        predicted = float(np.linalg.norm(gradient))
+        model_record = {'iteration': iteration, 'radius': radius,
+                        'model_shots_per_point': model_shots, 'model_shots': model_cost,
+                        'shots': oracle.shots, 'condition': condition, 'predicted': predicted,
+                        'center': x.tolist(), 'design_points': points.tolist(),
+                        'coefficients': coefficient.tolist()}
+        models.append(model_record)
+        if predicted < 1e-12:
+            stop, stop_reason = 'resolution_limited', 'flat_model'
+            break
+        trial = wrap(x-radius*shape @ gradient/predicted)
+        batches, intervals = [[], []], []
+        previous = 0
+        decision = 'unresolved'
+        unresolved_reason = 'acceptance_look_cap'
+        lower = upper = None
+        for cumulative in looks:
+            count = cumulative-previous
+            if 2*count > budget-oracle.shots:
+                unresolved_reason = 'next_acceptance_look_unaffordable'
+                break
+            oracle.batch([x, trial], count, 'acceptance', rng=endpoint_rng)
+            for side in (0, 1):
+                batches[side].append(oracle.records[-2+side])
+            moments = [_pooled_endpoint(part) for part in batches]
+            if bound == 'hoeffding':
+                radii = [float(np.sqrt(np.log(4*horizon*len(looks)/alpha)/(2*cumulative)))]*2
+            else:
+                logarithm = np.log(8*horizon*len(looks)/alpha)
+                radii = [float(np.sqrt(2*variance*logarithm/cumulative)
+                               + 7*logarithm/(3*(cumulative-1)))
+                         for _, _, variance in moments]
+            decrease = moments[0][1]-moments[1][1]
+            lower, upper = float(decrease-sum(radii)), float(decrease+sum(radii))
+            previous = cumulative
+            intervals.append({'shots_per_point': cumulative,
+                              'means': [part[1] for part in moments],
+                              'sample_variances': [part[2] for part in moments],
+                              'radii': radii, 'lower': lower, 'upper': upper})
+            if lower >= eta*predicted:
+                decision = 'accepted'
+                break
+            if upper < eta*predicted:
+                decision = 'rejected'
+                break
+        record = {**model_record, 'shots': oracle.shots,
+                  'acceptance_shots_per_point': previous, 'acceptance_shots': 2*previous,
+                  'lower_decrease': lower, 'upper_decrease': upper,
+                  'decision': decision, 'trial': trial.tolist(), 'intervals': intervals,
+                  'confidence_bound': bound}
+        decisions.append(record)
+        if observer is not None:
+            observer('decision', record)
+        if decision == 'accepted':
+            x = trial
+            incumbents.append({'shots': oracle.shots, 'theta': x.tolist()})
+            if observer is not None:
+                observer('incumbent', incumbents[-1])
+            radius = min(max_radius, 1.5*radius)
+        elif decision == 'rejected':
+            if radius <= min_radius:
+                stop, stop_reason = 'radius_limit', 'certified_rejection_at_min_radius'
+                break
+            radius = max(min_radius, .5*radius)
+        elif unresolved_policy == 'stop':
+            stop, stop_reason = 'resolution_limited', unresolved_reason
+            break
+    return {'theta': x.tolist(), 'shots': oracle.shots, 'calls': oracle.calls,
+            'jobs': oracle.jobs, 'seconds': time.perf_counter()-start,
+            'stop': stop, 'stop_reason': stop_reason, 'decisions': decisions,
+            'incumbents': incumbents, 'evaluations': oracle.records, 'models': models,
+            'policy': ('radius_adaptive' if (model_sampling, unresolved_policy) == ('radius', 'stop')
+                       else f'{model_sampling}_model_{unresolved_policy}_unresolved'),
+            'confidence_bound': bound,
+            'final_radius': radius, 'last_allocation': allocation}

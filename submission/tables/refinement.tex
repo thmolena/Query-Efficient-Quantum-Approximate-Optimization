@@ -1,0 +1,93 @@
+\paragraph{A matched revision separates transfer from refinement.}
+The post-hoc revision evaluates 256 new runs on the same 16 follow-up target graphs, with byte-identical graph-specific descriptor anchors and the previously selected initial radius and model-shot count. The full isotropic/shaped by Hoeffding/empirical-Bernstein factorial changes the radius-dependent sampling and stopping logic without retuning on those targets. Its measured cost is 9,458,244 optimization shots plus 2,097,152 independent output-validation shots. The historical SPSA, COBYLA and original Bernstein runs provide matched-anchor comparators at the same cap. The original Bernstein rule is our own implementation; it is not an implementation of a published variance-aware optimizer. The revision is exploratory because these graphs were already used to diagnose the original method.
+\paragraph{Returned quality and incremental gain answer different questions.}
+At depth 2, revised shaped Bernstein has paired refinement gain 0.07 (95\% interval 0.00 to 0.20) percentage points and changes 2/32 outputs. 
+The original shaped Bernstein gain is 0.032508 percentage points. Using unrounded paired graph records, the revision minus original gain difference is 0.032665 (95\% interval 0.000000 to 0.097995) percentage points, and its mean shot difference is -24284.38 (95\% interval -27360.00 to -20536.75). The number of unique targets changed is 1 for the revision and 1 for the original. These depth-specific paired comparisons separate gain from avoided expenditure. 
+Its paired gain difference from SPSA is -0.13 (95\% interval -0.21 to -0.05) percentage points; positive values favor shaped Bernstein. 
+Its paired gain difference from COBYLA is -0.02 (95\% interval -0.15 to 0.09) percentage points; positive values favor shaped Bernstein. 
+At depth 3, revised shaped Bernstein has paired refinement gain 0.03 (95\% interval 0.00 to 0.10) percentage points and changes 1/32 outputs. 
+The original shaped Bernstein gain is 0.108996 percentage points. Using unrounded paired graph records, the revision minus original gain difference is -0.077215 (95\% interval -0.192421 to 0.000000) percentage points, and its mean shot difference is -26243.31 (95\% interval -29216.00 to -22534.62). The number of unique targets changed is 1 for the revision and 2 for the original. These depth-specific paired comparisons separate gain from avoided expenditure. 
+Its paired gain difference from SPSA is -0.33 (95\% interval -0.47 to -0.20) percentage points; positive values favor shaped Bernstein. 
+Its paired gain difference from COBYLA is -0.16 (95\% interval -0.37 to 0.00) percentage points; positive values favor shaped Bernstein. 
+Figure~\ref{fig:refinement} reports quality, own-anchor gain, actual shots and changed-output counts together. Figure~\ref{fig:efficiency} uses completed incumbent events rather than connecting separate budget-cap means: initialization is available at zero shots, and an unfinished atomic batch leaves the preceding output available. Target curves record first-ever attainment, retain failed runs in their denominator and count initial successes at zero cost. The paired shaped-policy difference uses pointwise graph-block bootstrap bands. Flat tails after termination mean that the output remains available without further expenditure. Changing a parameter vector does not guarantee objective improvement for an unconstrained baseline. The reference objective is best found, not a certified depth-matched optimum; signed deficits remain signed.
+\begin{table}[t]
+\caption{Matched revision and historical comparators. Values are graph-mean refinement gains and signed reference deficits in percentage points, followed by actual mean optimization shots in thousands. All use the same descriptor anchor per graph. Add 8,192 independent validation shots per output. H and EB denote Hoeffding and empirical Bernstein; original EB is our own comparator. Graph-paired, fixed-bank-stratified 95\% bootstrap intervals appear in the figures and text.}\label{tab:refinement}
+\centering\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrr}\toprule
+ & \multicolumn{2}{c}{Gain} & \multicolumn{2}{c}{Deficit} & \multicolumn{2}{c}{Shots ($10^3$)} \\
+Policy & $p=2$ & $p=3$ & $p=2$ & $p=3$ & $p=2$ & $p=3$ \\ \midrule
+Initialization only & 0.000 & 0.000 & 0.407 & 0.768 & 0.000 & 0.000 \\
+Original H, isotropic & 0.000 & 0.000 & 0.407 & 0.768 & 64.768 & 64.512 \\
+Original EB, isotropic & 0.000 & 0.034 & 0.407 & 0.735 & 64.768 & 64.512 \\
+Original EB, shaped & 0.033 & 0.109 & 0.375 & 0.659 & 64.768 & 64.512 \\
+Revised H, isotropic & 0.000 & 0.000 & 0.407 & 0.768 & 34.048 & 34.560 \\
+Revised H, shaped & 0.000 & 0.000 & 0.407 & 0.768 & 34.048 & 34.560 \\
+Revised EB, isotropic & 0.029 & 0.000 & 0.378 & 0.768 & 40.626 & 38.976 \\
+Revised EB, shaped & 0.065 & 0.032 & 0.342 & 0.736 & 40.484 & 38.269 \\
+SPSA & 0.196 & 0.359 & 0.211 & 0.409 & 64.512 & 64.512 \\
+COBYLA & 0.083 & 0.197 & 0.324 & 0.572 & 22.720 & 30.752 \\
+\bottomrule\end{tabular}\end{table}
+\newcommand{\ResolutionResults}{%
+\paragraph{Stopping status distinguishes limited resolution from adverse evidence.}
+Across the new factorial, terminal statuses are \texttt{resolution\_limited}: 256. An unresolved comparison does not certify a bad direction. A resolution-limited stop reports that the declared model or decision policy cannot resolve another update within its remaining budget or precision limits; it does not establish stationarity or optimality.
+The recorded reasons are \texttt{acceptance\_look\_cap}: 230, \texttt{next\_acceptance\_look\_unaffordable}: 26.
+}
+\newcommand{\HistoricalDiagnostics}{%
+\paragraph{Exact-data proposals isolate the affine model from sampling error.}
+The offline diagnostic uses 2560 sampled fits across 8 fixed target graphs, both depths, both geometries, five radii and four shot counts. The design is held fixed within each target, depth and geometry. Of the 160 distinct exact-data fits, 84 improve the objective and 79 have a positive sufficient-decrease margin. At 1,024 shots per point, 292/640 sampled proposals improve and 233/640 have a positive sufficient-decrease margin. These dependent proposal counts describe the chosen diagnostic grid, not independent graph observations. Figure~\ref{fig:components} separates sampling error around the exact affine fit from total error against the central-finite-difference reference gradient (step $10^{-5}$). The reference derivative is evaluated only offline. Neither lower fitting error nor better conditioning alone establishes useful refinement.
+Generating the model diagnostics uses 83,558,400 simulated observations. The frozen-endpoint replay generates 2,684,354,560 simulated observations, sharing each stored stream across confidence rules and caps. These ideal-sampling offline diagnostic costs are separate from online optimizer cost and do not constitute measurement savings.
+At radius 0.025, 32/32 exact-data proposals have positive sufficient-decrease margin. 
+At radius 0.4, 0/32 exact-data proposals have positive sufficient-decrease margin. 
+\paragraph{Frozen endpoint replays measure the cost of decision resolution.}
+Before replay, 160 actual sampled-model proposals are fixed by target, depth, geometry and radius at 1,024 model shots per point, using the first diagnostic replicate. Each condition is replayed 128 times with independent endpoint streams and common error allocation across confidence rules. The preceding extended replay uses a 131,072-shot endpoint-pair cap and five prescribed looks. Figure~\ref{fig:acceptance-power} now compares all budget prefixes under both four-look and five-look allocations. Acceptance-stage cost includes unresolved runs at their caps. The analytical Hoeffding proposition remains an upper bound for its decision rule, not a universal QAOA shot lower bound.
+For Hoeffding, the mean acceptance probability over all fixed proposals is 0.000, and the mean unresolved fraction is 0.687. 
+Among the 58 positive-margin proposals, the mean acceptance probability is 0.000, with mean endpoint cost 131,072 shots. 
+For Bernstein, the mean acceptance probability over all fixed proposals is 0.104, and the mean unresolved fraction is 0.446. 
+Among the 58 positive-margin proposals, the mean acceptance probability is 0.288, with mean endpoint cost 128,931 shots. 
+\paragraph{Paired regime comparisons delimit the evidence.}
+Figure~\ref{fig:generality} keeps negative effects visible when comparing shaped Bernstein with both conventional optimizers by vertex count and with SPSA by depth within graph families. The two reference banks belong to different target panels, so these comparisons do not identify a bank effect. All intervals average shot repetitions within graph and resample graphs within the two fixed banks (10,000 resamples, seed 5713); they are descriptive and unadjusted. The experiment supplies no fresh holdout validation of a revised policy, large-graph scaling result, structural-shift test, or hardware-noise validation.
+}
+\newcommand{\RadiusResults}{%
+\paragraph{Most original savings occur before radius-dependent allocation is activated.}
+The preserved revision ledgers show that 31/256 runs fit a model away from the initial radius (32/288 fits), and 28/256 runs allocate more than 256 shots per point (28/288 fits). Every revised Hoeffding run fits one initial model and performs one full four-look endpoint comparison before unresolved stopping. Its costs are therefore exactly $5(256)+2(16384)=34048$ at depth two and $7(256)+2(16384)=34560$ at depth three. Those savings demonstrate avoided continuation, not an observed improvement from changing the model-shot allocation on the Hoeffding trajectories.
+\paragraph{The implemented schedule is tested against its variance prediction.}
+The mechanism study uses 8 original diagnostic graphs from panel zero and 8 newly generated targets nonisomorphic to all previous bank, validation and test graphs. Figure~\ref{fig:components} displays shaped models on the original eight, with depths two and three equally averaged within each graph before bootstrap resampling. Full graph identities and their split membership are recorded in the saved protocol.
+Central-difference gradients at steps $10^{-5}$ and $5\times10^{-6}$ differ by at most $1.39\times10^{-10}$ in Euclidean norm across all targets and depths. This check supports the numerical reference used in the bias comparison; it does not turn a numerical derivative into an analytic exact-gradient formula.
+The 1920 target/depth/shape/radius/shot-count conditions each use 128 independent sampled fits. Root-mean-square error means the square root after averaging squared Euclidean errors, including graph averaging; it is not the arithmetic mean of error norms. Exact-data bias floors and the propagated covariance predict total mean-square error. The actual schedule samples 4096, 1024, 256, 64 and 16 shots per point at radii 0.025, 0.05, 0.1, 0.2 and 0.4. Its cost is multiplied by $2p+1$ fitting points. Graph-level bands are pointwise 95\% intervals conditional on the fixed bank and sampled designs; they do not provide simultaneous radius-wise coverage.
+Across the fresh-graph model grid, the ratios of mean observed to mean predicted sampling and total MSE are 1.016122 and 1.014871, respectively. On the implemented schedule alone, the corresponding ratios are 1.009032 and 1.002424. Both summaries equally average the fresh targets, depths and shapes. The identity predicts this second moment for the fixed fitting map; Gaussian positive-margin prediction additionally approximates the distribution of fitted objective means and the nonlinear proposal map.
+}
+\newcommand{\PowerResults}{%
+\paragraph{Online power uses its own four-look confidence allocation.}
+Figure~\ref{fig:acceptance-power} holds fixed the 58 positive-margin proposals and the 102 nonpositive-margin proposals, with equal proposal weights at every budget. The online row uses four prescribed looks up to 16,384 shots per endpoint; the extended row uses five looks up to 65,536. Both are recomputed from the same stored independent streams, so this comparison needs no additional sampled observations. Shading gives conservative pointwise 95\% Hoeffding bounds for each fixed-cohort replay mean, allowing different endpoint distributions across proposals. Those intervals quantify Monte Carlo replay uncertainty conditional on the fixed proposals, not uncertainty over target graphs.
+At the 32,768-shot pair cap, online four-look Hoeffding has mean positive-margin acceptance frequency 0.0000 (pointwise interval 0.0000 to 0.0158), unresolved fraction 1.0000, and mean actual endpoint expenditure 32,768.00 shots. 
+At the 32,768-shot pair cap, online four-look Bernstein has mean positive-margin acceptance frequency 0.0233 (pointwise interval 0.0075 to 0.0391), unresolved fraction 0.9767, and mean actual endpoint expenditure 32,759.17 shots. 
+At the 131,072-shot pair cap, extended five-look Hoeffding has mean positive-margin acceptance frequency 0.0000 (pointwise interval 0.0000 to 0.0158), unresolved fraction 1.0000, and mean actual endpoint expenditure 131,072.00 shots. 
+At the 131,072-shot pair cap, extended five-look Bernstein has mean positive-margin acceptance frequency 0.2877 (pointwise interval 0.2720 to 0.3035), unresolved fraction 0.7123, and mean actual endpoint expenditure 128,931.31 shots. 
+For one pair, zero acceptances in 128 independent replays has exact one-sided 95\% binomial upper limit 0.02313 (2.313\%). Zero observed frequency therefore does not establish zero probability or empirically validate an analytical probability of order $10^{-6}$.
+}
+\newcommand{\MechanismResults}{%
+\paragraph{A separate factorial isolates sampling allocation from unresolved stopping.}
+The controlled attribution adds 256 shaped empirical-Bernstein runs on the original 16 targets, crossing fixed/radius-dependent model shots with stop/continue after unresolved evidence. All four cells share anchors, shape, model family, error allocation, shot cap, initial settings and paired seeds. Continuation holds the radius and refits from fresh data; it contracts only after certified rejection. This control is not a replay of the historical rule that contracted after unresolved evidence. Figure~\ref{fig:attribution} separates gain and expenditure for these controlled policies.
+\begin{table}[t]
+\caption{Controlled sampling-by-stopping attribution. Gains are percentage points over the common anchor; costs are actual optimization shots in thousands. Every row uses shaped empirical-Bernstein refinement at a 65,536-shot cap, with 8,192 independent validation shots per output. Two shot repetitions are averaged within each of 16 target graphs.}\label{tab:attribution}
+\centering\small\begin{tabular}{lrrrr}\toprule
+ & \multicolumn{2}{c}{Gain (pp)} & \multicolumn{2}{c}{Shots ($10^3$)} \\
+Allocation / unresolved policy & $p=2$ & $p=3$ & $p=2$ & $p=3$ \\ \midrule
+Fixed / continue & 0.0365 & 0.0723 & 64.7680 & 64.5120 \\
+Fixed / stop & 0.0365 & 0.0723 & 39.0160 & 37.5840 \\
+Radius / continue & 0.0365 & 0.0723 & 64.7752 & 63.8771 \\
+Radius / stop & 0.0365 & 0.0723 & 39.9538 & 38.0696 \\
+\bottomrule\end{tabular}\end{table}
+All four cells return byte-identical parameter vectors in 64/64 matched graph--depth--seed cases. In this controlled sample, neither continuation nor radius-dependent allocation changes returned quality; stopping changes expenditure.
+At depth 2 under fixed sampling, stopping minus continuation has paired shot difference -25752.00 (95\% interval -28512.00 to -22440.00). 
+At depth 2 under radius sampling, stopping minus continuation has paired shot difference -24821.44 (95\% interval -28181.44 to -20789.44). 
+At depth 2 with unresolved stop, radius-dependent minus fixed allocation has gain difference 0.00 (95\% interval 0.00 to 0.00) percentage points and mean shot difference 937.81. 
+At depth 2 with unresolved continue, radius-dependent minus fixed allocation has gain difference 0.00 (95\% interval 0.00 to 0.00) percentage points and mean shot difference 7.25. 
+At depth 3 under fixed sampling, stopping minus continuation has paired shot difference -26928.00 (95\% interval -29952.00 to -23152.00). 
+At depth 3 under radius sampling, stopping minus continuation has paired shot difference -25807.50 (95\% interval -29952.00 to -20926.00). 
+At depth 3 with unresolved stop, radius-dependent minus fixed allocation has gain difference 0.00 (95\% interval 0.00 to 0.00) percentage points and mean shot difference 485.62. 
+At depth 3 with unresolved continue, radius-dependent minus fixed allocation has gain difference 0.00 (95\% interval 0.00 to 0.00) percentage points and mean shot difference -634.88. 
+\paragraph{Fresh-graph prediction is simulator-informed and conditional.}
+All fitting maps, covariance predictions and Gaussian proposal predictions were frozen before independent multinomial observations. The fresh targets use the same fixed panel-zero donor bank and no fresh-target tuning. Figure~\ref{fig:attribution} compares 256 Gaussian proposal draws per condition with 32 independent sampled proposals along the implemented radius schedule. The mean absolute difference in positive-margin probability across shaped fresh conditions is 2.017 percentage points (graph-bootstrap interval 1.450 to 2.524). This discrepancy includes Gaussian approximation error and finite replay noise. The predictor uses exact simulator objective means, variances and trial expectations. It is an oracle-informed mechanism test, not a measurement-implementable regime selector, fresh-graph optimizer benchmark, or hardware validation.
+The additional attribution consumes 13,201,786 optimization and 2,097,152 independent validation shots. The mechanism observations require 5,367,398,400 simulated finite-shot outcomes; the Gaussian diagnostic uses 40,960 draws and prediction/reference construction uses 43,872 exact simulator queries, plus 10,240 exact sampled-proposal diagnostic objective evaluations. Those offline diagnostic costs are not credited as optimizer savings.
+}

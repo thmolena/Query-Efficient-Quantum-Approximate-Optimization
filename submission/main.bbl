@@ -112,12 +112,14 @@ Gene~H. Golub and Charles~F. Van~Loan.
 \newblock Johns Hopkins University Press, Baltimore, 4 edition, 2013.
 \newblock \doi{10.56021/9781421407944}.
 
-\bibitem[Ha et~al.(2024)Ha, Shashaani, and Menickelly]{ha2024}
+\bibitem[Ha et~al.(2025)Ha, Shashaani, and Menickelly]{ha2024}
 Yunsoo Ha, Sara Shashaani, and Matt Menickelly.
 \newblock Two-stage estimation and variance modeling for latency-constrained
-  variational quantum algorithms, 2024.
-\newblock URL \url{https://arxiv.org/abs/2401.08912}.
-\newblock arXiv:2401.08912.
+  variational quantum algorithms.
+\newblock \emph{INFORMS Journal on Computing}, 37\penalty0 (1):\penalty0
+  125--145, 2025.
+\newblock \doi{10.1287/ijoc.2024.0575}.
+\newblock URL \url{https://pubsonline.informs.org/doi/10.1287/ijoc.2024.0575}.
 
 \bibitem[Hagberg et~al.(2008)Hagberg, Schult, and Swart]{hagberg2008}
 Aric~A. Hagberg, Daniel~A. Schult, and Pieter~J. Swart.
