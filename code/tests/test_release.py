@@ -4,9 +4,11 @@ import copy
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 import zipfile
@@ -20,6 +22,7 @@ sys.path.insert(0, str(ROOT / "code/scripts"))
 SPEC = importlib.util.spec_from_file_location("release_checks", ROOT / "code/scripts/check_release.py")
 release = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(release)
+import build_paper as paper
 
 
 def pdf_bytes(*, metadata=None, attachment=False, action=None, annotation=None, open_view=False):
@@ -47,7 +50,123 @@ def link(uri):
     return DictionaryObject({NameObject("/Type"): NameObject("/Annot"), NameObject("/Subtype"): NameObject("/Link"),
                              NameObject("/Rect"): ArrayObject([NumberObject(value) for value in (0, 0, 10, 10)]),
                              NameObject("/A"): DictionaryObject({NameObject("/S"): NameObject("/URI"),
-                                                                NameObject("/URI"): TextStringObject(uri)})})
+                                                             NameObject("/URI"): TextStringObject(uri)})})
+
+
+def inline_source(payload=None):
+    payload = pdf_bytes() if payload is None else payload
+    names = sorted(paper.EMBEDDED_PDF_NAMES)
+    source = "\\documentclass{article}\n\\begin{document}\n\\cite{one}\n"
+    source += "".join(f"\\includegraphics{{{name}}}\n" for name in names)
+    source += "\\begin{thebibliography}{1}\n\\bibitem{one} A result.\n\\end{thebibliography}\n\\end{document}\n"
+    return source + "".join(f"%BEGIN_EMBEDDED_PDF {name}\n%{payload.hex()}\n%END_EMBEDDED_PDF\n"
+                            for name in names)
+
+
+class ManuscriptBuildTests(unittest.TestCase):
+    def test_embedded_archive_depends_only_on_main_tex(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = inline_source()
+            (root / "main.tex").write_text(source)
+            (root / "main.bbl").write_text("stale legacy bibliography")
+            self.assertEqual(paper.manuscript_files(root), [Path("main.tex")])
+            self.assertEqual(set(paper.embedded_pdfs(source)), paper.EMBEDDED_PDF_NAMES)
+
+    def test_embedded_assets_reject_unsafe_duplicate_incomplete_and_invalid_payloads(self):
+        source = inline_source()
+        first = sorted(paper.EMBEDDED_PDF_NAMES)[0]
+        second = sorted(paper.EMBEDDED_PDF_NAMES)[1]
+        cases = [source.replace(f"%BEGIN_EMBEDDED_PDF {first}", "%BEGIN_EMBEDDED_PDF ../escape.pdf"),
+                 source.replace(f"%BEGIN_EMBEDDED_PDF {first}", "%BEGIN_EMBEDDED_PDF /escape.pdf"),
+                 source.replace(f"%BEGIN_EMBEDDED_PDF {first}", f"%BEGIN_EMBEDDED_PDF {second}"),
+                 source[:source.rfind("%BEGIN_EMBEDDED_PDF")],
+                 source.replace("%END_EMBEDDED_PDF", "", 1),
+                 source.replace("%25504446", "%z5504446", 1),
+                 source.replace("%25504446", "%5504446", 1),
+                 inline_source(b"not a PDF"), inline_source(b"%PDF-1.7\ninvalid\n%%EOF\n")]
+        for index, content in enumerate(cases):
+            with self.subTest(case=index), self.assertRaises(ValueError):
+                paper.embedded_pdfs(content)
+
+    def test_embedded_assets_must_be_used_and_cannot_hide_external_dependencies(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "extra.tex").write_text("extra content")
+            for source in (inline_source().replace("\\includegraphics{qaoa-decision.pdf}", ""),
+                           inline_source().replace("\\begin{document}", "\\input{extra}\n\\begin{document}")):
+                (root / "main.tex").write_text(source)
+                with self.assertRaisesRegex(ValueError, "no external dependencies"):
+                    paper.manuscript_files(root)
+
+    def test_legacy_dependencies_and_bbl_remain_required(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "main.tex").write_text("\\input{part}\n\\bibliography{refs}")
+            (root / "part.tex").write_text("\\includegraphics{plot}")
+            (root / "plot.pdf").write_bytes(pdf_bytes())
+            (root / "refs.bib").write_text("reference")
+            self.assertEqual(paper.manuscript_files(root, include_bbl=False),
+                             list(map(Path, ["main.tex", "part.tex", "plot.pdf", "refs.bib"])))
+            with self.assertRaisesRegex(ValueError, "main.bbl"):
+                paper.manuscript_files(root)
+            (root / "main.bbl").write_text("compiled reference")
+            self.assertIn(Path("main.bbl"), paper.manuscript_files(root))
+            (root / "part.tex").write_text("\\input{../escape}")
+            with self.assertRaisesRegex(ValueError, "unsafe manuscript dependency"):
+                paper.manuscript_files(root)
+
+    def test_lualatex_runs_twice_without_bibtex_or_shell_escape(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "main.tex").write_text(inline_source())
+            calls = []
+            def compile_one(command, **options):
+                calls.append(command)
+                self.assertEqual(options["cwd"], root)
+                self.assertEqual(options["env"]["FORCE_SOURCE_DATE"], "1")
+                (root / "main.pdf").write_bytes(b"compiled PDF")
+                (root / "main.log").write_text("successful build\n")
+                return SimpleNamespace(returncode=0, stdout="")
+            with patch.dict(os.environ, {}, clear=True), \
+                    patch.object(paper.shutil, "which", return_value="/tools/lualatex"), \
+                    patch.object(paper.subprocess, "run", side_effect=compile_one):
+                self.assertEqual(paper.compile_manuscript(root), 0)
+            self.assertEqual(calls, [["/tools/lualatex", "-no-shell-escape", "-interaction=nonstopmode",
+                                      "-halt-on-error", "main.tex"]] * 2)
+            self.assertFalse((root / "main.bbl").exists())
+
+    def test_legacy_compiler_requires_a_fresh_bbl(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "main.tex").write_text("\\bibliography{refs}")
+            (root / "refs.bib").write_text("reference")
+            calls = []
+            def compile_one(command, **_):
+                calls.append(command[0])
+                (root / "main.pdf").write_bytes(b"compiled PDF")
+                (root / "main.log").write_text("successful build\n")
+                return SimpleNamespace(returncode=0, stdout="")
+            with patch.dict(os.environ, {}, clear=True), \
+                    patch.object(paper.shutil, "which", side_effect=lambda name: name if name in ("pdflatex", "bibtex") else None), \
+                    patch.object(paper.subprocess, "run", side_effect=compile_one):
+                with self.assertRaisesRegex(RuntimeError, "main.bbl"):
+                    paper.compile_manuscript(root)
+            self.assertEqual(calls, ["pdflatex", "bibtex", "pdflatex", "pdflatex"])
+
+    def test_build_copies_only_source_and_keeps_generated_assets_temporary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "main.tex").write_text(inline_source())
+            def compile_one(work):
+                self.assertNotEqual(work, root)
+                self.assertEqual([path.name for path in work.iterdir()], ["main.tex"])
+                (work / "main.pdf").write_bytes(b"compiled PDF")
+                (work / "qaoa-decision.pdf").write_bytes(b"temporary figure")
+                return 0
+            with patch.object(paper, "SUBMISSION", root), patch.object(paper, "compile_manuscript", side_effect=compile_one):
+                paper.main()
+            self.assertEqual({path.name for path in root.iterdir()}, {"main.tex", "main.pdf"})
 
 
 class FolderInventoryTests(unittest.TestCase):
@@ -103,6 +222,21 @@ class BibliographyTests(unittest.TestCase):
                                   (r"\cite{one}", self.entry("one").replace("  annote = {Verified claim and source},\n", ""))]:
             with self.subTest(tex=tex, bibliography=bibliography), self.assertRaises(ValueError):
                 release.check_bibliography(tex, bibliography)
+
+    def test_inline_bibliography_coverage_is_strict_and_ignores_comments(self):
+        source = "\\cite{one}\n\\begin{thebibliography}{1}\n\\bibitem{one} A\n\\end{thebibliography}\n"
+        self.assertTrue(paper.inline_bibliography(source))
+        self.assertFalse(paper.inline_bibliography("% " + source.replace("\n", "\n% ")))
+        result = release.check_bibliography(source, self.entry("one"), source + "% \\bibitem{unused} X\n")
+        self.assertEqual(result["distinct_references"], 1)
+        for altered in (source.replace("\\bibitem{one}", "\\bibitem{two}"),
+                        source.replace("\\bibitem{one}", "\\bibitem{one} X \\bibitem{one}")):
+            with self.assertRaisesRegex(ValueError, "Compiled bibliography"):
+                release.check_bibliography(altered, self.entry("one"), altered)
+        for altered in (source + "\\bibliography{refs}", source + "\\input{main.bbl}",
+                        source + "\\bibitem{two} Outside", source.replace("\\end{thebibliography}", "")):
+            with self.assertRaises(ValueError):
+                paper.inline_bibliography(altered)
 
 
 class PublicContentTests(unittest.TestCase):
@@ -174,6 +308,16 @@ class PublicContentTests(unittest.TestCase):
                         good.replace(b"plainnat", b"plain")):
             audit = release.PublicAudit()
             audit.blob("main.tex", content)
+            self.assertTrue(audit.errors)
+
+    def test_inline_manuscript_and_embedded_pdf_contents_are_audited(self):
+        audit = release.PublicAudit()
+        audit.blob("main.tex", inline_source().encode())
+        audit.finish()
+        for payload in (pdf_bytes(attachment=True), pdf_bytes(action=DictionaryObject({
+                NameObject("/S"): NameObject("/JavaScript"), NameObject("/JS"): TextStringObject("void(0)")}))):
+            audit = release.PublicAudit()
+            audit.blob("main.tex", inline_source(payload).encode())
             self.assertTrue(audit.errors)
 
     def test_private_literals_are_not_regex_and_errors_are_redacted(self):

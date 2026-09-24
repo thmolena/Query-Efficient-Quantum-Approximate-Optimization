@@ -583,6 +583,57 @@ def _save_figure(fig, target, name, plt):
     plt.close(fig)
 
 
+EMBEDDED_FIGURES = {
+    'qaoa-efficiency.pdf':'efficiency.pdf',
+    'qaoa-allocation.pdf':'allocation.pdf',
+    'qaoa-components.pdf':'components.pdf',
+    'qaoa-acceptance-power.pdf':'acceptance_power.pdf',
+    'qaoa-decision.pdf':'decision.pdf',
+    'qaoa-calibration.pdf':'calibration.pdf',
+}
+
+
+def sync_embedded_figures(source_path, target):
+    """Refresh six validated hex payloads, leaving all other TeX unchanged.
+
+    Legacy manuscripts with external figure files are a no-op. The same
+    strict PDF/marker parser used by the builder validates both versions
+    before any source write. Returns whether the source bytes changed.
+    """
+    import importlib.util
+    import re
+
+    source_path, target = Path(source_path), Path(target)
+    source = source_path.read_bytes().decode('utf-8')
+    spec = importlib.util.spec_from_file_location(
+        '_gcqaoa_manuscript_builder', CODE_ROOT/'scripts'/'build_paper.py')
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    embedded = builder.embedded_pdfs(source)
+    if not embedded:
+        return False
+    if set(embedded) != set(EMBEDDED_FIGURES):
+        raise ValueError('Require the six expected manuscript figure markers')
+    generated = {name:(target/asset).read_bytes() for name,asset in EMBEDDED_FIGURES.items()}
+    pattern = re.compile(r'(^%BEGIN_EMBEDDED_PDF ([a-z0-9-]+\.pdf)\r?\n)'
+                         r'(?:%(?:[0-9a-fA-F]{2})*\r?\n)*'
+                         r'(^%END_EMBEDDED_PDF)(?=\r?$)', re.M)
+
+    def replace(match):
+        encoded = generated[match[2]].hex()
+        newline = '\r\n' if match[1].endswith('\r\n') else '\n'
+        payload = ''.join('%'+encoded[i:i+128]+newline for i in range(0,len(encoded),128))
+        return match[1]+payload+match[3]
+
+    updated, count = pattern.subn(replace, source)
+    if count != len(EMBEDDED_FIGURES) or builder.embedded_pdfs(updated) != generated:
+        raise ValueError('Embedded figure synchronization failed validation')
+    if updated == source:
+        return False
+    source_path.write_bytes(updated.encode('utf-8'))
+    return True
+
+
 def render_transport(data,target,plt,canonical):
     """Compare every audit solver with references on its identical valid targets."""
     methods=list(TRANSPORT_LABELS)
@@ -695,42 +746,7 @@ def render_revision(data,target,plt):
     fig.tight_layout(rect=(0,0,1,.96))
     _save_figure(fig,target,'refinement.pdf',plt)
 
-    methods_curve=['initialization_only','revised_bernstein_iso','revised_bernstein_shape',
-                   'bernstein_iso','bernstein_shape','spsa','cobyla']
-    # All unique completion times preserve every atomic-batch transition.
-    budgets=np.array(sorted({0,budget}|{e['shots'] for r in rows for e in r['incumbents']}))
-    target_gap=min(data.get('config',{}).get('target_gaps',[.002]))
-    fig,axes=plt.subplots(3,len(depths),figsize=(7.1,7.0))
-    for j,depth in enumerate(depths):
-        for method in methods_curve:
-            group=[r for r in rows if r['depth']==depth and r['method']==method]
-            gain,success=refinement_curves(group,budgets,target_gap)
-            for ax,values in [(axes[0,j],gain),(axes[1,j],success)]:
-                ax.step(budgets/1000,values,where='post',label=REVISION_LABELS[method],
-                        color=REVISION_COLORS[method],lw=1.2,
-                        ls='--' if method=='initialization_only' else '-',
-                        zorder=5 if method=='initialization_only' else 2)
-                ax.set_xlim(0,budget/1000)
-                ax.grid(alpha=.15)
-        axes[0,j].set_title(f'({chr(97+j)}) p = {depth}: available output')
-        axes[1,j].set_title(f'({chr(99+j)}) p = {depth}: target gap {100*target_gap:g} pp')
-        axes[1,j].set_xlabel('Cumulative optimization shots (thousands)')
-        axes[1,j].set_ylim(-.025,1.025)
-        pair=[r for r in rows if r['depth']==depth and r['method'] in ('bernstein_shape','revised_bernstein_shape')]
-        mean,lo,hi=paired_curve_bands(pair,budgets,'revised_bernstein_shape','bernstein_shape')
-        axes[2,j].step(budgets/1000,mean,where='post',color='#009E73')
-        axes[2,j].fill_between(budgets/1000,lo,hi,step='post',color='#009E73',alpha=.18)
-        axes[2,j].axhline(0,color='.4',lw=.7)
-        axes[2,j].set_title(f'({chr(101+j)}) p = {depth}: RA minus original shaped')
-        axes[2,j].set_xlabel('Available optimization budget (thousands of shots)')
-        axes[2,j].grid(alpha=.15)
-    axes[2,0].set_ylabel('Paired gain difference (pp)')
-    axes[0,0].set_ylabel('Refinement gain (pp)')
-    axes[1,0].set_ylabel('Fraction ever attaining target')
-    handles,labels=axes[0,0].get_legend_handles_labels()
-    fig.legend(handles,labels,loc='lower center',ncol=3,frameon=False,fontsize=7)
-    fig.tight_layout(rect=(0,.10,1,1))
-    _save_figure(fig,target,'efficiency.pdf',plt)
+    render_efficiency(data,target,plt)
 
     render_mechanism(_mechanism_for_report(),target,plt)
 
@@ -767,6 +783,49 @@ def render_revision(data,target,plt):
     fig.tight_layout()
     _save_figure(fig,target,'generality.pdf',plt)
 
+
+
+def render_efficiency(data,target,plt):
+    """Render only the measured incumbent and paired trajectory figure."""
+    rows=data['runs']+data['baseline_runs']
+    depths=sorted({r['depth'] for r in data['runs']})
+    budget=max(r['budget'] for r in rows)
+    methods_curve=['initialization_only','revised_bernstein_iso','revised_bernstein_shape',
+                   'bernstein_iso','bernstein_shape','spsa','cobyla']
+    # All unique completion times preserve every atomic-batch transition.
+    budgets=np.array(sorted({0,budget}|{e['shots'] for r in rows for e in r['incumbents']}))
+    target_gap=min(data.get('config',{}).get('target_gaps',[.002]))
+    fig,axes=plt.subplots(3,len(depths),figsize=(7.1,7.0))
+    for j,depth in enumerate(depths):
+        for method in methods_curve:
+            group=[r for r in rows if r['depth']==depth and r['method']==method]
+            gain,success=refinement_curves(group,budgets,target_gap)
+            for ax,values in [(axes[0,j],gain),(axes[1,j],success)]:
+                ax.step(budgets/1000,values,where='post',label=REVISION_LABELS[method],
+                        color=REVISION_COLORS[method],lw=1.2,
+                        ls='--' if method=='initialization_only' else '-',
+                        zorder=5 if method=='initialization_only' else 2)
+                ax.set_xlim(0,budget/1000)
+                ax.grid(alpha=.15)
+        axes[0,j].set_title(f'({chr(97+j)}) p = {depth}: available output')
+        axes[1,j].set_title(f'({chr(99+j)}) p = {depth}: target gap {100*target_gap:g} pp')
+        axes[1,j].set_xlabel('Cumulative optimization shots (thousands)')
+        axes[1,j].set_ylim(-.025,1.025)
+        pair=[r for r in rows if r['depth']==depth and r['method'] in ('bernstein_shape','revised_bernstein_shape')]
+        mean,lo,hi=paired_curve_bands(pair,budgets,'revised_bernstein_shape','bernstein_shape')
+        axes[2,j].step(budgets/1000,mean,where='post',color='#009E73')
+        axes[2,j].fill_between(budgets/1000,lo,hi,step='post',color='#009E73',alpha=.18)
+        axes[2,j].axhline(0,color='.4',lw=.7)
+        axes[2,j].set_title(f'({chr(101+j)}) p = {depth}: RA minus original shaped')
+        axes[2,j].set_xlabel('Available optimization budget (thousands of shots)')
+        axes[2,j].grid(alpha=.15)
+    axes[2,0].set_ylabel('Paired gain difference (pp)')
+    axes[0,0].set_ylabel('Refinement gain (pp)')
+    axes[1,0].set_ylabel('Fraction ever attaining target')
+    handles,labels=axes[0,0].get_legend_handles_labels()
+    fig.legend(handles,labels,loc='lower center',ncol=3,frameon=False,fontsize=7)
+    fig.tight_layout(rect=(0,.10,1,1))
+    _save_figure(fig,target,'efficiency.pdf',plt)
 
 
 def replay_mean_interval(records,field,pair_budget):
@@ -886,8 +945,8 @@ def render_decision(data,mechanism,target,plt):
     _save_figure(fig,target,'decision.pdf',plt)
 
 
-def render_mechanism(data,target,plt):
-    """Controlled endpoint budgets, model error, and independent attribution."""
+def render_acceptance_power(data,target,plt):
+    """Render only fixed-proposal endpoint power from saved replays."""
     fig,axes=plt.subplots(2,3,figsize=(7.1,5.3))
     for row,(key,schedule) in enumerate([('online_power','Online: four looks'),('extended_power','Extended: five looks')]):
         records=data[key]
@@ -918,6 +977,9 @@ def render_mechanism(data,target,plt):
     fig.tight_layout(rect=(0,.095,1,1))
     _save_figure(fig,target,'acceptance_power.pdf',plt)
 
+
+def render_components(data,target,plt):
+    """Render only saved model-error and scheduled-proposal diagnostics."""
     diagnostics=[r for r in data['model_diagnostics'] if r['split']=='diagnostic' and r['shape_kind']=='shape']
     predictions=[r for r in data['predictions'] if r['split']=='diagnostic' and r['shape_kind']=='shape']
     proposals=[r for r in data['schedule_proposals'] if r['split']=='diagnostic' and r['shape_kind']=='shape']
@@ -984,15 +1046,18 @@ def render_mechanism(data,target,plt):
     fig.tight_layout(rect=(0,0,1,.96))
     _save_figure(fig,target,'components.pdf',plt)
 
+
+def render_mechanism(data,target,plt):
+    """Render mechanism figures without generating any new observations."""
+    render_acceptance_power(data,target,plt)
+    render_components(data,target,plt)
     render_attribution(data,target,plt)
     if (CODE_ROOT/'results'/'decision.json.gz').is_file():
         render_decision(_decision_for_report(),data,target,plt)
 
 
-def render_attribution(data,target,plt):
-    """Draw controlled effects and calibration with a shared external legend."""
-    radii=sorted({r['radius'] for r in data['predictions']})
-    fig,axes=plt.subplots(3,2,figsize=(7.1,7.5))
+def _draw_allocation_panels(data,axes):
+    """Shared controlled-policy estimates for combined and separate figures."""
     methods=['fixed_continue','fixed_stop','radius_continue','radius_stop']
     for depth,color,offset in [(2,'#0072B2',-.17),(3,'#D55E00',.17)]:
         for index,method in enumerate(methods):
@@ -1029,9 +1094,14 @@ def render_attribution(data,target,plt):
         ax.axhline(0,color='.4',lw=.7)
         ax.set_ylabel('Paired shot difference (thousands)')
         ax.set_title(title)
+
+
+def _draw_calibration_panels(data,axes,panel_letters):
+    """Shared fresh residuals and uncertainty for both figure layouts."""
+    radii=sorted({r['radius'] for r in data['predictions']})
     residuals=fresh_prediction_residuals(data)
     for column,depth in enumerate([2,3]):
-        ax=axes[2,column]
+        ax=axes[column]
         groups=[[r for r in residuals if r['depth']==depth and r['radius']==radius] for radius in radii]
         null=np.array([conditional_mc_reference(group,data['config']['proposal_repetitions'],
                                                 data['config']['gaussian_repetitions']) for group in groups])*100
@@ -1043,17 +1113,78 @@ def render_attribution(data,target,plt):
                     capsize=2,lw=1,label='Signed mean; graph-bootstrap interval')
         ax.axhline(0,color='.4',lw=.7)
         ax.set_ylabel('Observed minus Gaussian (pp)')
-        ax.set_title(f'({"e" if depth==2 else "f"}) Fresh signed calibration, p = {depth}')
-    for ax in axes[2:].flat:
+        ax.set_title(f'({panel_letters[column]}) Fresh signed calibration, p = {depth}')
+    for ax in axes.flat:
         ax.set_xscale('log',base=2)
         ax.set_xticks(radii,[str(r) for r in radii],fontsize=7)
         ax.set_xlabel('Radius along S(radius)')
+
+
+def render_attribution_splits(data,target,plt):
+    """Render only the allocation and calibration figures from saved records."""
+    fig,axes=plt.subplots(2,2,figsize=(7.1,5.0))
+    _draw_allocation_panels(data,axes)
+    for ax in axes.flat:
+        ax.grid(axis='y',alpha=.15)
+    fig.tight_layout()
+    _save_figure(fig,target,'allocation.pdf',plt)
+
+    fig,axes=plt.subplots(1,2,figsize=(7.1,2.9))
+    _draw_calibration_panels(data,axes,('a','b'))
+    for ax in axes.flat:
+        ax.grid(axis='y',alpha=.15)
+    handles,labels=axes[0].get_legend_handles_labels()
+    fig.legend(handles,labels,loc='lower center',ncol=2,frameon=False,fontsize=6.5)
+    fig.tight_layout(rect=(0,.12,1,1))
+    _save_figure(fig,target,'calibration.pdf',plt)
+
+
+def render_attribution(data,target,plt):
+    """Retain the combined figure and regenerate its two standalone layouts."""
+    fig,axes=plt.subplots(3,2,figsize=(7.1,7.5))
+    _draw_allocation_panels(data,axes[:2])
+    _draw_calibration_panels(data,axes[2],('e','f'))
     for ax in axes.flat:
         ax.grid(axis='y',alpha=.15)
     handles,labels=axes[2,0].get_legend_handles_labels()
     fig.legend(handles,labels,loc='lower center',ncol=2,frameon=False,fontsize=6.5)
     fig.tight_layout(rect=(0,.05,1,1))
     _save_figure(fig,target,'attribution.pdf',plt)
+    render_attribution_splits(data,target,plt)
+
+
+def render_main_figures(target):
+    """Regenerate the six manuscript assets without tables, website, or experiments."""
+    import os
+    import tempfile
+    from .followup import load_refinement
+
+    target = Path(target)
+    target.mkdir(parents=True,exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='.main-figure-cache-',dir=CODE_ROOT/'results') as cache:
+        previous = {key:os.environ.get(key) for key in ('MPLCONFIGDIR','XDG_CACHE_HOME')}
+        try:
+            os.environ.update(MPLCONFIGDIR=cache,XDG_CACHE_HOME=cache)
+            import matplotlib
+            matplotlib.use('Agg')
+            import matplotlib.pyplot as plt
+            plt.rcParams.update({'font.size':8,'axes.labelsize':8,'axes.titlesize':9,
+                                 'legend.fontsize':7,'pdf.fonttype':42,'ps.fonttype':42,
+                                 'axes.spines.top':False,'axes.spines.right':False,
+                                 'savefig.bbox':'tight'})
+            revision = load_refinement()
+            mechanism = _mechanism_for_report()
+            render_efficiency(revision,target,plt)
+            render_acceptance_power(mechanism,target,plt)
+            render_components(mechanism,target,plt)
+            render_attribution_splits(mechanism,target,plt)
+            render_decision(_decision_for_report(),mechanism,target,plt)
+        finally:
+            for key,value in previous.items():
+                if value is None:
+                    os.environ.pop(key,None)
+                else:
+                    os.environ[key] = value
 
 
 def render_transfer(data,target,plt):
@@ -1802,7 +1933,9 @@ def figure_manifest(data, data_path, target):
                 'acceptance_power.pdf':'fixed-cohort power, unresolved fraction and actual expenditure across endpoint budgets, online four-look and extended five-look allocations',
                 'components.pdf':'graph-level RMS bias-variance, positive margin and magnitude, actual radius schedule cost and prediction',
                 'generality.pdf':'supporting paired refinement-gain effects versus both conventional comparators by graph size and depth',
-                'attribution.pdf':'controlled sampling-by-stopping gains/costs, paired cost effects, and signed fresh prediction residuals with graph and conditional Monte Carlo uncertainty'}.items()})
+                'attribution.pdf':'controlled sampling-by-stopping gains/costs, paired cost effects, and signed fresh prediction residuals with graph and conditional Monte Carlo uncertainty',
+                'allocation.pdf':'four controlled sampling-by-stopping gain/cost and paired cost-effect panels, using the attribution figure estimates',
+                'calibration.pdf':'two fresh signed prediction-residual panels with graph-bootstrap intervals and exact conditional Monte Carlo null references, using the attribution figure estimates'}.items()})
     if (target/'decision.pdf').is_file():
         descriptions['decision.pdf']={'quantity':'fresh scheduled positive-margin probability with frozen old-graph predictor controls, accepted true gain including failures, and model-plus-endpoint cost; oracle-informed forecasts versus independent observations',
                                       'study':'post-hoc matched fresh-schedule decision experiment'}
@@ -1850,6 +1983,8 @@ def main(argv=None):
     modes=parser.add_mutually_exclusive_group()
     modes.add_argument('--analysis-only',action='store_true',help='write CSVs and canonical manuscript results')
     modes.add_argument('--figures-only',action='store_true',help='render figures and their provenance manifest')
+    modes.add_argument('--main-figures-only',action='store_true',
+                       help='render six manuscript figures, refresh their manifest and embedded payloads only')
     args=parser.parse_args(argv)
     data=load_study(args.data)
     if args.config is not None:
@@ -1860,6 +1995,15 @@ def main(argv=None):
         if requested_config != data['config']:
             parser.error('--config does not match the saved study selected by --data')
     canonical=args.data.resolve()==CANONICAL_DATA
+    if args.main_figures_only:
+        if not canonical:
+            parser.error('--main-figures-only requires the canonical saved study')
+        target=REPO_ROOT/'submission'/'figures'
+        render_main_figures(target)
+        figure_manifest(data,args.data,target)
+        sync_embedded_figures(REPO_ROOT/'submission'/'main.tex',target)
+        print('Regenerated six manuscript figures, their manifest, and embedded payloads from saved records.')
+        return
     if canonical:
         update_website(data)
     if not args.figures_only:
@@ -1872,6 +2016,8 @@ def main(argv=None):
         target=REPO_ROOT/'submission'/'figures' if canonical else args.data.resolve().parent/'figures'
         render(data,target)
         figure_manifest(data,args.data,target)
+        if canonical:
+            sync_embedded_figures(REPO_ROOT/'submission'/'main.tex',target)
     print(f"Generated requested artifacts from {len(data['runs'])} runs ({data['execution_run_id']}).")
 
 if __name__=='__main__':

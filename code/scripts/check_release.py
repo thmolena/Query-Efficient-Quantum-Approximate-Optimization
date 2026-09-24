@@ -19,7 +19,7 @@ import zipfile
 from pypdf import PdfReader
 from pypdf.generic import NullObject
 
-from build_paper import ROOT, SUBMISSION, manuscript_files
+from build_paper import ROOT, SUBMISSION, active_tex, embedded_pdfs, inline_bibliography, manuscript_files
 sys.path.insert(0, str(ROOT / "code/src"))
 from gcqaoa.provenance import verify_source_identity, verify_source_snapshots
 from gcqaoa.report import (WEB_BEGIN, WEB_END, EXPERIMENTS_BEGIN, EXPERIMENTS_END,
@@ -91,11 +91,19 @@ class PublicAudit:
 
     def manuscript(self, content, object_id):
         # Comments do not activate a class or bibliography style.
-        active = re.sub(r"(?<!\\)%[^\n]*", "", content)
+        active = active_tex(content)
         classes = re.findall(r"\\documentclass\s*(?:\[[^]]*\])?\s*\{([^}]+)\}", active)
         styles = re.findall(r"\\bibliographystyle\s*\{([^}]+)\}", active)
-        if classes != ["article"] or styles != ["plainnat"]:
-            self.reject("Manuscript must use the generic article class and plainnat bibliography", object_id)
+        try:
+            inline = inline_bibliography(content)
+            figures = embedded_pdfs(content)
+        except ValueError:
+            self.reject("Invalid self-contained manuscript assets or bibliography", object_id)
+            return
+        if classes != ["article"] or (styles not in ([], ["plainnat"]) if inline else styles != ["plainnat"]):
+            self.reject("Manuscript must use the generic article class and inline or plainnat bibliography", object_id)
+        for name, payload in figures.items():
+            self.blob(name, payload)
 
     def pdf(self, payload, object_id, *, main=False):
         """Check PDF metadata, embedded objects, actions, links, and page text."""
@@ -313,7 +321,7 @@ def digest(path):
 
 def check_bibliography(tex, bibliography, compiled=None):
     """Check citation coverage and duplicate identifiers, not scholarly support."""
-    source = re.sub(r"(?<!\\)%[^\n]*", "", tex)
+    source = active_tex(tex)
     if re.search(r"\\nocite(?:\[[^]]*\])?\s*\{[^}]*\*", source):
         raise ValueError("Wildcard bibliography inclusion is not permitted")
     commands = re.findall(r"\\cite(?:[pt]|author|year(?:par)?)?\*?"
@@ -349,7 +357,7 @@ def check_bibliography(tex, bibliography, compiled=None):
     if missing or unused:
         raise ValueError(f"Citation coverage differs: missing={sorted(missing)}, unused={sorted(unused)}")
     if compiled is not None:
-        rendered = re.findall(r"\\bibitem(?:\[[^]]*\])?\s*\{([^}]+)\}", compiled)
+        rendered = re.findall(r"\\bibitem(?:\[[^]]*\])?\s*\{([^}]+)\}", active_tex(compiled))
         if len(rendered) != len(set(rendered)) or set(rendered) != set(cited):
             raise ValueError("Compiled bibliography differs from cited references")
     return {"distinct_references": len(entries), "citation_commands": len(commands),
@@ -577,8 +585,10 @@ def check(*, rules=(), history=False, allow_manifest_creation=False):
             require(parsed.fragment in page.ids, f"Broken website anchor: {target}")
     manuscript = (SUBMISSION / "main.tex").read_text()
     require("\\today" not in manuscript, "Manuscript uses a moving date")
-    require("\\input{main.bbl}" not in manuscript and "\\bibliography{refs}" in manuscript,
-            "Use a single editable BibTeX workflow")
+    inline = inline_bibliography(manuscript)
+    require("\\input{main.bbl}" not in active_tex(manuscript) and
+            (inline or "\\bibliography{refs}" in active_tex(manuscript)),
+            "Use one inline bibliography or the editable refs.bib workflow")
     for name in ("README.md", "index.html", "submission/main.tex"):
         content = (ROOT / name).read_text()
         if name.endswith(".tex"):
@@ -587,7 +597,7 @@ def check(*, rules=(), history=False, allow_manifest_creation=False):
     tex_sources = "\n".join((SUBMISSION / name).read_text() for name in manuscript_files()
                             if name.suffix == ".tex")
     reference_counts = check_bibliography(tex_sources, (SUBMISSION / "refs.bib").read_text(),
-                                         (SUBMISSION / "main.bbl").read_text())
+                                         tex_sources if inline else (SUBMISSION / "main.bbl").read_text())
     print("Bibliography: " + json.dumps(reference_counts, sort_keys=True), flush=True)
     archive = SUBMISSION / "dist/arxiv-2604.24803-v2-source.zip"
     expected = {path.as_posix() for path in manuscript_files()}

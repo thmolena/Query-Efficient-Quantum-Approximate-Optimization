@@ -13,3 +13,4 @@ arxiv/
 *.synctex.gz
 *-blx.bib
 *.run.xml
+qaoa-*.pdf

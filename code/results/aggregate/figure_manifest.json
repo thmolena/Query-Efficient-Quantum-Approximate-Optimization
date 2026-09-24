@@ -9,7 +9,7 @@
   "analysis_source_sha256": {
     "src/gcqaoa/artifacts.py": "3604b250c0359c2e60852173d8bccfd83776322e645df6cda0654e9b924538c3",
     "src/gcqaoa/provenance.py": "23121b8539d1a72391ade14eef58e3c27302c4486ad83e130b99c4bba1507204",
-    "src/gcqaoa/report.py": "fb8e653ee5198035efd1b21c5d2e88ac47d8f05ad541082425fd4e1d45d46e9d"
+    "src/gcqaoa/report.py": "6eed116659d8eb57b90fb6cbcdbca92bac1ec59c6879875e5245b00c358254c4"
   },
   "bootstrap": {
     "interval": "95 percent percentile; unadjusted descriptive comparisons",
@@ -99,6 +99,18 @@
       "path": "submission/figures/attribution.pdf",
       "quantity": "controlled sampling-by-stopping gains/costs, paired cost effects, and signed fresh prediction residuals with graph and conditional Monte Carlo uncertainty",
       "sha256": "e2ea8e6f08b4ae8c42a9f2244a07a221e4999090f3a7b3d48983b4eefbecf209",
+      "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/allocation.pdf",
+      "quantity": "four controlled sampling-by-stopping gain/cost and paired cost-effect panels, using the attribution figure estimates",
+      "sha256": "2ec13835af0595689a1ce46cb413c028a25b10ee7aa14096e6a6e0cbc9b23a81",
+      "study": "post-hoc matched refinement revision"
+    },
+    {
+      "path": "submission/figures/calibration.pdf",
+      "quantity": "two fresh signed prediction-residual panels with graph-bootstrap intervals and exact conditional Monte Carlo null references, using the attribution figure estimates",
+      "sha256": "bb9a281c377ed877bb62c1379b3ceca8c292a7f00c33214f59e735d08e42fe02",
       "study": "post-hoc matched refinement revision"
     },
     {

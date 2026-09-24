@@ -62,6 +62,8 @@ python code/scripts/make_figures.py --config code/configs/paper.json
 python code/scripts/build_paper.py
 ```
 
+To regenerate only the six manuscript figures and refresh their embedded copies in `main.tex`, run `python -m gcqaoa.report --main-figures-only`. This reads the saved records without running new experiments.
+
 The figure generator also consumes the refinement, mechanism, and joint-decision bundles. Check them separately:
 
 ```sh
@@ -72,9 +74,9 @@ python -m gcqaoa.decision --verify
 
 Add `--full` to any of these commands to regenerate its stochastic observations and deterministic decisions. Mechanism and joint-decision full replay require byte-identical recorded numerical sources and the recorded numerical environment; source drift is an explicit error. Default checks validate the saved evidence and reconstruct the reported analyses. See [METHOD.md](code/docs/METHOD.md) and [PROVENANCE.md](code/docs/PROVENANCE.md) for the distinction between record checks and trajectory replay.
 
-The PDF builds from the authoritative source `submission/main.tex`. It needs **Tectonic** (which downloads its standard TeX bundle on first use), or **pdfLaTeX and BibTeX** with the packages loaded by the manuscript. **Poppler** (`pdftotext`) is needed for source-package verification. The builder regenerates `main.pdf` and `main.bbl`, checks for undefined references, missing citations, and overfull boxes, and removes TeX intermediates. Edit bibliography entries in `submission/refs.bib`; do not edit the PDF or generated numerical tables independently.
+The PDF builds from the self-contained source `submission/main.tex`, which includes six vector figures and the bibliography. It needs **LuaLaTeX** with the packages loaded by the manuscript; the builder runs it twice with shell escape disabled in a temporary directory and retains `main.pdf`. Set `LUALATEX` to the executable path if it is not on `PATH` (the usual macOS TinyTeX location is also detected). **Poppler** (`pdftotext`) is needed for source-package verification. The builder checks for undefined references, missing citations, and overfull boxes; the source archive contains only `main.tex`. Keep its inline references consistent with the verified reference metadata in `submission/refs.bib`. The builder also supports older external BibTeX sources using **Tectonic**, or **pdfLaTeX and BibTeX**, and regenerates `main.bbl` for that mode. Do not edit the PDF or generated numerical tables independently.
 
-The build prefers Tectonic when available. Set `TECTONIC` to select its executable, or `TECTONIC_ONLY_CACHED=1` to use an already populated offline cache. The source-package check below builds and verifies a temporary archive; running `python code/scripts/package_arxiv.py` without `--check` retains a source ZIP and checksum in `submission/dist/` for manual submission.
+For older external BibTeX sources, the build prefers Tectonic when available. Set `TECTONIC` to select its executable, or `TECTONIC_ONLY_CACHED=1` to use an already populated offline cache. The source-package check below builds and verifies a temporary archive; running `python code/scripts/package_arxiv.py` without `--check` retains a source ZIP and checksum in `submission/dist/` for manual submission.
 
 Check the supplied folder, including source snapshots, follow-up protocol and ledgers, every saved transport coupling, bibliography, local page links, and file hashes:
 
@@ -188,8 +190,8 @@ code/
   docs/                   Method, evidence, provenance, and attribution
 submission/
   main.tex, main.pdf      Authoritative manuscript and matching PDF
-  refs.bib, main.bbl      Editable and generated bibliography
-  figures/, tables/       Generated inputs used by the manuscript
+  refs.bib, main.bbl      Reference metadata and legacy BibTeX output
+  figures/, tables/       Generated assets; six PDFs are embedded in main.tex
   LICENSE                 Manuscript and figure rights
 ```
 
